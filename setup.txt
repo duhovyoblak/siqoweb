@@ -1,0 +1,14 @@
+d:
+cd github\siqosk 
+
+
+
+
+
+
+
+
+
+
+
+C:\ProgramData\Anaconda3\Scripts\pip
