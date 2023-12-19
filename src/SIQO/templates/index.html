@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+    <meta name="PageInfo" content="index">
+    {% if not is_test %}  
+    <meta http-equiv="Refresh" content="1;url=http://siqo.sk/Homepage.php">
+    {% else %}
+    <meta http-equiv="Refresh" content="1;url=http://localhost/homepage">
+    {% endif %}
+
+    <title>SIQO index redirecting page</title>
+</head>
+
+<body>
+    <p>Stránka bude presmerovaná :
+   
+        <a href="http://siqo.sk/Homepage.php">http://siqo.sk/Homepage.php</a>
+        <p>is_test = {{is_test}}</p>
+    </p>
+</body>
+
+</html>

@@ -1,12 +1,15 @@
 #==============================================================================
-#  SIQO Homepage: main file
+#  SIQO Homepage: homepage
 #------------------------------------------------------------------------------
 import os
 
-os.environ['siqo-test-mode'] = '1'
+from   flask                    import Flask, url_for, render_template, make_response
+from   flask                    import request, session, abort, redirect
+from   markupsafe               import escape
 
-from siqo_journal    import SiqoJournal
-from siqo_api        import app
+import jinja2 as j2
+from jinja2          import Environment, PackageLoader, select_autoescape
+
 
 #==============================================================================
 # package's constants
@@ -17,6 +20,12 @@ _IS_TEST  = True if os.environ['siqo-test-mode']=='1' else False
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
+env = Environment(
+    
+    autoescape = select_autoescape()
+#     loader     = PackageLoader("SIQO")
+)
+
 
 #==============================================================================
 # package's tools
@@ -24,19 +33,33 @@ _IS_TEST  = True if os.environ['siqo-test-mode']=='1' else False
 
 
 #==============================================================================
-# Functions
+# 
 #------------------------------------------------------------------------------
-if __name__ =='__main__':
-
-    journal = SiqoJournal('SIQO Homepage', debug=5)
-    journal.I('Main start')
-
-    app.run(host='localhost', port=5000, debug=True, use_reloader=False)
+def index():
     
-    journal.O('Main end')
+    resp = make_response(render_template('index.html', is_test=_IS_TEST), 200)
+    resp.headers['X-Something'] = 'A value'
+
+    return resp
+
+#------------------------------------------------------------------------------
+def homepage():
     
+    context = {"title": "SIQO Homepage"
+              ,"width": 1000
+              }
+    
+    resp = make_response(render_template('base.html', **context), 200)
+    resp.headers['X-Something'] = 'A value'
+
+    return resp
+
 #==============================================================================
-print(f"main {_VER}")
+# Test cases
+#------------------------------------------------------------------------------
+
+#==============================================================================
+print(f"homepage {_VER}")
 
 #==============================================================================
 #                              END OF FILE

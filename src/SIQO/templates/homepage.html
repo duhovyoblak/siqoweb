@@ -1,0 +1,237 @@
+<?php
+//==============================================================================
+//                                                            (c) SIQO 2012 - 18
+// SIQO HomePage stranka
+//
+//------------------------------------------------------------------------------
+require_once ( dirname(__FILE__).'/PagMan/classes/S_Page.php'      );
+                     
+//==============================================================================
+// Nadviazanie spojenia
+//------------------------------------------------------------------------------
+$se   = new S_Session();
+
+$page = new S_Page( $se, 'SiqoHomepage' );
+$page->ResolvePost();
+ 
+//==============================================================================
+// Vytvorenie objektov - po prihlaseni a nastaveni usera
+//------------------------------------------------------------------------------
+                   
+//==============================================================================
+// Page rendering
+//------------------------------------------------------------------------------
+$page->HeadStart( 'SIQO HomePage' );
+$page->HeadCss  ( '/PagMan/css/base_page.css' );
+$page->HeadCss  ( '/PagMan/css/base_paragraph.css' );
+$page->HeadCss  ( '/PagMan/css/base_object.css' );
+$page->HeadCss  ( '/PagMan/css/base_DBObject.css' );
+$page->HeadJs   ( '/PagMan/js/S_Page.js' );
+$page->HeadMeta ( 'author', 'Palo4' );
+
+//==============================================================================
+// Telo dokumentu
+//------------------------------------------------------------------------------
+$page->BodyStart( '1400px' );
+
+  $page->DivHeader();
+    $page->HeaderTitle();
+    $page->HeaderComment();
+    $page->HeaderSubTitle();
+  $page->DivEnd();
+ 
+  $page->DivBarMenu();
+    $page->BarMenuUser( 'Homepage.php' );
+  $page->DivEnd();
+  
+  $page->DivStageMenu( '640px' );
+  
+    $page->DivStageSelector();
+      $page->StageSelectorItem('1' );
+      $page->StageSelectorItem('2' );
+      $page->StageSelectorItem('3' );
+      $page->StageSelectorItem('4' );
+      $page->StageSelectorItem('5' );
+      $page->StageSelectorItem('6' );
+      $page->StageSelectorItem('7' );
+    $page->DivEnd();
+  
+    //--------------------------------------------------------------------------
+    $page->DivStagePanel('1');
+      h2( 'S.I.Q.O. - to je spoločnosť s IQ obmedzeným');
+      p( "Projekt SIQO je experimentálna základňa pre projekty, spojené vývojom 
+          asociatívne adresovaných pamäťových priestorov. Naozaj, aj keď sa to 
+          možno podľa aplikácií nezdá." );
+      p( "Asociatívne pamäte sa testujú na viacerých demonštračných projektoch, 
+         opísaných v príslušných záložkách" );
+      p( "Zároveň s vývojom a testovaním pamätí prebieha vývoj PHP/MySQL frameworku, 
+         optimalizovaného pre takéto aplikácie" );
+    $page->DivEnd();
+  
+    //--------------------------------------------------------------------------
+    $page->DivStagePanel('2');
+      h2('Oral History');
+      p('Veľká história sa zaoberá veľkými udalosťami, ktoré ovplyvnia mnoho ľudí
+         a zvyčajne sa nezaobídu bez príslušného počtu mŕtvol alebo aspoň jedu, dýky a kráľa. 
+         Tieto príbehy sú také veľké, že sa nedokážu dostať k nášmu srdcu a dotýkajú
+         sa nás asi ako boje medzi zelenokožími citrusmi v susednej galaxii.');
+
+      $oral = html_baseurl().'../OralHistory/pages/OralHistory.php';
+      pStart();
+        pCont( 'Príbehy ' );
+        a( $oral, 'oral history' );
+        pCont( ' sú malé, omnoho menšie ako tie z učebníc dejepisu. Sú dostatočne 
+                 drobné na to, aby sa dostali k nášmu vnútru a zanechali tam stopu.
+                 Tieto príbehy sa stali ľuďom, ktorí sa na nás veľmi podobali. Skoro
+                 by sa mohli stať aj nám, keby sme tam vtedy boli.' );
+      pStop();
+      
+      pStart();
+        pCont( 'Ráčte ' );
+        a( $oral, 'vstúpiť...' );
+      pStop();
+
+    $page->DivEnd();
+
+    //--------------------------------------------------------------------------
+    $page->DivStagePanel('3');
+      h2( 'Principia Informatica');
+      p( "Fyzika je dnes veľmi technická disciplína. Symbióza matematiky s fyzikou
+          je taká úspešná a pevná, že je často nemožné rozlíšiť, kedy ešte matematika
+          interpretuje fyzikálny model skutočnosti a kedy už sama tvorí fyzikálnu realitu
+          a fyzik sa 'len' snaží nájsť v prírode javy, ktoré sa mu zjavujú v riešeniach
+          matematického modelu." );
+
+      p( "V projekte Principia Informatica ide o snahu poodstúpiť o krok späť, 
+          kedy bola fyzika ešte skôr prírodná filozofia. Cieľom tohto projektu
+          nie je objavenie nových prírodných zákonov, ale prerozprávanie príbehu 
+          fyziky iným, možno trochu nevšedným spôsobom. Aj keď treba priznať, 
+          že jazyk tohto rozprávania bude počítačová simulácia." );
+
+      htmlSplit();
+
+      $princForum = html_baseurl().'../HiPack/pages/PrincipiaForum.php';
+      pStart();
+        pCont( 'Teoretické základy projektu sú opísané vo ' );
+        a( $princForum, 'fóre Principia Informatica.' );
+      pStop();
+ 
+      htmlSplit();
+
+      $princPlay = html_baseurl().'../HiPack/pages/PrincipiaPlay.php';
+      pStart();
+        pCont( 'Vesmír na hranie podľa Principia Informatica je pripravený. Ráčte ' );
+        a( $princPlay, 'vstúpiť...' );
+      pStop();
+
+    $page->DivEnd();
+
+    //--------------------------------------------------------------------------
+    $page->DivStagePanel('4');
+      h2('GraFórum');
+
+      $grafor = html_baseurl().'../GraForum/pages/GraForum.php';
+
+      pStart();
+        a( $grafor, 'GraFórum' );
+        pCont( ' je všeobecné voľné fórum pre malých aj väčších grafomanov. Nie 
+        sú tu žiadne obmedzenia, okrem vkusu a dobrých mravov. Ak ste členom SIQO 
+        projektu, môžete si tu založiť vlastnú zbierku textov a písať, čo sa
+        do klávesnice zmestí.' );
+      pStop();
+      
+      pStart();
+        pCont( 'Ráčte ' );
+        a( $grafor, 'vstúpiť...' );
+      pStop();
+
+    $page->DivEnd();
+
+  //----------------------------------------------------------------------------
+    $page->DivStagePanel('5');
+      h2( 'Nebeská mechanika');
+      
+      $urt = html_baseurl().'../SKME/pages/SKMEmgmt.php';
+      pStart();
+        pCont( 'Toto je ročníková práca užívateľa Michala, korá sa príhodne volá ' );
+        a( $urt, 'Nebeská mechanika' );
+        pCont( '. Na tomto projekte môžete pracovať s vesmírom v zmysle Newtonových pohybových zákonov a gravitácie.' );
+      pStop();
+
+    $page->DivEnd();
+    
+    //--------------------------------------------------------------------------
+    $page->DivStagePanel('6');
+      h2( 'HASAR - Hierarchical Associative Storage Area');
+      p( "Fyzika je dnes veľmi technická disciplína. Symbióza matematiky s fyzikou
+          je taká úspešná a pevná, že je často nemožné rozlíšiť, kedy ešte matematika
+          interpretuje fyzikálny model skutočnosti a kedy už sama tvorí fyzikálnu realitu
+          a fyzik sa 'len' snaží nájsť v prírode javy, ktoré sa mu zjavujú v riešeniach
+          matematického modelu." );
+
+      p( "V projekte Principia Informatica / HASAR ide o snahu poodstúpiť o krok späť, 
+          kedy bola fyzika ešte skôr prírodná filozofia. Cieľom tohto projektu
+          nie je objavenie nových prírodných zákonov, ale prerozprávanie príbehu 
+          fyziky iným, možno trochu nevšedným spôsobom. Aj keď treba priznať, 
+          že jazyk tohto rozprávania bude počítačová simulácia." );
+
+      htmlSplit();
+
+      $HasarForum = html_baseurl().'../HASAR/pages/HasarForum.php';
+      pStart();
+        pCont( 'Teoretické základy projektu sú opísané vo ' );
+        a( $HasarForum, 'fóre Principia Informatica / HASAR.' );
+      pStop();
+ 
+      htmlSplit();
+
+      $HasarPlay = html_baseurl().'../HASAR/pages/HasarPlay.php';
+      pStart();
+        pCont( 'Svet podľa HASAR je pripravený. Ráčte ' );
+        a( $HasarPlay, 'vstúpiť...' );
+      pStop();
+
+    $page->DivEnd();
+
+    //--------------------------------------------------------------------------
+    $page->DivStagePanel('7');
+      h2('Is This Just Fantasy?');
+      $ITJFurl = html_baseurl().'../ITJF/pages/ITJFmain.php';
+      pStart();
+        pCont( 'Beta testeri! Vaše hľadanie je pri konci. Tento link: ' );
+        a( $ITJFurl, 'Is This Just Fantasy?' );
+        pCont( ' vedie do môjho projektu ITJF. Na samotnej stránke nájdete všetku dokumentáciu. Ak je vám niečo nejasné, po prihlásení je tam tab s nápisom Feedback, z ktorého mi posielate maily. Ak vám to zúfalo nefunguje, napíšte mi mail ručne. Ale určite nie stručne! Chcem vedieť všetko! Majte sa' );
+      pStop();
+      p('Dvojka');
+    $page->DivEnd();
+
+   //--------------------------------------------------------------------------
+/*
+    $page->DivStagePanel('5');
+      h2('SKME');
+
+      $skme = html_baseurl().'../SKME/pages/SKMEmgmt.php';
+      
+      pStart();
+        pCont( 'Ráčte ' );
+        a( $skme, 'vstúpiť...' );
+      pStop();
+
+    $page->DivEnd();
+*/
+  //----------------------------------------------------------------------------
+  $page->DivEnd();
+  
+  $page->DivTirage();
+    $page->TirageEmpty( '40%' );
+    $page->TirageItem('ti1', 'O autorovi',       html_baseurl().'PagMan/pages/Author.php');
+    $page->TirageItem('ti2', 'F.A.Q.',           html_baseurl().'PagMan/pages/FAQ.php'   );
+    $page->TirageItem('ti3', 'Admin',            html_baseurl().'PagMan/pages/Admin.php' );
+  $page->DivEnd();
+
+//==============================================================================
+// Inicializacia
+//------------------------------------------------------------------------------
+$page->BodyEnd();
+//===============================KONIEC=SUBORU==================================
+?>
