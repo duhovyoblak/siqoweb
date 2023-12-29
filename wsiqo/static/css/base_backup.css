@@ -1,0 +1,586 @@
+/*----------------------------------------------------------------------------*/
+/* (c) SIQO css definition */
+/*----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------*/
+/* Default Elements                                                           */
+/*----------------------------------------------------------------------------*/
+* {
+  margin           :0;
+  padding          :0px;
+  border           :0px;
+}
+
+html {
+  color            :gray; 
+  background       :white;
+  width            :100%;
+}
+
+body {
+  width            :1024px;
+  margin           :auto;
+
+  color            :gray; 
+  background       :rgb(224,240,255);
+  
+  font-family      :verdana,tahoma, helvetica,sans-serif;
+  font-size        :0.9em;
+  overflow         :scroll;
+}
+
+/*----------------------------------------------------------------------------*/
+/* Default Heading and Paragraph Elements                                     */
+/*----------------------------------------------------------------------------*/
+h1 {
+  color            :#001F5C; 
+  background       :transparent;
+
+  font-family      :Verdana,Tahoma,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :1.3em;
+
+  margin           :0.0em 0.0em 0.0em 0.0em; 
+  padding          :0.1em 0.05em 0.0em 0.2em;
+  text-align       :left;
+}
+h2 {
+  color            :#134368;
+  background       :transparent;
+  font-family      :Verdana,Tahoma,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :1.2em;
+  margin           :0.0em 0.0em 0.0em 0.0em; 
+  padding          :0.3em 0.1em 0.1em 6px;
+}
+h3 {
+  color            :#134368;
+  background       :transparent;
+  font-family      :verdana,arial,helvetica,sans-serif;
+  font-weight      :bold;
+  font-size        :1.1em;
+  margin           :0.0em 0.0em 0.0em 0.0em; 
+  padding          :0.1em 0.1em 0.1em 6px;
+}
+h4 {
+  color            :#0C2D45;
+  background       :transparent;
+  font-family      :verdana,arial,helvetica,sans-serif;
+  font-weight      :normal;
+  font-style       :oblique;
+  font-size        :1.0em;
+  margin           :0.0em 0.0em 0.0em 0em; 
+  padding          :0.1em 0.1em 0.1em 6px;
+}
+p {
+  color            :#061623; 
+  background       :transparent;
+
+  margin           :0px; 
+  padding          :8px 4px 2px 4px;
+
+  font-family      :calibri,verdana,arial,sans-serif;
+  font-size        :1.0em;
+}
+
+p.comment {
+  color            :#061623; 
+  background       :transparent;
+
+  margin           :0px; 
+  padding          :2px 2px 2px 4px;
+
+  font-family      :calibri,verdana,arial,sans-serif;
+  font-size        :0.8em;
+}
+
+p.InternalControlBtn {
+  color            :#061623; 
+  background       :#F1F6FA;
+  
+  margin           :8px 6px 0px 0px;
+  padding          :2px 2px 2px 2px;
+  border           :1px solid #596380;
+
+  font-family      :Calibri,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :.9em;
+
+  cursor           :pointer;
+}
+
+b {
+  background       :transparent;
+  font-weight      :bold;
+}
+label {
+  color            :#003366;
+  background       :transparent;
+
+  padding          :2px 4px 2px 4px;
+  margin           :0px;
+
+  font-family      :verdana,arial,sans-serif;
+  font-size        :0.9em;
+}
+li {
+  margin-left      : 1em;
+  margin-bottom    :.5em;
+}
+pre, .noprop {
+  color            :#596380; 
+  background       :transparent;
+
+  margin           :0px; 
+  padding          :0px;
+
+  font-family      :courier new, monospace;
+  font-size        :0.9em; 
+}
+code, tt {
+  color            :#596380; 
+  background       :transparent;
+  font-family      :'lucida console',monospace;
+  font-size        :1em;
+}
+/*----------------------------------------------------------------------------*/
+/* Aditional Elements                                                         */
+/*----------------------------------------------------------------------------*
+.right { 
+  float             :right;
+}
+
+.center { 
+  margin-left       :auto;
+  margin-right      :auto;
+}
+
+/*----------------------------------------------------------------------------*/
+/* Default Anchor Elements                                                    */
+/*----------------------------------------------------------------------------*/
+a:link {
+  color            :#002966; 
+  background       :transparent;
+  text-decoration  :none;
+}
+a:visited {
+  color            :#002966; 
+  background       :transparent;
+  text-decoration  :none;
+}
+a:active {
+  color            :#002966; 
+  background       :transparent;
+  text-decoration  :none;
+}
+a:hover {
+  color            :#660033; 
+  background       :transparent;
+  text-decoration  :underline;
+}
+/*----------------------------------------------------------------------------*/
+/* Page Header Elements                                                       */
+/*----------------------------------------------------------------------------*/
+div.Break {
+  background       :transparent;
+  position         :relative;
+  height           :6px;
+}
+
+div.Header {
+  background       :#FFFFE0;
+  position         :relative;
+  height           :3.0em;
+}
+
+div.HeaderTitle
+{
+  position         :relative;
+  top              :0px;
+  width            :40%;
+}
+div.HeaderComment
+{
+  color            :#002E8A; 
+
+  position         :absolute;
+  width            :60%;
+  top              :0px;
+  right            :0px;
+
+  margin           :0.4em; 
+
+  font-family      :verdana,arial,sans-serif;
+  text-align       :right;
+  font-size        :0.8em;
+}
+
+/*----------------------------------------------------------------------------*/
+/* Bar Menu Elements                                                          */
+/*----------------------------------------------------------------------------*/
+div.BarMenu
+{
+  background       :#C7DCEA;
+
+  position         :relative;
+  height           :1.8em;
+  border-top       :1px solid gray;
+}
+
+div.BarMenuItem
+{
+  color            :#002966; 
+
+  font-family      :calibri,verdana,arial,sans-serif;
+  font-size        :0.9em;
+
+  position         :relative;
+  display          :inline;
+  float            :right;
+  
+  margin           :0px 3px 0px 3px;
+  padding          :5px;
+  cursor           :pointer;
+}
+
+div.BarMenuItem:hover, div.BarMenuLeft:hover
+{
+  color            :#660033; 
+  text-decoration  :underline;
+}
+
+div.BarMenuItemWindow
+{
+  background       :#E0ECF3;
+  opacity          :0.94;
+
+  font-family      :calibri,verdana,arial,sans-serif;
+  font-size        :0.9em;
+
+  display          :none;
+  margin           :0px 3px 0px 3px;
+  padding          :15px;
+  border           :1px solid #002966;
+//  border-radius    :4px;
+  cursor           :auto;
+  
+  position         :absolute;
+  top              :100%;
+  right            :1%;
+  
+  z-index          :111;
+}
+
+div.BarMenuLeft
+{
+  color            :#002966; 
+
+  font-family      :calibri,verdana,arial,sans-serif;
+  font-size        :0.9em;
+
+  position         :relative;
+  display          :inline;
+  float            :left;
+  
+  margin           :0px 3px 0px 3px;
+  padding          :5px;
+  cursor           :pointer;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/* Page Stage Menu Elements                                                   */
+/*----------------------------------------------------------------------------*/
+div.StageMenu
+{
+  color            :#273327; 
+  background       :#FFFFEB;
+  position         :relative;
+  height           :550px;
+  left             :0px;
+  top              :0px;
+}
+
+div.StageSelector
+{
+  color            :#273327; 
+//  background       :#FFFFE0;
+  background       :#FFFFEB;
+  float            :left;
+  height           :100%;
+  width            :20%;
+}
+
+div.StageSelectorItem
+{
+  color            :#273327; 
+  font-size        :1.0em;
+  margin           :10px;
+  padding          : 6px;
+}
+
+div.StageSelectorItem:hover
+{
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3) inset;
+}
+
+div.StagePanel
+{
+  color            :#273327; 
+  background       :#FFFFEB;
+
+//  border-left      :1px solid gray;
+
+  position         :absolute;
+  z-index          :1;                
+  left             :20%;
+  height           :100%;
+  width            :79.80%;
+
+  overflow         :hidden;
+}
+
+div.StageCourtain
+{
+  color            :white; 
+  background       :#092234;
+  opacity          :0.6;
+}
+/*----------------------------------------------------------------------------*/
+/* Form Elements                                                       */
+/*----------------------------------------------------------------------------*/
+.FormControl {
+  color            :#FFFFED;
+  background       :darkgray;
+  margin           :2px;
+  border           :1px solid #596380;
+  padding          :0px;
+//  display          :inline;
+  
+  font-family      :Verdana,arial,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :1.0em;
+}
+/* Input Elements                                                             */
+.FormInput {
+  color            :#FFFFED;
+  background       :darkgray;
+  margin           :2px;
+  border           :1px solid #596380;
+  display          :inline;
+    
+  font-family      :Verdana,arial,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :1.0em;
+}
+input.ObjectControlBtn {
+  color            :#061623; 
+  background       :white;
+  
+  margin           :4px 0px 4px 8px;
+  padding          :0px 2px 0px 2px;
+  border           :1px solid #596380;
+
+  font-family      :Calibri,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :.9em;
+
+  cursor           :pointer;
+}
+input.MenuControlBtn {
+  color            :#061623; 
+  background       :#F1F6FA;
+  
+  margin           :8px 6px 0px 0px;
+  padding          :0px 2px 0px 2px;
+  border           :1px solid #596380;
+
+  font-family      :Calibri,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :.9em;
+
+  cursor           :pointer;
+}
+input[type="radio"]
+{
+  color            :#273327; 
+  background       : none repeat scroll 0% 0% rgb(255, 255, 255);
+  position         : relative;
+  margin           :0px;
+  padding          :6px;
+  width            :13px;
+  height           :13px;
+  vertical-align   :center;
+  border           :1px solid rgb(220, 220, 220);
+  border-radius    :1px 1px 1px 1px;
+  cursor           :pointer;
+}
+/*----------------------------------------------------------------------------*/
+/* Classes for SObject                                                        */
+/*----------------------------------------------------------------------------*/
+div.Object {
+  color            :green;
+  background       :#FFFFE0;
+  border-radius    :9px;
+  
+  position         :absolute;
+  top              :1%;
+  left             :1%;
+  width            :80%;
+//  display          :inline;
+}
+/*----------------------------------------------------------------------------*/
+div.ObjectHeaderSpace {
+  color            :#FFFFED;
+  background       :#D5E5E2;
+
+  border-radius    :9px 9px 0px 0px;
+  border           :1px solid gray;
+
+  position         :relative;
+  top              :0;
+  width            :100%;
+
+  z-index          :1;
+  cursor           :pointer;
+}
+/*----------------------------------------------------------------------------*/
+p.ObjectName {
+  color            :#003366;
+  background       :transparent;
+
+  margin           :0px;
+  padding          :2px 8px 2px 8px;
+
+  border-radius    :9px 9px 0px 0px;
+
+  font-family      :verdana,arial,sans-serif;
+  font-size        :0.9em;
+}
+/*----------------------------------------------------------------------------*/
+div.ObjectContentSpace {
+  color            :#003366;
+  background       :transparent;
+
+  border-left      :1px solid gray;
+  border-right     :1px solid gray;
+  box-shadow       :0px 5px 5px rgba(0, 0, 0, 0.2) inset;
+
+  position         :relative;
+  top              :0;
+  width            :100%;
+  overflow         :hidden;
+  z-index          :1;
+}
+/*----------------------------------------------------------------------------*/
+input.InputString {
+//  color            :#FFFFED;
+  background       :#FFFFEB;
+
+  margin           :2px;
+  padding          :2px 4px 2px 4px;
+  border           :1px solid #596380;
+    
+  font-family      :Calibri,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :0.9em;
+}
+/*----------------------------------------------------------------------------*/
+select {
+//  color            :#FFFFED;
+  background       :#FFFFEB;
+
+  margin           :2px;
+  padding          :0px;
+  border           :1px solid #596380;
+    
+  font-family      :Calibri,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :0.9em;
+}
+/*----------------------------------------------------------------------------*/
+option {
+  color            :black;
+
+  margin           :2px;
+  padding          :0px;
+    
+  font-family      :Calibri,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :0.9em;
+}
+/*----------------------------------------------------------------------------*/
+div.ObjectScrollSpace {
+  color            :#003366;
+  background       :#FFFFE0;
+
+  border-top       :1px solid black;
+
+  position         :absolute;
+  bottom           :0px;
+  height           :100%;
+  width            :100%;
+
+  z-index          :2;
+  overflow-y       :scroll;
+}
+/*----------------------------------------------------------------------------*/
+div.ObjectControlSpace {
+  color            :#FFFFED;
+  background       :#C7DCEA;
+  width            :100%;
+
+  border           :1px solid gray;
+  border-radius    :0px 0px 9px 9px;
+}
+/*----------------------------------------------------------------------------*/
+.ObjectControlItem {
+  color            :#FFFFED;
+  background       :darkgray;
+
+  margin           :2px;
+  border           :1px solid #596380;
+  padding          :0px;
+//  display          :inline;
+  
+  font-family      :Verdana,arial,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :1.0em;
+}
+
+.ObjectControlString {
+  color            :#FFFFED;
+  background       :darkgray;
+
+  margin           :2px;
+  border           :1px solid #596380;
+  width            :99%;
+    
+  font-family      :Verdana,arial,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :1.0em;
+}
+
+/*----------------------------------------------------------------------------*/
+/* Page Tirage Elements                                                       */
+/*----------------------------------------------------------------------------*/
+div.Tirage
+{
+  color            :gray; 
+  background       :#FFFFE0;
+  height           :1.7em;
+}
+div.TirageItem
+{
+  color            :gray; 
+  background       :#FFFFE0;
+  font-family      :calibri,verdana,arial,sans-serif;
+  font-size        :0.8em;
+  display          :inline;
+  float            :left;
+  margin           :0px 3px 0px 3px;
+  padding          :5px;
+}
+/*----------------------------------------------------------------------------*/
+/* (c) SIQO css definition                                                    */
+/*----------------------------------------------------------------------------*/

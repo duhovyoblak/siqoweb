@@ -1,0 +1,180 @@
+/*----------------------------------------------------------------------------*/
+/* (c) SIQO css definition */
+/*----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------*/
+/* Heading Elements                                                           */
+/*----------------------------------------------------------------------------*/
+h1 {
+  color            :#001F5C; 
+  background       :transparent;
+
+  font-family      :Verdana,Tahoma,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :1.3em;
+
+  margin           :0.0em 0.0em 0.0em 0.0em; 
+  padding          :0.2em 0.05em 0.0em 0.2em;
+//  text-align       :left;
+}
+h2 {
+  color            :#134368;
+  background       :transparent;
+  font-family      :Verdana,Tahoma,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :1.2em;
+  margin           :0.0em 0.0em 0.0em 0.0em; 
+  padding          :0.3em 0.1em 0.1em 6px;
+}
+h3 {
+  color            :#134368;
+  background       :transparent;
+  font-family      :verdana,arial,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :0.9em;
+  margin           :0.0em 0.0em 0.0em 0.0em; 
+  padding          :0.3em 0.1em 0.1em 6px;
+}
+h4 {
+  color            :#0C2D45;
+  background       :transparent;
+  text-align       :left;
+  font-family      :verdana,arial,helvetica,sans-serif;
+  font-weight      :normal;
+  font-style       :oblique;
+  font-size        :0.8em;
+  margin           :0.0em 0.0em 0.0em 0em; 
+  padding          :0.3em 0.1em 0.1em 6px;
+}
+/*----------------------------------------------------------------------------*/
+/* Paragraph Elements                                                         */
+/*----------------------------------------------------------------------------*/
+p {
+  color            :#061623; 
+  background       :transparent;
+
+  margin           :0px; 
+  padding          :6px 4px 2px 4px;
+
+  font-family      :calibri,verdana,arial,sans-serif;
+  font-size        :1.1em;
+}
+/*----------------------------------------------------------------------------*/
+p.comment {
+  color            :#061623; 
+  background       :transparent;
+
+  margin           :0px; 
+  padding          :2px 2px 2px 4px;
+
+  font-family      :calibri,verdana,arial,sans-serif;
+  font-size        :0.8em;
+}
+/*----------------------------------------------------------------------------*/
+p.center {
+  text-align       :center;
+}
+/*----------------------------------------------------------------------------*/
+p.foto {
+  color            :#596380; 
+  background       :transparent;
+
+  margin           :0px; 
+  padding          :0px;
+
+  font-family      :courier new, monospace;
+  font-size        :0.8em; 
+  font-style       :italic; 
+  text-align       :center;
+}
+/*----------------------------------------------------------------------------*/
+b {
+  background       :transparent;
+  font-weight      :bold;
+}
+/*----------------------------------------------------------------------------*/
+label {
+  color            :#003366;
+  background       :transparent;
+
+  padding          :2px 4px 2px 4px;
+  margin           :0px;
+
+  font-family      :verdana,arial,sans-serif;
+  font-size        :0.9em;
+}
+/*----------------------------------------------------------------------------*/
+li {
+  margin-left      : 1em;
+  margin-bottom    :.5em;
+}
+/*----------------------------------------------------------------------------*/
+pre, .noprop {
+  color            :#596380; 
+  background       :transparent;
+
+  margin           :0px; 
+  padding          :0px;
+
+  font-family      :courier new, monospace;
+  font-size        :0.9em; 
+  font-style       :normal; 
+  text-align       :left;
+}
+/*----------------------------------------------------------------------------*/
+code, tt {
+  color            :#596380; 
+  background       :transparent;
+  font-family      :'lucida console',monospace;
+  font-size        :1em;
+}
+/*----------------------------------------------------------------------------*/
+select {
+//  color            :#FFFFED;
+  background       :#FFFFEB;
+
+  margin           :2px;
+  padding          :0px;
+  border           :1px solid #596380;
+    
+  font-family      :Calibri,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :0.9em;
+}
+/*----------------------------------------------------------------------------*/
+option {
+  color            :black;
+
+  margin           :2px;
+  padding          :0px;
+    
+  font-family      :Calibri,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :0.9em;
+}
+/*----------------------------------------------------------------------------*/
+/* Default Anchor Elements                                                    */
+/*----------------------------------------------------------------------------*/
+a:link {
+  color            :#002966; 
+  background       :transparent;
+  text-decoration  :none;
+}
+a:visited {
+  color            :#002966; 
+  background       :transparent;
+  text-decoration  :none;
+}
+a:active {
+  color            :#002966; 
+  background       :transparent;
+  text-decoration  :none;
+}
+a:hover {
+  color            :#660033; 
+  background       :transparent;
+  text-decoration  :underline;
+}
+/*----------------------------------------------------------------------------*/
+/* (c) SIQO css definition                                                    */
+/*----------------------------------------------------------------------------*/

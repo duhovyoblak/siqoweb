@@ -5,10 +5,15 @@ __pycache__/
 
 instance/
 
+backup/
+
 .pytest_cache/
+.spyproject/
 .coverage
 htmlcov/
 
 dist/
 build/
 *.egg-info/
+
+*.journal

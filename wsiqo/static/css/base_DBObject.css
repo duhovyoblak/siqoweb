@@ -1,0 +1,57 @@
+/*----------------------------------------------------------------------------*/
+/* (c) SIQO css definition */
+/*----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------*/
+/* Classes for S_Table                                                        */
+/*----------------------------------------------------------------------------*/
+.DBTable {
+  border-collapse  :collapse;
+  border           :1px solid;
+}
+
+td {
+  border-left      :1px solid gray;
+}
+/*----------------------------------------------------------------------------*/
+/* Table Head                                                                 */
+/*----------------------------------------------------------------------------*/
+.DBTableHead {
+  color            :#FFFFED;
+  background       :#4E72AD;
+}
+
+.DBTableHeadItem {
+  padding          : 2px;
+
+  font-family      :Calibri, helvetica, sans-serif;
+  font-size        :0.9em;
+  font-weight      :bold;
+}
+
+/*----------------------------------------------------------------------------*/
+/* Table Lines                                                                */
+/*----------------------------------------------------------------------------*/
+.DBTableLineA {
+  color            :#003366;
+  background       :#FFFFDC;
+  vertical-align   :top;
+}
+
+.DBTableLineB {
+  color            :#003366;
+  background       :#FFFFED;
+  vertical-align   :top;
+}
+
+.DBTableLineInput {
+  background       :transparent;
+  padding          :1px;
+  
+  font-family      :Calibri Light,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :0.9em;
+}
+/*----------------------------------------------------------------------------*/
+/* (c) SIQO css definition */
+/*----------------------------------------------------------------------------*/

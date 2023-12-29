@@ -1,5 +1,5 @@
 #==============================================================================
-#  SIQO Homepage: web API
+#  SIQO Homepage: web routes operations
 #------------------------------------------------------------------------------
 import os
 
@@ -7,36 +7,51 @@ from   flask                    import Flask, url_for, render_template, make_res
 from   flask                    import request, session, abort, redirect
 from   markupsafe               import escape
 
-import jinja2 as j2
-import homepage as hp
+from   config                   import Config
+import pages as page
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = 1.00
-_IS_TEST  = True if os.environ['siqo-test-mode']=='1' else False
+_IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
-app = Flask('SIQO')   # 'SIQO' je folder pre celu Homepage
-
-app.secret_key = b'_5#34gvaebh y\xec]/'
+_app = None
 
 #==============================================================================
 # package's tools
 #------------------------------------------------------------------------------
-def shutdown_server():
-    'Tu by chcelo stop'
-    pass
-    
-@app.errorhandler(404)
-def page_not_found(error):
-    
-    resp = make_response(render_template('error.html'), 404)
-    resp.headers['X-Something'] = 'A value'
+def getApp():
 
-    return resp
+    global _app
+    if _app is not None: return _app
+
+    app = Flask('wsiqo')   # 'SIQO' je folder pre celu Homepage
+    app.config.from_object(Config)
+    _app = app
+    
+    print( f'Flask object {app} was created at {id(app)} in {__name__}')
+
+    return _app
+
+#------------------------------------------------------------------------------
+def shutdown_server():
+
+    from win32api import GenerateConsoleCtrlEvent
+    CTRL_C_EVENT = 0
+    GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0)
+    
+#------------------------------------------------------------------------------
+#@app.errorhandler(404)
+#def page_not_found(error):
+    
+#    resp = make_response(render_template('error.html'), 404)
+#    resp.headers['X-Something'] = 'A value'
+
+#    return resp
 
 #Note the 404 after the render_template() call. This tells Flask that the status code of that page should be 404 which means not found. By default 200 is assumed which translates to: all went well.
 
@@ -45,22 +60,28 @@ def page_not_found(error):
 #==============================================================================
 # PATHs operation
 #------------------------------------------------------------------------------
+app = getApp()
+
+#------------------------------------------------------------------------------
 @app.get("/")
+@app.get("/index")
 def index():
-    return hp.index()
+    return page.index()
+
+#------------------------------------------------------------------------------
+@app.get('/shutdown')
+def shutdown():
+    
+    if not _IS_TEST: abort(404)
+    
+    shutdown_server()
+    return 'Server was shut down...'
 
 #------------------------------------------------------------------------------
 @app.get('/homepage')
 def homepage():
-    return hp.homepage()
+    return page.homepage()
     
-#------------------------------------------------------------------------------
-@app.get('/shutdown')
-def shutdown():
-    abort(404)
-    shutdown_server()
-    return 'Server shutting down...'
-
 #------------------------------------------------------------------------------
 @app.get('/login')
 def login_page():
@@ -114,7 +135,7 @@ with app.test_request_context():
     print(url_for('static', filename='base_page.css'))
     
 #==============================================================================
-print(f"siqo_api {_VER}")
+print(f"routes {_VER}")
 
 #==============================================================================
 #                              END OF FILE

@@ -3,23 +3,27 @@
 #------------------------------------------------------------------------------
 import os
 
-from   flask                    import Flask, url_for, render_template, make_response
+from   flask                    import url_for, render_template, make_response
 from   flask                    import request, session, abort, redirect
 from   markupsafe               import escape
 
 import jinja2 as j2
-from jinja2          import Environment, PackageLoader, select_autoescape
+from   jinja2          import Environment, PackageLoader, select_autoescape
 
+import siqo_general  as gen
+import web_lib       as wl
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = 1.00
-_IS_TEST  = True if os.environ['siqo-test-mode']=='1' else False
+_IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
+journal = None
+
 env = Environment(
     
     autoescape = select_autoescape()
@@ -45,11 +49,16 @@ def index():
 #------------------------------------------------------------------------------
 def homepage():
     
-    context = {"title": "SIQO Homepage"
-              ,"width": 1000
-              }
+    selpage = gen.loadJson(journal, fileName='../DMS/homepage.json')
     
-    resp = make_response(render_template('base.html', **context), 200)
+    context = wl.selpageContext(selpage)
+    
+    for k, v in context.items():
+        
+        print()
+        print(k, '...:', v)
+    
+    resp = make_response(render_template('page.html', **context), 200)
     resp.headers['X-Something'] = 'A value'
 
     return resp

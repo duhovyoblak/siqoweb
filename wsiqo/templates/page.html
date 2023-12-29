@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<!---------------------------------------------------------------------------->
+<!-- Head -->
+<!---------------------------------------------------------------------------->
+<head>
+    <meta   http-equiv="Content-Type"      content="text/html; charset=UTF-8">
+    <meta   name="META HTTP-EQUIV"         content="NO-CACHE">
+    <meta   name="author"                  content="Palo4">
+    
+    <link   href="{{url_for('static', filename='css/base_page.css')     }}" rel="stylesheet" type="text/css">
+    <link   href="{{url_for('static', filename='css/base_paragraph.css')}}" rel="stylesheet" type="text/css">
+    <link   href="{{url_for('static', filename='css/base_object.css')   }}" rel="stylesheet" type="text/css">
+    <link   href="{{url_for('static', filename='css/base_DBObject.css') }}" rel="stylesheet" type="text/css">
+
+    <script src= "{{url_for('static', filename='js/S_Page.js')          }}" type="text/javascript"></script>
+    
+    <title>{{title}}</title>
+    
+</head>
+
+<!---------------------------------------------------------------------------->
+<!-- Body -->
+<!---------------------------------------------------------------------------->
+<body>
+    <!--------------------------------------------------------------HEADER---->
+    <div class="Header", name="Header">
+        <div class="HeaderTitle", name="HeaderTitle">
+            <h1>{{head_title}}</h1>
+        </div>
+        <div class="HeaderComment", name="HeaderComment">
+            <p>{{head_comment}}</p>
+        </div>
+        <h4>{{head_subtitle}}</h4>
+    </div>
+
+    <!--------------------------------------------------------------NAVBAR---->
+    <div class="BarMenu", name="BarMenu", id="BarMenu">
+        <div class="BarMenuItem", name="BarMenuUser", ID="BarMenuUser", onclick="BarMenuWinShow('BarMenuUser')">
+            {{user}}
+        </div>
+    </div>
+
+    <!--------------------------------------------------------------STAGE----->
+    <div class="StageMenu", name="SS", style="height:640px", onclick="BarMenuWinHide()">
+
+        <!--------------------------------------------------STAGE-SELECTOR---->
+        <div class="StageSelector">
+        
+            {% for sel in selectors %}
+                <div class="StageSelectorItem">
+                    <input type="radio" name="SSB" id={{sel['id']}} value={{sel['value']}} onclick={{sel['onclick']}}>
+                    <label for={{sel['id']}}>{{sel['title']}}</label><br>
+                </div>
+           {% endfor %}
+        </div>
+        
+        <!--------------------------------------------------STAGE-CONTENT----->
+        {% for pnl in panels %}
+            <div class="StagePanel" name="SP" id={{pnl['id']}} style={{pnl['style']}}>
+
+                <h2>{{pnl['header']}}</h2>
+                {{pnl['item']}}
+                
+            </div>
+        {% endfor %}
+
+    </div>
+
+    <!-------------------------------------------------------------TIRAGE----->
+    <div class="Tirage">
+    
+        <div class="TirageItem", style="width:40%" ></div>
+    
+        <div class="TirageItem", id="TI_1">
+            <a "href"="PagMan/pages/Author.php">O autorovi</a>
+        </div>
+    
+        <div class="TirageItem", id="TI_2">
+            <a "href"="PagMan/pages/FAQ.php">F.A.Q.</a>
+        </div>
+    
+        <div class="TirageItem", id="TI_3">
+            <a "href"="PagMan/pages/Admin.php">O autorovi</a>
+        </div>
+    </div>
+    
+<!---------------------------------------------------------------------------->
+</body>
+</html>
+<!---------------------------------------------------------------------------->
+<!-- End of the file -->
+<!---------------------------------------------------------------------------->
