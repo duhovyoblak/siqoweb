@@ -6,13 +6,13 @@
 
 ,"sels":[ { "id"     :"1"
            ,"folder" :""
-           ,"title"  :"Homepage"
+           ,"title"  :"S.I.Q.O."
            ,"header" :"S.I.Q.O. - to je spoločnosť s IQ obmedzeným"
            ,"item"   :"Projekt SIQO je experimentálna základňa pre projekty, spojené vývojom asociatívne adresovaných pamäťových priestorov. Naozaj, aj keď sa to možno podľa aplikácií nezdá. Asociatívne pamäte sa testujú na viacerých demonštračných projektoch, opísaných v príslušných záložkách Zároveň s vývojom a testovaním pamätí prebieha vývoj frameworku, optimalizovaného pre takéto aplikácie"
           }
          ,{ "id"     :"2"
            ,"folder" :"orahist"
-           ,"title"  :"Homepage"
+           ,"title"  :"Oral History"
            ,"header" :"Oral History"
            ,"item"   :"Veľká história sa zaoberá veľkými udalosťami, ktoré ovplyvnia mnoho ľudí a zvyčajne sa nezaobídu bez príslušného počtu mŕtvol alebo aspoň jedu, dýky a kráľa. Tieto príbehy sú také veľké, že sa nedokážu dostať k nášmu srdcu a dotýkajú sa nás asi ako boje medzi zelenokožími citrusmi v susednej galaxii.{#split} Príbehy {#href={{url_oral}},oral history} sú malé, omnoho menšie ako tie z učebníc dejepisu. Sú dostatočne drobné na to, aby sa dostali k nášmu vnútru a zanechali tam stopu. Tieto príbehy sa stali ľuďom, ktorí sa na nás veľmi podobali. Skoro by sa mohli stať aj nám, keby sme tam vtedy boli."
           }

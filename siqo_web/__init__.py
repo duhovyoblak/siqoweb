@@ -10,29 +10,38 @@ os.environ['wsiqo-test-mode' ] = '1'
 os.environ['wsiqo-secret-key'] = 'asklurgw8374yhcbfQ2R7GYFQPIUBR'
 
 #==============================================================================
-from siqo_journal    import SiqoJournal
-from routes          import getApp
+from   siqo_lib                 import SiqoJournal
+import siqo_web.pages           as pag
+import siqo_web.dms             as dms
 
-import pages as pag
+import siqo_web.routes          as rou
+#from   siqo_web.routes          import getApp
 
 #==============================================================================
-# package's constants
+# package's constants & private vars
 #------------------------------------------------------------------------------
 _VER      = 1.00
 _IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 
 #==============================================================================
+# package's variables
+#------------------------------------------------------------------------------
+journal = SiqoJournal('siqo-web', debug=5)
+
+#==============================================================================
 # Get an Flask Application Object
 #------------------------------------------------------------------------------
-app = getApp()
+app  = rou.getApp()
+
+
+pag.journal = journal
+dms.journal = journal
+rou.journal = journal
 
 #==============================================================================
 # Main
 #------------------------------------------------------------------------------
 if __name__ =='__main__':
-
-    journal = SiqoJournal('wsiqo', debug=5)
-    pag.journal = journal
     
     journal.I('Main start')
     
@@ -41,7 +50,6 @@ if __name__ =='__main__':
     
     journal.O('Main end')
     
-
 #==============================================================================
 print(f"wsiqo.__init__ {_VER}")
 

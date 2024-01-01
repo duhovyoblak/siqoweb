@@ -7,8 +7,8 @@ from   flask                    import Flask, url_for, render_template, make_res
 from   flask                    import request, session, abort, redirect
 from   markupsafe               import escape
 
-from   config                   import Config
-import pages as page
+from   siqo_web.config          import Config
+import siqo_web.pages           as page
 
 #==============================================================================
 # package's constants
@@ -19,7 +19,8 @@ _IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
-_app = None
+journal = None
+_app    = None
 
 #==============================================================================
 # package's tools
@@ -28,15 +29,26 @@ def getApp():
 
     global _app
     if _app is not None: return _app
-
-    app = Flask('wsiqo')   # 'SIQO' je folder pre celu Homepage
-    app.config.from_object(Config)
-    _app = app
     
-    print( f'Flask object {app} was created at {id(app)} in {__name__}')
+    cwd = os.getcwd()
+#    cwd += r'\siqo_web'
+    print(f"cwd = '{cwd}'")
+
+    _app = Flask(__name__, static_url_path=None, static_folder='static', 
+                template_folder='templates', instance_path=None, 
+                instance_relative_config=False, root_path=None)
+    
+    _app.config.from_object(Config)
+    
+    print( f'Flask object {_app} was created at {id(_app)} in {__name__}')
 
     return _app
 
+#------------------------------------------------------------------------------
+app = getApp()
+
+#==============================================================================
+# package's tools
 #------------------------------------------------------------------------------
 def shutdown_server():
 
@@ -59,9 +71,6 @@ def shutdown_server():
 #@app.before_request
 #==============================================================================
 # PATHs operation
-#------------------------------------------------------------------------------
-app = getApp()
-
 #------------------------------------------------------------------------------
 @app.get("/")
 @app.get("/index")
@@ -129,10 +138,8 @@ def show_subpath(subpath):
 #------------------------------------------------------------------------------
 with app.test_request_context():
     print(url_for('index'))
-    print(url_for('login_page'))
-    print(url_for('login_user'))
     print(url_for('profile', username='John Doe'))
-    print(url_for('static', filename='base_page.css'))
+    print(url_for('static', filename='css/base_page.css'))
     
 #==============================================================================
 print(f"routes {_VER}")
