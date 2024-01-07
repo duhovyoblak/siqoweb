@@ -15,7 +15,6 @@ import siqo_web.pages           as pag
 import siqo_web.dms             as dms
 
 import siqo_web.routes          as rou
-#from   siqo_web.routes          import getApp
 
 #==============================================================================
 # package's constants & private vars
@@ -28,15 +27,14 @@ _IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 #------------------------------------------------------------------------------
 journal = SiqoJournal('siqo-web', debug=5)
 
+pag.journal = journal
+dms.journal = journal
+rou.journal = journal
+
 #==============================================================================
 # Get an Flask Application Object
 #------------------------------------------------------------------------------
 app  = rou.getApp()
-
-
-pag.journal = journal
-dms.journal = journal
-rou.journal = journal
 
 #==============================================================================
 # Main

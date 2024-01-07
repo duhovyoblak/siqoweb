@@ -59,21 +59,17 @@ def homepage():
     selpage = dms.loadJson('homepage.json')
     
     context = wl.selpageContext(selpage)
-    context["css_base_page"     ] = url_for('static', filename='css/base_page.css'     )
-    context["css_base_paragraph"] = url_for('static', filename='css/base_paragraph.css')
-    context["css_base_object"   ] = url_for('static', filename='css/base_object.css'   )
-    context["css_base_DBObject" ] = url_for('static', filename='css/base_DBObject.css' )
+    context["url_for"] = url_for
+#    context["css_base_page"     ] = url_for('static', filename='css/base_page.css'     )
+#    context["css_base_paragraph"] = url_for('static', filename='css/base_paragraph.css')
+#    context["css_base_object"   ] = url_for('static', filename='css/base_object.css'   )
+#    context["css_base_DBObject" ] = url_for('static', filename='css/base_DBObject.css' )
  
-    context["js_S_Page" ] = url_for('static', filename='js/S_Page.js' )
+#    context["js_S_Page" ] = url_for('static', filename='js/S_Page.js' )
     
  
     journal.M( gen.dictString(context) )
-    
-    print()
-    print(url_for('static', filename='css/base_page.css'))
-    
-    
-    
+     
     template = env.get_template("page.html")
     resp = make_response(template.render(**context), 200)
     resp.headers['X-Something'] = 'A value'
