@@ -18,7 +18,7 @@ _IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 #------------------------------------------------------------------------------
 class Config:
     
-    SECRET_KEY = os.environ.get('wsiqo-secret-key')
+    SECRET_KEY = os.environ.get('wsiqo-secret-key') or "ekjwn47wtyqgpUHP43UGH3"
 
 
 

@@ -7,7 +7,7 @@ import os
 # Setting the environment
 #------------------------------------------------------------------------------
 os.environ['wsiqo-test-mode' ] = '1'
-os.environ['wsiqo-secret-key'] = 'asklurgw8374yhcbfQ2R7GYFQPIUBR'
+#os.environ['wsiqo-secret-key'] = 'asklurgw8374yhcbfQ2R7GYFQPIUBR'
 
 #==============================================================================
 from   siqo_lib                 import SiqoJournal
@@ -38,7 +38,6 @@ app  = rou.getApp()
 
 #==============================================================================
 # Main
-#------------------------------------------------------------------------------
 if __name__ =='__main__':
     
     journal.I('Main start')

@@ -37,40 +37,9 @@
     </div>
 
     <!--------------------------------------------------------------NAVBAR---->
-    <div class="BarMenu", name="BarMenu", id="BarMenu">
-        <div class="BarMenuItem", name="BarMenuUser", ID="BarMenuUser", onclick="BarMenuWinShow('BarMenuUser')">
-            {{user}}
-        </div>
-        <div class="BarMenuItem", name="BarMenuLogin", ID="BarMenuLogin">
-            <a href="{{url_for('login')}}">Log in</a>
-        </div>
-    </div>
 
     <!--------------------------------------------------------------STAGE----->
-    <div class="StageMenu", name="SS", style="height:640px", onclick="BarMenuWinHide()">
-
-        <!--------------------------------------------------STAGE-SELECTOR---->
-        <div class="StageSelector">
-        
-            {% for sel in selectors %}
-                <div class="StageSelectorItem">
-                    <input type="radio" name="SSB" id={{sel['id']}} value={{sel['value']}} onclick={{sel['onclick']}}>
-                    <label for={{sel['id']}}>{{sel['title']}}</label><br>
-                </div>
-           {% endfor %}
-        </div>
-        
-        <!--------------------------------------------------STAGE-CONTENT----->
-        {% for pnl in panels %}
-            <div class="StagePanel" name="SP" id={{pnl['id']}} style={{pnl['style']}}>
-
-                <h2>{{pnl['header']}}</h2>
-                {{pnl['item']}}
-                
-            </div>
-        {% endfor %}
-
-    </div>
+    {% block stage %}{% endblock %}
 
     <!-------------------------------------------------------------TIRAGE----->
     <div class="Tirage">

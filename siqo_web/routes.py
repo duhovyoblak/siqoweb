@@ -8,6 +8,7 @@ from   flask                    import request, session, abort, redirect
 from   markupsafe               import escape
 
 from   siqo_web.config          import Config
+from   siqo_web.forms           import LoginForm
 import siqo_web.pages           as page
 
 #==============================================================================
@@ -92,14 +93,10 @@ def homepage():
     return page.homepage()
     
 #------------------------------------------------------------------------------
-@app.get('/login')
-def login_page():
-    return '''
-    <form method="post">
-        <p><input type=text name=username>
-        <p><input type=submit value=Login>
-    </form>
-'''
+@app.route('/login')
+def login():
+    form = LoginForm()
+    return render_template('login.html', title='Sign In', form=form)
 
 #------------------------------------------------------------------------------
 @app.post('/login')

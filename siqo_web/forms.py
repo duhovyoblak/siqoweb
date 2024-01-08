@@ -11,7 +11,7 @@ from wtforms.validators import DataRequired
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = 1.00
-_IS_TEST  = True if os.environ['siqo-test-mode']=='1' else False
+_IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 
 #==============================================================================
 # package's variables
