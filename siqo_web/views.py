@@ -11,8 +11,7 @@ import jinja2 as j2
 from   jinja2             import Environment, FileSystemLoader, PackageLoader, select_autoescape
 
 import siqo_lib.general   as gen
-import siqo_web.dms       as dms
-import siqo_web.web_lib   as wl
+from   siqo_web.page      import Page
 
 #==============================================================================
 # package's constants
@@ -55,17 +54,10 @@ def index():
 def homepage():
     
     journal.I('homepage()')
-    
-    selpage = dms.loadJson('homepage.json')
-    
-    context = wl.selpageContext(selpage)
-    context["url_for"] = url_for
- 
-#    journal.M( gen.dictString(context) )
-     
-    template = env.get_template("page.html")
-    resp = make_response(template.render(**context), 200)
-    resp.headers['X-Something'] = 'A value'
+
+    page = Page(journal, 'homePage', env, "_pageNologin.html", 'homepage.json')
+
+    resp = page.resp()
 
     journal.O()
     return resp

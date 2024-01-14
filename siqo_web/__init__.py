@@ -11,7 +11,7 @@ os.environ['wsiqo-test-mode' ] = '1'
 
 #==============================================================================
 from   siqo_lib                 import SiqoJournal
-import siqo_web.pages           as pag
+import siqo_web.views           as vie
 import siqo_web.dms             as dms
 
 import siqo_web.routes          as rou
@@ -27,7 +27,7 @@ _IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 #------------------------------------------------------------------------------
 journal = SiqoJournal('siqo-web', debug=5)
 
-pag.journal = journal
+vie.journal = journal
 dms.journal = journal
 rou.journal = journal
 

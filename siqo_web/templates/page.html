@@ -26,28 +26,36 @@
 <!---------------------------------------------------------------------------->
 <body>
     <!--------------------------------------------------------------HEADER---->
-    <div class="Header", name="Header">
-        <div class="HeaderTitle", name="HeaderTitle">
+    <div class="Header" id="Header" onclick="ShowStageContent()">
+    
+        <div class="HeaderTitle" id="HeaderTitle">
             <h1>{{head_title}}</h1>
         </div>
-        <div class="HeaderComment", name="HeaderComment">
+        <div class="HeaderComment" id="HeaderComment">
             <p>{{head_comment}}</p>
         </div>
         <h4>{{head_subtitle}}</h4>
     </div>
 
     <!--------------------------------------------------------------NAVBAR---->
-    <div class="BarMenu", name="BarMenu", id="BarMenu">
-        <div class="BarMenuItem", name="BarMenuUser", ID="BarMenuUser", onclick="BarMenuWinShow('BarMenuUser')">
+    <div class="BarMenu" id="BarMenu">
+    
+        <div class="BarMenuItem" id="BarMenuUser" onclick="ShowStageLogin()">
             {{user}}
         </div>
-        <div class="BarMenuItem", name="BarMenuLogin", ID="BarMenuLogin">
+        <div class="BarMenuItem" id="BarMenuLogin">
             <a href="{{url_for('login')}}">Log in</a>
         </div>
     </div>
 
-    <!--------------------------------------------------------------STAGE----->
-    <div class="StageMenu", name="SS", style="height:640px", onclick="BarMenuWinHide()">
+    <!-----------------------------------------------------------STAGE-LOGIN-->
+    <div class="Stage" id="Login" style="height:700px; display:none">
+            {{user}}
+
+    </div>
+    
+    <!---------------------------------------------------------STAGE-CONTENT-->
+    <div class="Stage" id="Content" style="height:700px">
 
         <!--------------------------------------------------STAGE-SELECTOR---->
         <div class="StageSelector">
@@ -73,19 +81,19 @@
     </div>
 
     <!-------------------------------------------------------------TIRAGE----->
-    <div class="Tirage">
+    <div class="Tirage" onclick="ShowStageContent()">
     
-        <div class="TirageItem", style="width:40%" ></div>
+        <div class="TirageItem" style="width:40%" ></div>
     
-        <div class="TirageItem", id="TI_1">
+        <div class="TirageItem" id="TI_1">
             <a href="PagMan/pages/Author.php">O autorovi</a>
         </div>
     
-        <div class="TirageItem", id="TI_2">
+        <div class="TirageItem" id="TI_2">
             <a href="PagMan/pages/FAQ.php">F.A.Q.</a>
         </div>
     
-        <div class="TirageItem", id="TI_3">
+        <div class="TirageItem" id="TI_3">
             <a href="PagMan/pages/Admin.php">O autorovi</a>
         </div>
     </div>

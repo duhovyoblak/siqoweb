@@ -1,0 +1,44 @@
+{% extends "_base.html" %}
+
+<!---------------------------------------------------------------------LOGIN-->
+{% block login %}
+<h1>Sign In</h1>
+    
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.username.label }}<br>
+        {{ form.username(size=32) }}
+    </p>
+    <p>
+        {{ form.password.label }}<br>
+        {{ form.password(size=32) }}
+    </p>
+    <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+    <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}
+
+{% block content %}
+<!------------------------------------------------------------STAGE-SELECTOR-->
+<div class="StageSelector">
+        
+    {% for sel in selectors %}
+        <div class="StageSelectorItem">
+            <input type="radio" name="SSB" id={{sel['id']}} value={{sel['value']}} onclick={{sel['onclick']}}>
+            <label for={{sel['id']}}>{{sel['title']}}</label><br>
+        </div>
+    {% endfor %}
+</div>
+
+<!-------------------------------------------------------------STAGE-CONTENT-->
+{% for pnl in panels %}
+    <div class="StagePanel" name="SP" id={{pnl['id']}} style={{pnl['style']}}>
+
+        <h2>{{pnl['header']}}</h2>
+        {{pnl['item']}}
+    </div>
+{% endfor %}
+{% endblock %}
+
+<!---------------------------------------------------------------------------->

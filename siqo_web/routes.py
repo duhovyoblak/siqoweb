@@ -9,7 +9,7 @@ from   markupsafe               import escape
 
 from   siqo_web.config          import Config
 from   siqo_web.forms           import LoginForm
-import siqo_web.pages           as page
+import siqo_web.views           as views
 
 #==============================================================================
 # package's constants
@@ -76,7 +76,7 @@ def shutdown_server():
 @app.get("/")
 @app.get("/index")
 def index():
-    return page.index()
+    return views.index()
 
 #------------------------------------------------------------------------------
 @app.get('/shutdown')
@@ -90,7 +90,7 @@ def shutdown():
 #------------------------------------------------------------------------------
 @app.get('/homepage')
 def homepage():
-    return page.homepage()
+    return views.homepage()
     
 #------------------------------------------------------------------------------
 @app.route('/login')

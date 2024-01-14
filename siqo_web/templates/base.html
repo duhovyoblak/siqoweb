@@ -14,10 +14,9 @@
     <link   href="{{url_for('static', filename='css/base_DBObject.css' )}}" rel="stylesheet" type="text/css">
 
     <script src= "{{url_for('static', filename='js/S_Page.js' )}}" type="text/javascript"></script>
-
-    {% block head %}{% endblock %}
     
     <title>{{title}}</title>
+    
 </head>
 
 <!---------------------------------------------------------------------------->
@@ -47,10 +46,8 @@
         </div>
     </div>
 
-    </div>
-
     <!-----------------------------------------------------------------LOGIN-->
-    <div class="Login" id="Login" style="height:700px; display:none">
+    <div class="Stage" id="Login" style="height:700px; display:none">
     {% block login %}{% endblock %}
     </div>
     

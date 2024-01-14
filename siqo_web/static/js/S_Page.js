@@ -34,7 +34,28 @@ function BarMenuWinShow( id )
   win.style.display="block";  
 }
 //==============================================================================
-// Stage menu mgmt
+// Stage Login/Content mgmt
+//------------------------------------------------------------------------------
+function ShowStageLogin()
+{
+  // Zatlaci Stage Content do pozadia
+  document.getElementById("Content").style.display = "none";
+
+  // Vystavi Stage Login do popredia
+  document.getElementById("Login").style.display = "block";
+}
+
+//------------------------------------------------------------------------------
+function ShowStageContent()
+{
+  // Zatlaci Stage Content do pozadia
+  document.getElementById("Content").style.display = "block";
+
+  // Vystavi Stage Login do popredia
+  document.getElementById("Login").style.display = "none";
+}
+//==============================================================================
+// Stage Panel mgmt
 //------------------------------------------------------------------------------
 function ShowStage( key )
 {
