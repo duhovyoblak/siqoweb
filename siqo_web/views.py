@@ -55,7 +55,7 @@ def homepage():
     
     journal.I('homepage()')
 
-    page = Page(journal, 'homePage', env, "_pageNologin.html", 'homepage.json')
+    page = Page(journal, 'homePage', env, "_page.html", 'homepage.json')
 
     resp = page.resp()
 

@@ -11,6 +11,7 @@ import jinja2 as j2
 from jinja2          import Environment, PackageLoader, select_autoescape
 
 import siqo_web.dms       as dms
+from siqo_web.forms       import FormLogin
 
 
 #==============================================================================
@@ -55,6 +56,14 @@ class PageBase:
         # Inicializacia contextu
         #----------------------------------------------------------------------
         self.baseContext(self.data)
+        
+        #----------------------------------------------------------------------
+        # Doplnenie formLogin do contextu
+        #----------------------------------------------------------------------
+        frmLogin = FormLogin()
+        
+        cont = {"formLogin":frmLogin}
+        self.addContext(cont)
     
         self.journal.O()
         
@@ -91,6 +100,11 @@ class PageBase:
         #----------------------------------------------------------------------
         self.journal.M(f"{self.name}.baseContext = {self.context}")
         self.journal.O()
+
+    #--------------------------------------------------------------------------
+    def addContext(self, cont):
+        
+        self.context.update(cont)
 
     #==========================================================================
     # API for users

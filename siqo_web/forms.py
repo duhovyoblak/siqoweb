@@ -20,7 +20,7 @@ _IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 #==============================================================================
 # 
 #------------------------------------------------------------------------------
-class LoginForm(FlaskForm):
+class FormLogin(FlaskForm):
     
     username    = StringField  ('Username', validators=[DataRequired()] )
     password    = PasswordField('Password', validators=[DataRequired()] )

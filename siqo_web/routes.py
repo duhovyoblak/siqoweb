@@ -8,7 +8,7 @@ from   flask                    import request, session, abort, redirect
 from   markupsafe               import escape
 
 from   siqo_web.config          import Config
-from   siqo_web.forms           import LoginForm
+from   siqo_web.forms           import FormLogin
 import siqo_web.views           as views
 
 #==============================================================================
