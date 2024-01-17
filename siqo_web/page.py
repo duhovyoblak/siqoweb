@@ -32,13 +32,13 @@ class Page(PageBase):
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, name, env, template, pageDms):
+    def __init__(self, journal, name, env, template, pageDms, height):
         "Call constructor of Page and initialise template and dms content"
         
         #----------------------------------------------------------------------
         # Initialise PageBase
         #----------------------------------------------------------------------
-        super().__init__(journal, name, env, template, pageDms)
+        super().__init__(journal, name, env, template, pageDms, height)
         self.name = name
         
         #----------------------------------------------------------------------

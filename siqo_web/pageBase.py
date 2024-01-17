@@ -32,7 +32,7 @@ class PageBase:
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, name, env, template, pageDms):
+    def __init__(self, journal, name, env, template, pageDms, height):
         "Call constructor of PageBase and initialise it"
         
         self.journal       = journal
@@ -40,6 +40,7 @@ class PageBase:
         self.name          = f"Base_{name}"
         self.env           = env
         self.template      = template
+        self.height        = height
         self.data          = {}
         self.context       = {"url_for":url_for}
         
@@ -88,8 +89,11 @@ class PageBase:
     
         self.journal.I(f"{self.name}.baseContext:")
 
-        self.context = {"url_for":url_for}
+        self.context = {}
 
+        self.context["url_for"      ]= url_for
+        self.context["height"       ]= self.height
+        
         self.context["title"        ]= data["title"        ]
         self.context["head_title"   ]= data["head_title"   ]
         self.context["head_subtitle"]= data["head_subtitle"]
