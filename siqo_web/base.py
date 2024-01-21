@@ -159,7 +159,7 @@ class Base:
             self.addFlash(f"Login requested for user '{user}'({pasw}), remember={rmbr}")
 
             self.journal.O()
-            return redirect('/homepage')
+            return redirect(url_for('homepage'))
     
         #----------------------------------------------------------------------
         # Vytvorim HTML stranku pre GET

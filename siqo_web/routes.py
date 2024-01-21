@@ -5,6 +5,7 @@ import os
 
 from   flask                    import Flask, url_for, render_template, make_response
 from   flask                    import request, session, abort, redirect
+from   flask_login              import LoginManager
 from   markupsafe               import escape
 
 from   siqo_web.config          import Config
@@ -45,8 +46,10 @@ def getApp():
                      instance_relative_config=False, root_path=None)
     
         _app.config.from_object(Config)
-    
-        print("getApp(): Flask app {_app} was created at {id(_app)} in {__name__}")
+        print(f"getApp(): Flask app {_app} was created at {id(_app)} in {__name__}")
+        
+        login = LoginManager(_app)
+        print(f"getApp(): LoginManager was created at {id(login)}")
 
     #--------------------------------------------------------------------------
     return _app
