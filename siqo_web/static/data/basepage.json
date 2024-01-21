@@ -1,0 +1,6 @@
+{"title"        :"S.I.Q.O."
+,"head_title"   :"Base Page"
+,"head_subtitle":"Test case for base template"
+,"head_comment" :"{{environment}}"
+,"user"         :"{{user}}"
+}

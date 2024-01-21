@@ -11,6 +11,7 @@ import jinja2 as j2
 from   jinja2             import Environment, FileSystemLoader, PackageLoader, select_autoescape
 
 import siqo_lib.general   as gen
+from   siqo_web.base      import Base
 from   siqo_web.page      import Page
 
 #==============================================================================
@@ -40,7 +41,7 @@ env = Environment(
 #------------------------------------------------------------------------------
 def index():
     
-    journal.I('index()')
+    journal.I('views.index()')
     
     template = env.get_template("index.html")
     
@@ -53,9 +54,10 @@ def index():
 #------------------------------------------------------------------------------
 def homepage():
     
-    journal.I('homepage()')
+    journal.I('views.homepage()')
 
-    page = Page(journal, 'homePage', env, "_page.html", 'homepage.json', height=770)
+    page = Base(journal, 'basePage', env, height=670)
+#    page = Page(journal, 'homePage', env, height=670)
 
     resp = page.resp()
 

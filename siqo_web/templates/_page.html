@@ -2,19 +2,6 @@
 
 <!---------------------------------------------------------------------LOGIN-->
 {% block login %}
-<form class="center" action="" method="post" novalidate>
-    {{ formLogin.hidden_tag() }}
-    <p>
-        {{ formLogin.username.label }}<br>
-        {{ formLogin.username(class_="ObjectInputString", size=32) }}
-    </p>
-    <p>
-        {{ formLogin.password.label }}<br>
-        {{ formLogin.password(size=32) }}
-    </p>
-    <p>{{ formLogin.remember_me() }} {{ formLogin.remember_me.label }}</p>
-    <p>{{ formLogin.submit() }}</p>
-</form>
 {% endblock %}
 
 {% block content %}

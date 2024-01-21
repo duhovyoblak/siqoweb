@@ -8,12 +8,10 @@
     <meta   name="META HTTP-EQUIV"         content="NO-CACHE">
     <meta   name="author"                  content="Palo4">
     
-    <link   href="{{url_for('static', filename='css/base_page.css'     )}}" rel="stylesheet" type="text/css">
-    <link   href="{{url_for('static', filename='css/base_paragraph.css')}}" rel="stylesheet" type="text/css">
-    <link   href="{{url_for('static', filename='css/base_object.css'   )}}" rel="stylesheet" type="text/css">
-    <link   href="{{url_for('static', filename='css/base_DBObject.css' )}}" rel="stylesheet" type="text/css">
+    <link   href="{{url_for('static', filename='css/paragraph.css')}}" rel="stylesheet" type="text/css">
+    <link   href="{{url_for('static', filename='css/base.css'     )}}" rel="stylesheet" type="text/css">
 
-    <script src= "{{url_for('static', filename='js/S_Page.js' )}}" type="text/javascript"></script>
+    <script src= "{{url_for('static', filename='js/base.js' )}}" type="text/javascript"></script>
 
     {% block head %}{% endblock %}
     
@@ -25,7 +23,7 @@
 <!---------------------------------------------------------------------------->
 <body>
     <!----------------------------------------------------------------HEADER-->
-    <div class="Header" id="Header" onclick="ShowStageContent()">
+    <div class="Header" id="Header" onclick="ShowElement('Content')">
     
         <div class="HeaderTitle" id="HeaderTitle">
             <h1>{{head_title}}</h1>
@@ -39,28 +37,76 @@
     <!----------------------------------------------------------------NAVBAR-->
     <div class="BarMenu" id="BarMenu">
     
-        <div class="BarMenuItem" id="BarMenuUser" onclick="ShowStageLogin()">
+        <div class="BarMenuItem" id="BarMenuUser" onclick="ShowElement('Login')">
             {{user}}
         </div>
-        <div class="BarMenuItem" id="BarMenuLogin">
-            <a href="{{url_for('login')}}">Log in</a>
-        </div>
+
+
+
+
     </div>
 
+    <!------------------------------------------------------FLASHED-MESSAGES-->
+    <div class="Flash" id="Flash" style="height:{{height}}px; display:none">
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+
+        <script>InitElement("Flash")</script>
+        {% endif %}
+        {% endwith %}
     </div>
 
     <!-----------------------------------------------------------------LOGIN-->
     <div class="Login" id="Login" style="height:{{height}}px; display:none">
-    {% block login %}{% endblock %}
+
+      <form class="center" action="" method="post" novalidate>
+          {{ formLogin.hidden_tag() }}
+          <p>
+              {{ formLogin.username.label }}<br>
+              {{ formLogin.username(class_="ObjectInputString", size=32) }}<br>
+
+              {% if len(formLogin.username.errors)>0 %}
+              
+                  {% for error in formLogin.username.errors %}
+                      <span style="color: red;">[{{ error }}]</span>
+                  {% endfor %}
+                  
+                  <script>InitElement("Login")</script>
+                  
+              {% endif %}
+          </p>
+          <p>
+              {{ formLogin.password.label }}<br>
+              {{ formLogin.password(size=32) }}<br>
+
+              {% if len(formLogin.password.errors)>0 %}
+
+                  {% for error in formLogin.password.errors %}
+                      <span style="color: red;">[{{ error }}]</span>
+                  {% endfor %}
+                  
+                  <script>InitElement("Login")</script>
+                  
+              {% endif %}
+          </p>
+          <p>{{ formLogin.remember() }} {{ formLogin.remember.label }}</p>
+          <p>{{ formLogin.submit() }}</p>
+      </form>
     </div>
     
     <!---------------------------------------------------------------CONTENT-->
-    <div class="Stage" id="Content" style="height:{{height}}px">
+    <div class="Stage" id="Content" style="height:{{height}}px; display:none">
     {% block content %}{% endblock %}
     </div>
 
     <!----------------------------------------------------------------TIRAGE-->
-    <div class="Tirage" onclick="ShowStageContent()">
+    <div class="Tirage" onclick="ShowElement('Content')">
     
         <div class="TirageItem" style="width:40%" ></div>
     
@@ -77,6 +123,9 @@
         </div>
     </div>
     
+<!------------------------------------------------------------INITIALISATION-->
+<script>ShowInit()</script> 
+
 <!---------------------------------------------------------------------------->
 </body>
 </html>

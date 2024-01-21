@@ -15,6 +15,7 @@ import siqo_web.views           as views
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = 1.00
+_CWD      = os.getcwd()
 _IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 
 #==============================================================================
@@ -28,21 +29,26 @@ _app    = None
 #------------------------------------------------------------------------------
 def getApp():
 
+    print("getApp():")
+
     global _app
-    if _app is not None: return _app
-    
-    cwd = os.getcwd()
-#    cwd += r'\siqo_web'
-    print(f"cwd = '{cwd}'")
 
-    _app = Flask(__name__, static_url_path=None, static_folder='static', 
-                template_folder='templates', instance_path=None, 
-                instance_relative_config=False, root_path=None)
+    #--------------------------------------------------------------------------
+    # Ak Flask aplikacia neexistuje, vytvorim ju
+    #--------------------------------------------------------------------------
+    if _app is None:
     
-    _app.config.from_object(Config)
+        print("getApp(): Creating application...")
+        
+        _app = Flask(__name__, static_url_path=None, static_folder='static', 
+                     template_folder='templates', instance_path=None, 
+                     instance_relative_config=False, root_path=None)
     
-    print( f'Flask object {_app} was created at {id(_app)} in {__name__}')
+        _app.config.from_object(Config)
+    
+        print("getApp(): Flask app {_app} was created at {id(_app)} in {__name__}")
 
+    #--------------------------------------------------------------------------
     return _app
 
 #------------------------------------------------------------------------------
@@ -51,11 +57,15 @@ app = getApp()
 #==============================================================================
 # package's tools
 #------------------------------------------------------------------------------
-def shutdown_server():
+def shutdownServer():
+
+    journal.I("shutdownServer():")
 
     from win32api import GenerateConsoleCtrlEvent
     CTRL_C_EVENT = 0
     GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0)
+
+    journal.O()
     
 #------------------------------------------------------------------------------
 #@app.errorhandler(404)
@@ -76,59 +86,70 @@ def shutdown_server():
 @app.get("/")
 @app.get("/index")
 def index():
+
+    journal.M("index():")
     return views.index()
 
 #------------------------------------------------------------------------------
 @app.get('/shutdown')
 def shutdown():
     
-    if not _IS_TEST: abort(404)
-    
-    shutdown_server()
+    journal.I("shutdown():")
+
+    if _IS_TEST: 
+        shutdownServer()
+        
+    else: 
+        journal.O()
+        abort(404)
+
+    journal.O()
     return 'Server was shut down...'
 
 #------------------------------------------------------------------------------
-@app.get('/homepage')
+@app.route('/homepage', methods=['GET', 'POST'])
 def homepage():
+
+    journal.M("homepage():")
     return views.homepage()
     
 #------------------------------------------------------------------------------
-@app.route('/login')
-def login():
-    form = LoginForm()
-    return render_template('login.html', title='Sign In', form=form)
-
-#------------------------------------------------------------------------------
-@app.post('/login')
-def login_user():
- 
-    session['username'] = request.form['username']
-    return redirect(url_for('index'))
-
-#------------------------------------------------------------------------------
 @app.route('/logout')
 def logout():
+    
+    journal.M("logout():")
+    
     # remove the username from the session if it's there
     session.pop('username', None)
+
     return redirect(url_for('index'))
 
 #------------------------------------------------------------------------------
 @app.get('/user/<username>')
 def profile(username):
+
+    journal.M(f"profile(): username='{username}'")
+
     # show the user profile for that user
-    return f'User {escape(username)}'
+    return f"User {escape(username)}"
 
 #------------------------------------------------------------------------------
-@app.route('/post/<int:post_id>')
-def show_post(post_id):
+@app.route('/post/<int:postId>')
+def show_post(postId):
+
+    journal.M(f"show_post(): postId='{postId}'")
+
     # show the post with the given id, the id is an integer
-    return f'Post {post_id}'
+    return f"Post {postId}"
 
 #------------------------------------------------------------------------------
 @app.route('/path/<path:subpath>')
 def show_subpath(subpath):
+
+    journal.M(f"show_subpath(): subpath='{subpath}'")
+
     # show the subpath after /path/
-    return f'Subpath {escape(subpath)}'
+    return f"Subpath {escape(subpath)}"
 
 #==============================================================================
 # Test cases

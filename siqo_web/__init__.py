@@ -20,6 +20,7 @@ import siqo_web.routes          as rou
 # package's constants & private vars
 #------------------------------------------------------------------------------
 _VER      = 1.00
+_CWD      = os.getcwd()
 _IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 
 #==============================================================================
@@ -48,7 +49,7 @@ if __name__ =='__main__':
     journal.O('Main end')
     
 #==============================================================================
-print(f"wsiqo.__init__ {_VER}")
+print(f"wsiqo.__init__ {_VER} at {_CWD}")
 
 #==============================================================================
 #                              END OF FILE

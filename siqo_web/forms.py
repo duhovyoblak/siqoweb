@@ -11,6 +11,7 @@ from wtforms.validators import DataRequired
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = 1.00
+_CWD      = os.getcwd()
 _IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 
 #==============================================================================
@@ -22,9 +23,9 @@ _IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 #------------------------------------------------------------------------------
 class FormLogin(FlaskForm):
     
-    username    = StringField  ('Username', validators=[DataRequired()] )
-    password    = PasswordField('Password', validators=[DataRequired()] )
-    remember_me = BooleanField ('Remember Me')
+    username = StringField  ('Username', validators=[DataRequired()] )
+    password = PasswordField('Password', validators=[DataRequired()] )
+    remember = BooleanField ('Remember Me')
     
     submit = SubmitField('Sign In')
     

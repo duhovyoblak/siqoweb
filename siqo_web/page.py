@@ -11,7 +11,7 @@ import jinja2 as j2
 from jinja2          import Environment, PackageLoader, select_autoescape
 
 import siqo_web.dms       as dms
-from siqo_web.pageBase    import PageBase
+from siqo_web.base    import Base
 
 
 #==============================================================================
@@ -27,19 +27,18 @@ _IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 #==============================================================================
 # Page
 #------------------------------------------------------------------------------
-class Page(PageBase):
+class Page(Base):
     
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, name, env, template, pageDms, height):
+    def __init__(self, journal, name, env, height, data="homepage.json", template="_page.html"):
         "Call constructor of Page and initialise template and dms content"
         
         #----------------------------------------------------------------------
-        # Initialise PageBase
+        # Initialise Base
         #----------------------------------------------------------------------
-        super().__init__(journal, name, env, template, pageDms, height)
-        self.name = name
+        super().__init__(journal, name, env, height, data, template)
         
         #----------------------------------------------------------------------
         self.journal.I(f"{self.name}.init:")
@@ -47,7 +46,7 @@ class Page(PageBase):
         #----------------------------------------------------------------------
         # Doplnenie Page contextu
         #----------------------------------------------------------------------
-        self.pageContext(self.data)
+        self.addContext(self.data)
     
         self.journal.O()
         
@@ -96,6 +95,7 @@ class Page(PageBase):
     #==========================================================================
     # API for users
     #--------------------------------------------------------------------------
+    '''
     def resp(self):
      
         self.journal.I(f"{self.name}.resp: {self.template}")
@@ -110,7 +110,7 @@ class Page(PageBase):
         
         self.journal.O()
         return resp
-
+'''
 #==============================================================================
 # Test cases
 #------------------------------------------------------------------------------
