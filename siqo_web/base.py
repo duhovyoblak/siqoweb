@@ -20,7 +20,9 @@ from siqo_web.forms       import FormLogin
 #------------------------------------------------------------------------------
 _VER      = 1.00
 _CWD      = os.getcwd()
-_IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
+
+if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
+else                        : _IS_TEST = False
 
 #==============================================================================
 # package's variables

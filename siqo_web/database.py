@@ -2,24 +2,26 @@
 #  SIQO web library: Function for SIQO Flask application
 #------------------------------------------------------------------------------
 import os
-from   datetime import datetime, timedelta
-
-from werkzeug.security          import generate_password_hash, check_password_hash
+import re
+from   datetime                 import datetime, timedelta
 
 import sqlite3
-import siqo_lib.general   as gen
+import siqo_lib.general         as gen
 from   siqo_lib                 import SiqoJournal
-
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER          = 1.00
-_CWD          = os.getcwd()
-_TIME_WATCH   = 5            # Max duration in seconds without forced journal
+_VER       = 1.00
+_CWD       = os.getcwd()
 
-if 'wsiqo-test-mode' in os.environ: _IS_TEST = True if os.environ['wsiqo-test-mode']=='1' else False 
-else                              : _IS_TEST = False
+_PING_LAG  =    2    # Number of hours after which ping is recomended
+_SQL_WATCH =   10    # Max duration of SQL in seconds without forced journal
+_SQL_BATCH = 1000    # Default data batch for 
+_SQL_SMPL  =  100    # Max first chars from SQL statement for print into journal
+
+if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
+else                        : _IS_TEST = False
 
 #==============================================================================
 # package's variables
@@ -33,73 +35,323 @@ class Database:
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, name):
+    def __init__(self, journal, dtbs, path=''):
         "Call constructor of Database and initialise it"
         
-        journal.I(f"Database({name}).init:")
+        journal.I(f"Database({dtbs}).init:")
 
         self.journal       = journal
-        self.name          = name
+        self.path          = path
+        self.dtbs          = dtbs
+        
         self.con           = None
         self.cur           = None
         self.isOpen        = False
-        self.prevCmd       = ''
+        self.lastPing      = None
         
+        self.prevCmd       = ''
+
         #----------------------------------------------------------------------
         # Connect to the database
         #----------------------------------------------------------------------
-        self.open()
+        self.openDb()
 
         #----------------------------------------------------------------------
         # Nacitanie json data pre page
         #----------------------------------------------------------------------
-        self.journal.O(f"Database({self.name}).init")
+        self.journal.O(f"Database({self.dtbs}).init")
         
     #==========================================================================
     # Internal methods
     #--------------------------------------------------------------------------
-    def open(self):
+    def openDb(self):
 
-        self.con    = sqlite3.connect(f"{self.name}.db")
-        self.cur    = self.con.cursor()
-        self.isOpen = True
+        self.journal.I(f"{self.dtbs}.:openDb")
+
+        self.con      = sqlite3.connect(f"{self.path}{self.dtbs}.db")
+        self.cur      = self.con.cursor()
+        self.isOpen   = True
+        self.lastPing = datetime.now(gen._TIME_ZONE)
         
+        self.journal.O()
 
     #--------------------------------------------------------------------------
-    def createDb(self):
-        
-        ddl     = gen.loadFile(self.journal, fileName=f"{self.name}.ddl", enc='utf-8')
-        script  = gen.lines2str(ddl)
-                
-        self.cur.executescript(script)
-        
-        return script
+    def closeDb(self):
+        "Close opened session/connection to RDBMS"
 
-    
+        self.journal.I(f"{self.dtbs}.:closeDb")
+
+        self.commit()
+        if self.cur is not None: self.cur.close()
+
+        self.journal.O()
+
     #==========================================================================
-    # API for users
+    # DB tools
     #--------------------------------------------------------------------------
-    def readDb(self, sql):
+    def commit(self):
+        "Commits open transaction"
 
-        self.journal.I(f'{self.name}.readDb: {sql}')
+        if self.con is not None: self.con.commit()
+        self.journal.M(f'{self.dtbs}.commit: Commit {self.prevCmd}')
+
+        self.prevCmd = ''
+
+    #--------------------------------------------------------------------------
+    def rollback(self):
+        "Rollbacks open transaction"
+
+        if self.con is not None: self.con.rollback()
+        self.journal.M(f'{self.dtbs}.rollback: Rollback {self.prevCmd}')
+
+        self.prevCmd = ''
+
+    #--------------------------------------------------------------------------
+    def tables(self):
+        "Returns list of tables in the database"
+
+        self.journal.I(f'{self.dtbs}.tables:')
+        toRet = []
+        
+        #----------------------------------------------------------------------
+        # Ziskam zoznam tabuliek
+        #----------------------------------------------------------------------
+        rows = self.readDb(f"{self.dtbs}", sql="SELECT name FROM sqlite_master WHERE type='table' order by name")
+        
+        if type(rows) == int:
+            self.journal.M(f'{self.dtbs}.tables: Method failed', True)
+            self.journal.O()
+            return toRet
+        
+        #----------------------------------------------------------------------
+        # Skonvertujem do listu
+        #----------------------------------------------------------------------
+        toRet = [row[0] for row in rows]
+
+        self.journal.M(f'{self.dtbs}.tables: {toRet}')
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def attributes(self, table):
+        "Returns list of attributes for respective table"
+
+        self.journal.I(f"{self.dtbs}.attributes: table = '{table}'")
+        toRet = []
+        
+        #----------------------------------------------------------------------
+        # Ziskam zoznam tabuliek
+        #----------------------------------------------------------------------
+        rows = self.readDb( f"{self.dtbs}", 
+                           sql="SELECT sql FROM sqlite_master WHERE type='table' and name=?",
+                           params=(table,))
+        
+        if type(rows) == int:
+            self.journal.M(f'{self.dtbs}.attributes: Method failed', True)
+            self.journal.O()
+            return toRet
+        
+        #----------------------------------------------------------------------
+        # Ziskam text DDL prikazu CREATE TABLE ( content )
+        #----------------------------------------------------------------------
+        sql = rows[0][0].replace('\n', ' ')
+        
+        #----------------------------------------------------------------------
+        # Vystrihnem content
+        #----------------------------------------------------------------------
+        cont = re.findall(r'\(.*\)', sql)[0][1:-1]
+        
+        #----------------------------------------------------------------------
+        # Odstranim poznamky /*...*/ a ziskam cisty content
+        #----------------------------------------------------------------------
+        clear = re.sub(r'\/\*.*?\*\/', '', cont)
+
+        #----------------------------------------------------------------------
+        # Skonvertujem do listu
+        #----------------------------------------------------------------------
+        lst = clear.split(',')
+
+        #----------------------------------------------------------------------
+        # Extrahujem atributy do vysledneho listu
+        #----------------------------------------------------------------------
+        for line in lst:
+
+            attr = line.strip().split(' ')[0]
+            if attr not in ['PRIMARY', 'FOREIGN']: toRet.append(attr)
+
+        #----------------------------------------------------------------------
+        self.journal.M(f'{self.dtbs}.attributes: {toRet}')
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def views(self):
+        "Returns list of views in the database"
+
+        self.journal.I(f'{self.dtbs}.views:')
+        toRet = []
+
+        #----------------------------------------------------------------------
+        # Ziskam zoznam views
+        #----------------------------------------------------------------------
+        rows = self.readDb(f"{self.dtbs}", sql="SELECT name FROM sqlite_master WHERE type='view' order by name")
+
+        if type(rows) == int:
+            self.journal.M(f'{self.dtbs}.views: Method failed', True)
+            self.journal.O()
+            return toRet
+        
+        #----------------------------------------------------------------------
+        # Skonvertujem do listu
+        #----------------------------------------------------------------------
+        toRet = [row[0] for row in rows]
+
+        self.journal.M(f'{self.dtbs}.views: {toRet}')
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def indexes(self, table=''):
+        "Returns list of indexes in the database or in the table"
+
+        self.journal.I(f"{self.dtbs}.indexes: table = '{table}'")
+        toRet = {}
+        
+        #----------------------------------------------------------------------
+        # Ziskam zoznam indexov v DB alebo pre jednu tabulku
+        #----------------------------------------------------------------------
+        where  = ""
+        params = None
+        
+        if table != '': 
+            where  = " and tbl_name = ?"
+            params = (table,)
+        
+        rows = self.readDb(f"{self.dtbs}", 
+                            sql = f"SELECT tbl_name, name FROM sqlite_master WHERE type='index' {where} order by tbl_name, name",
+                            params = params)
+        
+        if type(rows) == int:
+            self.journal.M(f'{self.dtbs}.indexes: Method failed', True)
+            self.journal.O()
+            return toRet
+        
+        #----------------------------------------------------------------------
+        # Skonvertujem do dict
+        #----------------------------------------------------------------------
+        for row in rows:
+            
+            if row[0] not in toRet.keys(): toRet[row[0]] = []
+            toRet[row[0]].append(row[1])
+            
+        self.journal.M(f'{self.dtbs}.indexes: {toRet}')
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def ping(self, force=False):
+        "Pings this connection. Returns true if succeed"
+
+        self.journal.I(f'{self.dtbs}.ping: Force = {force}')
+
+        now = datetime.now(gen._TIME_ZONE)
+
+        #----------------------------------------------------------------------
+        # Ak je ping vynuteny alebo uz uplynulo vela casu
+        #----------------------------------------------------------------------
+        if force or ( now-self.lastPing > timedelta(hours=_PING_LAG) ):
+
+            test = self.readDb(self.dtbs, "select 'OK'")
+                
+            if (test is not None) and (type(test)==list):
+                self.lastPing = datetime.now(gen._TIME_ZONE)
+                self.journal.M(f"{self.dtbs}.ping: Connection was pinged")
+
+            else:
+                self.isOpen = False
+                self.journal.M(f"{self.dtbs}.ping: Ping failed", True)
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return self.isOpen
+
+    #==========================================================================
+    # Persistency methods
+    #--------------------------------------------------------------------------
+    def toJson(self, table, where='1=1'):
+        
+        self.journal.I(f"{self.dtbs}.toJson: table ={table} where {where}")
+        toRet = []
+        
+        #----------------------------------------------------------------------
+        # Ziskam zoznam atributov
+        #----------------------------------------------------------------------
+        atts = self.attributes(table)
+
+        #----------------------------------------------------------------------
+        # Nacitam riadky na konverziu do json
+        #----------------------------------------------------------------------
+        sql  = f"select * from {table} where {where}"
+        rows = self.readDb(self.dtbs, sql)
+        
+        #----------------------------------------------------------------------
+        # Konverzia do json
+        #----------------------------------------------------------------------
+        toRet.append(atts)
+        
+        for row in rows:
+            toRet.append(list(row))
+        
+        self.journal.O()
+        return toRet
+
+    #==========================================================================
+    # Backup&Restore
+    #--------------------------------------------------------------------------
+    def backup(self):
+        
+        pass
+
+    #--------------------------------------------------------------------------
+    def restore(self, fName):
+        
+        pass
+        
+        
+        
+    #==========================================================================
+    # Work with DB
+    #--------------------------------------------------------------------------
+    def createDb(self, who):
+        
+        self.journal.I(f"{who}@{self.dtbs}.:createDb from path='{self.path}'")
+
+        self.sSqlScript(who, fName=f"{self.dtbs}.ddl" )
+        
+        self.journal.O()
+
+    #--------------------------------------------------------------------------
+    def readDb(self, who, sql, params = None):
+
+        self.journal.I(f'{who}@{self.dtbs}.readDb: {sql}')
 
         #----------------------------------------------------------------------
         # Kontrola stavu konekcie
         #----------------------------------------------------------------------
-        if not self.initialised:
-            self.journal.M(f'{self.name}.readDb: ERROR : Connection is not initialised', True)
+        if not self.isOpen:
+            self.journal.M(f'{who}@{self.dtbs}.readDb: ERROR : Connection is not open', True)
             self.journal.O('')
-            return None
+            return -1
         
         #----------------------------------------------------------------------
         # Kontrola predchadzajuceho beziaceho prikazu
         #----------------------------------------------------------------------
         if self.prevCmd != '':
-            self.journal.M(f'{self.name}.readDb: ERROR   : Previous command is still runnig', True)
-            self.journal.M(f'{self.name}.readDb: prev SQL: {self.prevCmd}',                   True)
-            self.journal.M(f'{self.name}.readDb: SQL     : {sql}',                             True)
+            self.journal.M(f'{who}@{self.dtbs}.readDb: ERROR   : Previous command is still runnig', True)
+            self.journal.M(f'{who}@{self.dtbs}.readDb: prev SQL: {self.prevCmd}',                   True)
+            self.journal.M(f'{who}@{self.dtbs}.readDb: SQL     : {sql}',                            True)
             self.journal.O('')
-            return None
+            return -2
         
         #----------------------------------------------------------------------
         # Citanie udajov z konekcie
@@ -108,8 +360,10 @@ class Database:
             bef = datetime.now()
             self.prevCmd = sql
             
-            self.conn['cur'].execute(sql)
-            rows = self.conn['cur'].fetchall()
+            if params is None: res  = self.cur.execute(sql)
+            else             : res  = self.cur.execute(sql, params)
+            
+            rows = res.fetchall()
             cnt  = len(rows)
             self.prevCmd = ''
             
@@ -118,29 +372,31 @@ class Database:
             #------------------------------------------------------------------
             aft = datetime.now()
             sec = (aft-bef).seconds
-            if sec > _TIME_WATCH: self.journal.M('{}.readDb: {:8n} rows in {:4.0f} sec for {}'.format(self.name, cnt, sec, sql[:100].replace("\n"," ") ), True)
+            if sec > _SQL_WATCH: self.journal.M(f"{who}@{self.dtbs}.readDb: {cnt:8n} rows in {sec:4.0f}", True)
 
             #------------------------------------------------------------------
             self.journal.O('')
             return rows
 
         except Exception as err:
-            self.journal.M(f'{self.name}.readDb: ERROR :{str(err)}', True)
-            self.journal.M(f'{self.name}.readDb: SQL   :{sql}',      True)
+
+            self.prevCmd = ''
+
+            self.journal.M(f'{who}@{self.dtbs}.readDb: ERROR :{str(err)}', True)
+            self.journal.M(f'{who}@{self.dtbs}.readDb: SQL   :{sql}',      True)
             self.journal.O('')
-            return None
+            return -3
 
     #--------------------------------------------------------------------------
-    def sSql(self, sql, param='', log='B', logSql='Y', thread='', adat=0):
+    def sSql(self, who, sql, param=''):
 
-        self.journal.I(f"{self.name}.sSql: '{sql}' with param '{param}'")
+        self.journal.I(f"{who}@{self.dtbs}.sSql: '{sql}' with param '{param}'")
 
         #----------------------------------------------------------------------
         # Kontrola stavu konekcie
         #----------------------------------------------------------------------
-        if not self.initialised:
-            self.journal.M(f'{self.name}.sSql: ERROR : Connection is not initialised', True)
-            self.journal.M(f'{self.name}.sSql: SQL   : {sql}',                         True)
+        if not self.isOpen:
+            self.journal.M(f'{who}@{self.dtbs}.sSql: ERROR : Connection is not open', True)
             self.journal.O('')
             return -1
         
@@ -148,21 +404,12 @@ class Database:
         # Kontrola predchadzajuceho nekomitovaneho prikazu
         #----------------------------------------------------------------------
         if self.prevCmd != '':
-            self.journal.M(f'{self.name}.sSql: ERROR   : Previous command is not yet committed', True)
-            self.journal.M(f'{self.name}.sSql: prev SQL: {self.prevCmd}',                        True)
-            self.journal.M(f'{self.name}.sSql: SQL     : {sql}',                                 True)
+            self.journal.M(f'{who}@{self.dtbs}.sSql: ERROR   : Previous command is not yet committed', True)
+            self.journal.M(f'{who}@{self.dtbs}.sSql: prev SQL: {self.prevCmd}',                        True)
+            self.journal.M(f'{who}@{self.dtbs}.sSql: SQL     : {sql}',                                 True)
             self.journal.O('')
+            return -2
             
-            if log=='B':
-                self.addMeta(act='M2', who=self.name, obj=f'SSQL {_VER}', res='ER', dsc= 'Previous command is not yet committed', thread=thread, adat=adat)
-            return -1
-        
-        #----------------------------------------------------------------------
-        # Zapis sql statementu do logu
-        #----------------------------------------------------------------------
-        if logSql=='Y':
-            self.journal.M(f'{self.name}.sSql: SQL statement was logged in LogSQL table')
-
         #----------------------------------------------------------------------
         # Pokusim sa vykonat SQL prikaz
         #----------------------------------------------------------------------
@@ -170,18 +417,19 @@ class Database:
             bef = datetime.now()
             self.prevCmd = sql
             
-            if param != '': self.conn['cur'].execute(sql, param)
-            else          : self.conn['cur'].execute(sql)
+            if param != '': self.cur.execute(sql, param)
+            else          : self.cur.execute(sql)
             
-            cnt = self.conn['cur'].rowcount
-            self.commitConn()  # Tu sa resetuje self.prevCmd
+            cnt = self.cur.rowcount
+            self.commit()  # Tu sa resetuje self.prevCmd
 
             #------------------------------------------------------------------
             # Kontrola dlzky trvania prikazu
             #------------------------------------------------------------------
             aft = datetime.now()
             sec = (aft-bef).seconds
-            if sec > _TIME_WATCH: self.journal.M('{}.sSql: {:8n} rows in {:4.0f} sec for {}'.format(self.name, cnt, sec, sql[:100].replace("\n"," ") ), True)
+            mes = sql[:_SQL_SMPL].replace('\n',' ')
+            if sec > _SQL_WATCH: self.journal.M(f"{who}@{self.dtbs}.sSql: {cnt:8n} rows in {sec:4.0f} sec for {mes}", True)
                 
             self.journal.O('')
             return cnt
@@ -190,37 +438,28 @@ class Database:
         # Error handling
         #----------------------------------------------------------------------
         except Exception as err:
-            self.journal.M(f'{self.name}.sSql {_VER}: ERROR :{str(err)}', True)
-            self.journal.M(f'{self.name}.sSql {_VER}: SQL   :{sql}',      True)
-            self.journal.M(f'{self.name}.sSql {_VER}: PARAM :{param}',    True)
+            
+            self.rollback()
+            
+            self.journal.M(f'{who}@{self.dtbs}.sSql {_VER}: ERROR :{str(err)}', True)
+            self.journal.M(f'{who}@{self.dtbs}.sSql {_VER}: SQL   :{sql}',      True)
+            self.journal.M(f'{who}@{self.dtbs}.sSql {_VER}: PARAM :{param}',    True)
 
-            #------------------------------------------------------------------
-            if log=='B':
-                try:
-                    self.addMeta(act='M2', who=self.name, obj=f'SSQL {_VER}', res='ER', dsc=sql     , thread=thread, adat=adat)
-                    self.addMeta(act='M2', who=self.name, obj=f'SSQL {_VER}', res='ER', dsc=str(err), thread=thread, adat=adat)
-                    
-                except Exception as errB:
-                    self.journal.M(f'{self.name}.sSql: DEEP ERROR :{str(errB)}', True)
-                    self.journal.M(f'{self.name}.sSql: DEEP SQL   :{sql}',       True)
-                    self.journal.M(f'{self.name}.sSql: DEEP PARAM :{param}',     True)
-
-            #------------------------------------------------------------------
             self.journal.O('')
-            return -1
+            return -3
 
     #--------------------------------------------------------------------------
-    def sSqlMany(self, sql, data, batch=100000):
+    def sSqlMany(self, who, sql, data, batch=_SQL_BATCH):
 
         ld = len(data)
-        self.journal.I(f'{self.name}.sSqlMany: {sql} for data length {ld} via batch {batch}')
+        self.journal.I(f'{who}@{self.dtbs}.sSqlMany: {sql} for data length {ld} via batch {batch}')
 
         #----------------------------------------------------------------------
         # Kontrola stavu konekcie
         #----------------------------------------------------------------------
-        if not self.initialised:
-            self.journal.M(f'{self.name}.sSqlMany: ERROR : Connection is not initialised', True)
-            self.journal.M(f'{self.name}.sSqlMany: SQL   : {sql}',                         True)
+        if not self.isOpen:
+            self.journal.M(f'{who}@{self.dtbs}.sSqlMany: ERROR : Connection is not open', True)
+            self.journal.M(f'{who}@{self.dtbs}.sSqlMany: SQL   : {sql}',                  True)
             self.journal.O('')
             return -1
         
@@ -228,22 +467,22 @@ class Database:
         # Kontrola predchadzajuceho nekomitovaneho prikazu
         #----------------------------------------------------------------------
         if self.prevCmd != '':
-            self.journal.M(f'{self.name}.sSqlMany: ERROR   : Previous command is not yet committed', True)
-            self.journal.M(f'{self.name}.sSqlMany: prev SQL: {self.prevCmd}',                        True)
-            self.journal.M(f'{self.name}.sSqlMany: SQL     : {sql}',                                 True)
+            self.journal.M(f'{who}@{self.dtbs}.sSqlMany: ERROR   : Previous command is not yet committed', True)
+            self.journal.M(f'{who}@{self.dtbs}.sSqlMany: prev SQL: {self.prevCmd}',                        True)
+            self.journal.M(f'{who}@{self.dtbs}.sSqlMany: SQL     : {sql}',                                 True)
             self.journal.O('')
-            return -1
+            return -2
         
         #----------------------------------------------------------------------
         # Kontrola existencie udajov
         #----------------------------------------------------------------------
         if ld==0:
-            self.journal.M(f'{self.name}.sSqlMany: ERROR {sql} has empty data', True)
+            self.journal.M(f'{who}@{self.dtbs}.sSqlMany: ERROR {sql} has empty data', True)
             self.journal.O('')
-            return -1
+            return -3
 
         #----------------------------------------------------------------------
-        self.journal.M('1st row: {}'.format(data[0]))
+        self.journal.M(f"1st row: {data[0]}")
 
         cnt = 0
         a   = 0
@@ -259,31 +498,104 @@ class Database:
                 if b > ld: b=ld
 
                 self.prevCmd = sql
-                self.conn['cur'].executemany(sql, data[a:b])
-                cnt += self.conn['cur'].rowcount
-                self.commitConn()   # Tu sa resetuje self.prevCmd
+                self.cur.executemany(sql, data[a:b])
+                cnt += self.cur.rowcount
+                self.commit()                     # Tu sa resetuje self.prevCmd
 
-                self.journal.M(f'{self.name}.sSqlMany: batch from {a} till {b} done')
+                self.journal.M(f'{self.dtbs}.sSqlMany: batch from {a} till {b} done')
                 a = b
 
         except Exception as err:
-            self.journal.M(f'{self.name}.sSqlMany: ERROR  :{str(err)}', True)
-            self.journal.M(f'{self.name}.sSqlMany: SQL    :{sql}',      True)
-            self.journal.M(f"{self.name}.sSqlMany: DATA[a]:{data[a]}",  True)
-            self.journal.M(f'{self.name}.sSqlMany: DATA INTERVAL <{a}, {b}>', True)
+            
+            self.rollback()
+            
+            self.journal.M(f'{who}@{self.dtbs}.sSqlMany: ERROR  :{str(err)}', True)
+            self.journal.M(f'{who}@{self.dtbs}.sSqlMany: SQL    :{sql}',      True)
+            self.journal.M(f"{who}@{self.dtbs}.sSqlMany: DATA[a]:{data[a]}",  True)
+            self.journal.M(f'{who}@{self.dtbs}.sSqlMany: DATA INTERVAL <{a}, {b}>', True)
             self.journal.O('')
-            return -1
+            return -4
 
         #----------------------------------------------------------------------
         aft = datetime.now()
         sec = (aft-bef).seconds
+        mes = sql[:_SQL_SMPL].replace('\n',' ')
 
-        if sec > _TIME_WATCH: self.journal.M('{}.sSqlMany: {:8n} rows in {:4.0f} sec for {}'.format(self.name, cnt, sec, sql[:100].replace("\n"," ")), True)
+        if sec > _SQL_WATCH: self.journal.M(f"{who}@{self.dtbs}.sSqlMany: {cnt:8n} rows in {sec:4.0f} sec for {mes}", True)
         self.journal.O('')
         return cnt
 
+    #--------------------------------------------------------------------------
+    def sSqlScript(self, who, fName, path=None):
 
+        self.journal.I(f"{who}@{self.dtbs}.sSqlScript: '{fName}'")
 
+        #----------------------------------------------------------------------
+        # Kontrola stavu konekcie
+        #----------------------------------------------------------------------
+        if not self.isOpen:
+            self.journal.M(f'{who}@{self.dtbs}.sSqlScript: ERROR : Connection is not open', True)
+            self.journal.O('')
+            return -1
+        
+        #----------------------------------------------------------------------
+        # Kontrola predchadzajuceho nekomitovaneho prikazu
+        #----------------------------------------------------------------------
+        if self.prevCmd != '':
+            self.journal.M(f'{who}@{self.dtbs}.sSqlScript: ERROR   : Previous command is not yet committed', True)
+            self.journal.M(f'{who}@{self.dtbs}.sSqlScript: prev SQL: {self.prevCmd}',                        True)
+            self.journal.O('')
+            return -2
+            
+        #----------------------------------------------------------------------
+        # Kontrola a ziskanie skriptu
+        #----------------------------------------------------------------------
+        if path is None: fName = f"{self.path}{fName}"
+        else           : fName = f"{path}{fName}"
+
+        lines  = gen.loadFile(self.journal, fileName=fName, enc='utf-8')
+        if len(lines) == 0:
+            self.journal.M(f'{who}@{self.dtbs}.sSqlScript: ERROR   : Script is empty or does not exist', True)
+            self.journal.O('')
+            return -3
+        
+        script = gen.lines2str(lines)
+
+        #----------------------------------------------------------------------
+        # Pokusim sa vykonat SQL prikaz
+        #----------------------------------------------------------------------
+        try:
+            bef = datetime.now()
+            self.prevCmd = f"script '{fName}'"
+            
+            self.cur.executescript(script)
+            
+            cnt = self.cur.rowcount
+            self.commit()  # Tu sa resetuje self.prevCmd
+
+            #------------------------------------------------------------------
+            # Kontrola dlzky trvania prikazu
+            #------------------------------------------------------------------
+            aft = datetime.now()
+            sec = (aft-bef).seconds
+            mes = fName
+            if sec > _SQL_WATCH: self.journal.M(f"{who}@{self.dtbs}.sSqlScript: {cnt:8n} rows in {sec:4.0f} sec for {mes}", True)
+                
+            self.journal.O('')
+            return cnt
+
+        #----------------------------------------------------------------------
+        # Error handling
+        #----------------------------------------------------------------------
+        except Exception as err:
+            
+            self.rollback()
+            
+            self.journal.M(f"{who}@{self.dtbs}.sSqlScript: ERROR :'{str(err)}'", True)
+            self.journal.M(f"{who}@{self.dtbs}.sSqlScript: '{fName}'",           True)
+            self.journal.M(f"{who}@{self.dtbs}.sSqlScript: '{script}'",          True)
+            self.journal.O('')
+            return -4
 
 #==============================================================================
 # Test cases
@@ -291,9 +603,18 @@ class Database:
 if __name__ == '__main__':
     
     journal = SiqoJournal('test-db', debug=5)
-    db = Database(journal, "test")
-    db.createDb()
 
+    db = Database(journal, "test")
+
+    db.createDb(who="who")
+    db.sSqlScript('who', fName='test.ini')
+ 
+    tables     = db.tables()
+    attributes = db.attributes('SUSER')
+    views      = db.views()
+    indexes    = db.indexes()
+    indexes    = db.indexes('SUSER')
+    
 #==============================================================================
 print(f"Database {_VER}")
 

@@ -4,7 +4,7 @@
 DROP TABLE IF EXISTS SJOURNAL;
 
 CREATE TABLE IF NOT EXISTS SJOURNAL (
-   JOURNAL_SID  INTEGER          NOT NULL               /*  Identifikácia záznamu INTEGER PRIMARY KEY will autoincrement */
+   JOURNAL_SID  SERIAL           NOT NULL               /*  Identifikácia záznamu */
   ,D_CREATED    TIMESTAMP        NOT NULL               /*  Čas vzniku záznamu */
   ,USER_ID      VARCHAR(32)      NOT NULL               /*  User ktorý bol prihlásený pri vzniku záznamu */
   ,PAGE_ID      VARCHAR(32)      NOT NULL               /*  Identifikácia stránky na ktorej vznikol záznam */
@@ -211,7 +211,7 @@ CREATE INDEX FKI_CACH_OBJ ON SOBJ_CACHE(PAGE_ID, OBJ_ID);
 DROP TABLE IF EXISTS SDMS;
 
 CREATE TABLE IF NOT EXISTS SDMS (
-   DOC_ID       INTEGER          NOT NULL               /*  ID dokumentu INTEGER PRIMARY KEY will autoincrement */
+   DOC_ID       SERIAL           NOT NULL               /*  ID dokumentu */
   ,C_FUNC       CHAR(1)          DEFAULT 'E'            /*  Satv dokumentu */
   ,USER_ID      VARCHAR(32)      NOT NULL               /*  Vlastnik dokumentu */
   ,D_CREATED    TIMESTAMP        NOT NULL               /*  Datum vlozenia do DMS */
@@ -241,7 +241,7 @@ CREATE INDEX FKI_DMS_USR ON SDMS(USER_ID);
 DROP TABLE IF EXISTS SITEM;
 
 CREATE TABLE IF NOT EXISTS SITEM (
-   ITEM_ID      INTEGER              NOT NULL           /*  Identifikácia Itemu. INTEGER PRIMARY KEY will autoincrement */
+   ITEM_ID      SERIAL               NOT NULL           /*  Identifikácia Itemu. Jedinecna ID sekvencia.*/
   ,PARENT_ID    INT                  DEFAULT 0          /*  Identifikácia Itemu-rodiča */
   ,USER_ID      VARCHAR(32)          NOT NULL           /*  Majiteľ itemu */
   ,FORUM_ID     VARCHAR(32)          DEFAULT 'SYSTEM'   /*  Identifikacia fora */
@@ -268,7 +268,7 @@ CREATE INDEX FKI_ITM_USR ON SITEM(USER_ID);
 DROP TABLE IF EXISTS SBACKUP;
 
 CREATE TABLE IF NOT EXISTS SBACKUP (
-   BACKUP_ID    INTEGER              NOT NULL           /* INTEGER PRIMARY KEY will autoincrement */
+   BACKUP_ID    SERIAL               NOT NULL
   ,TITLE        VARCHAR(128)         NOT NULL
   ,D_CREATED    VARCHAR(45)          NOT NULL
   ,C_FUNC       CHAR(1)              NOT NULL

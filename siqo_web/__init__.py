@@ -6,7 +6,7 @@ import os
 #==============================================================================
 # Setting the environment
 #------------------------------------------------------------------------------
-os.environ['wsiqo-test-mode' ] = '1'
+os.environ['siqo-test'] = '1'
 #os.environ['wsiqo-secret-key'] = 'asklurgw8374yhcbfQ2R7GYFQPIUBR'
 
 #==============================================================================
@@ -21,7 +21,9 @@ import siqo_web.routes          as rou
 #------------------------------------------------------------------------------
 _VER      = 1.00
 _CWD      = os.getcwd()
-_IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
+
+if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
+else                        : _IS_TEST = False
 
 #==============================================================================
 # package's variables
