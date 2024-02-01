@@ -57,7 +57,13 @@ class Database:
         self.openDb()
 
         #----------------------------------------------------------------------
-        # Nacitanie json data pre page
+        # Ak je prazdna, pokusim sa ju vytvorit a inicializovat
+        #----------------------------------------------------------------------
+        if len(self.tables()) == 0:
+            
+            self.createDb  (who=self.dtbs)
+            self.sSqlScript(who=self.dtbs, fName=f"{self.dtbs}.ini")
+
         #----------------------------------------------------------------------
         self.journal.O(f"Database({self.dtbs}).init")
         
@@ -329,6 +335,55 @@ class Database:
         self.sSqlScript(who, fName=f"{self.dtbs}.ddl" )
         
         self.journal.O()
+
+    #--------------------------------------------------------------------------
+    def readTable(self, who, table, where='1=1'):
+
+        self.journal.I(f'{who}@{self.dtbs}.readTable: table = {table}')
+        toRet =[]
+
+        #----------------------------------------------------------------------
+        # Ziskam hlavicku
+        #----------------------------------------------------------------------
+        atts = self.attributes(table)
+            
+        if type(atts) != list:
+            self.journal.I(f'{who}@{self.dtbs}.readTable: failed', True)
+            self.journal.O()
+            return -1
+
+        #----------------------------------------------------------------------
+        # Ziskam riadky udajov
+        #----------------------------------------------------------------------
+        sql = f"SELECT * FROM {table} WHERE {where}"
+        
+        rows = self.readDb(who, sql)
+
+        if type(atts) != list:
+            self.journal.I(f'{who}@{self.dtbs}.readTable: failed', True)
+            self.journal.O()
+            return -2
+
+        #----------------------------------------------------------------------
+        # Prejdem vsetky riadky a skonertujem do listu dict
+        #----------------------------------------------------------------------
+        for row in rows:
+            
+            drow = {}
+            i = 0
+            
+            #----------------------------------------------------------------------
+            # Skonstruujem dict {atribut:hodnota} pre dany row
+            #----------------------------------------------------------------------
+            for att in atts:
+                drow[att] = row[i]
+                i += 1
+            
+            toRet.append(drow)
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return toRet
 
     #--------------------------------------------------------------------------
     def readDb(self, who, sql, params = None):
@@ -605,15 +660,14 @@ if __name__ == '__main__':
     journal = SiqoJournal('test-db', debug=5)
 
     db = Database(journal, "test")
-
-    db.createDb(who="who")
-    db.sSqlScript('who', fName='test.ini')
  
     tables     = db.tables()
     attributes = db.attributes('SUSER')
     views      = db.views()
     indexes    = db.indexes()
     indexes    = db.indexes('SUSER')
+    users      = db.readTable('who', 'SUSER')
+    palo4      = db.readTable('who', 'SUSER', "user_id = 'palo4'")
     
 #==============================================================================
 print(f"Database {_VER}")

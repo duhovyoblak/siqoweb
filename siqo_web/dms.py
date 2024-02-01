@@ -9,8 +9,10 @@ import siqo_lib.general   as gen
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = 1.00
-_IS_TEST  = True if os.environ['wsiqo-test-mode']=='1' else False
 _PATH     = '../DMS/'
+
+if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
+else                        : _IS_TEST = False
 
 #==============================================================================
 # package's variables

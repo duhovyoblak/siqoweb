@@ -3,10 +3,8 @@
 #------------------------------------------------------------------------------
 import os
 
-from werkzeug.security          import generate_password_hash, check_password_hash
-
+from   werkzeug.security        import generate_password_hash, check_password_hash
 from   flask_login              import UserMixin
-from   database                 import Database
 
 import siqo_lib.general         as gen
 
@@ -17,8 +15,6 @@ import siqo_lib.general         as gen
 _VER      = 1.00
 _CWD      = os.getcwd()
 
-_DB_PATH  = f"{_CWD}/database/"
-_DB_NAME  = "pagman"
 _DB_TABLE = "SUSER"
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
@@ -35,25 +31,25 @@ else                        : _IS_TEST = False
 #==============================================================================
 # Class User
 #------------------------------------------------------------------------------
-class User(UserMixin, Database):
+class User(UserMixin):
     
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dtbs, path=''):
+    def __init__(self, journal, dtbs):
         "Call constructor of User"
 
-        journal.I(f"User({dtbs}).init:")
+        journal.I(f"User.init: from database '{dtbs.dtbs}'")
         
         #----------------------------------------------------------------------
-        # Zdedeny konstruktor
-        #----------------------------------------------------------------------
-        super().__init__(journal, dtbs, path)
-
-        #----------------------------------------------------------------------
+        self.journal   = journal
+        
+        self.dtbs      = dtbs
         self.tableName = _DB_TABLE
+
         self.loaded    = False
         self.changed   = False
+        self.verified  = False
         
         self.user_id   = "Anonym"
         self.c_func    = 'L'          #  Users account status: W waiting for authentification A active L locked D deleted */
@@ -71,12 +67,35 @@ class User(UserMixin, Database):
         
         self.journal.O()
         
-    #==========================================================================
-    # Internal methods
+    #--------------------------------------------------------------------------
+    def __str__(self):
+        "Prints info about this user"
+
+        toRet = ''
+        for line in self.info: toRet += line +'\n'
+
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def info(self):
+        "Returns info about the user"
+
+        toRet = []
+
+        toRet.append(self.user_id )
+        toRet.append(self.password)
+        toRet.append(self.fname   )
+        toRet.append(self.lname   )
+        toRet.append(self.email   )
+
+        return toRet
+
     #--------------------------------------------------------------------------
     def reset(self):
         
         self.loaded    = False
+        self.changed   = False
+        self.verified  = False
 
         #----------------------------------------------------------------------
         # Len pre istotu nastavim defaultne hodnoty
@@ -95,42 +114,128 @@ class User(UserMixin, Database):
         self.d_changed = None
         self.d_locked  = None
         
-#--------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    def authenticate(self, user, pasw):
+        
+        self.journal.I(f"{self.user_id}.authenticate:")
+        
+        self.load(user)
+        
+        #----------------------------------------------------------------------
+        # Kontrola existencie usera
+        #----------------------------------------------------------------------
+        if not self.loaded:
+            self.journal.I(f"{self.user_id}.authenticate: User 'user' does not exists")
+            self.journal.O()
+            return False
+
+        #----------------------------------------------------------------------
+        # Kontrola hesla
+        #----------------------------------------------------------------------
+        if not self.check_password(pasw):
+            self.journal.I(f"{self.user_id}.authenticate: Invalid credentials")
+            self.journal.O()
+            return False
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return True
+        
+    #==========================================================================
+    # Flask login methods
+    def is_authenticated(self):
+        """This property should return True if the user is authenticated, i.e. 
+        they have provided valid credentials. (Only authenticated users will 
+        fulfill the criteria of login_required.)"""
+        
+        return self.verified
+
+    #--------------------------------------------------------------------------
+    def is_active(self):
+        """This property should return True if this is an active user - 
+        in addition to being authenticated, they also have activated their account, 
+        not been suspended, or any condition your application has for rejecting an account. 
+        Inactive accounts may not log in (without being forced of course)."""
+
+        return self.verified and self.c_func=='A'
+
+    #--------------------------------------------------------------------------
+    def is_anonymous(self):
+        """This property should return True if this is an anonymous user. 
+        (Actual users should return False instead.)"""
+        
+        return self.user_id == "Anonym"
+
+    #--------------------------------------------------------------------------
+    def get_id(self):
+        """This method must return a str that uniquely identifies this user, 
+        and can be used to load the user from the user_loader callback. 
+        Note that this must be a str - if the ID is natively an int or some 
+        other type, you will need to convert it to str"""
+        
+        return self.user_id
+
+    #--------------------------------------------------------------------------
     def set_password(self, password):
 
-        self.password = generate_password_hash(password)
+#        self.password = generate_password_hash(password)
+        self.password = password
         self.changed  = True
 
     #--------------------------------------------------------------------------
     def check_password(self, password):
 
-        return check_password_hash(self.password, password)
+        return self.password == password
+    
+#        return check_password_hash(self.password, password)
     
     #--------------------------------------------------------------------------
         
     #==========================================================================
-    # API for users
-    #--------------------------------------------------------------------------
-    def authenticate(self, user, passw):
-        
-        journal.I(f"{self.user_id}@{self.dtbs}.authenticate:")
-
-        self.journal.O()
-        
-    #==========================================================================
     # Persistency methods
     #--------------------------------------------------------------------------
-    def load(self, user):
+    def load(self, user_id):
         
-        journal.I(f"{self.user_id}@{self.dtbs}.load: {user}")
+        self.journal.I(f"{self.user_id}.load: user_id = '{user_id}'")
+        
+        userData = self.dtbs.readTable(user_id, self.tableName, f" user_id = '{user_id}'")
+        
+        #----------------------------------------------------------------------
+        # Skontrolujem existenciu usera
+        #----------------------------------------------------------------------
+        if len(userData) != 1:
+            
+            self.loaded   = False
+            self.verified = False
 
-
+            journal.M(f"{self.user_id}.load: User '{user_id}' does not exist")
+            self.journal.O()
+            return None
+        
+        #----------------------------------------------------------------------
+        self.user_id   = userData[0]['USER_ID'  ]
+        self.c_func    = userData[0]['C_FUNC'   ]
+        self.lang_id   = userData[0]['LANG_ID'  ]
+        self.c_type    = userData[0]['C_TYPE'   ]
+        self.fname     = userData[0]['FNAME'    ]
+        self.lname     = userData[0]['LNAME'    ]
+        self.email     = userData[0]['EMAIL'    ]
+        self.password  = userData[0]['PASSWORD' ]
+        self.authent   = userData[0]['AUTHENT'  ]
+        self.n_fails   = userData[0]['N_FAILS'  ]
+        self.d_created = userData[0]['D_CREATED']
+        self.d_changed = userData[0]['D_CHANGED']
+        self.d_locked  = userData[0]['D_LOCKED' ]
+        
+        self.loaded = True
+        
         self.journal.O()
-        
+        return self
+
     #--------------------------------------------------------------------------
     def save(self, force=False):
         
-        journal.I(f"{self.user_id}@{self.dtbs}.save: force={force}")
+        self.journal.I(f"{self.user_id}.save: force={force}")
         
         #----------------------------------------------------------------------
         # Ak nastala zmena udajov alebo je save vynutene
@@ -161,10 +266,10 @@ where user_id = {self.user_id}"""
             #------------------------------------------------------------------
             if cnt > 0:
                 self.changed = False
-                journal.M(f"{self.user_id}@{self.dtbs}.save: {cnt} row was saved")
+                self.journal.M(f"{self.user_id}.save: {cnt} row was saved")
                 
             else:
-                journal.M(f"{self.user_id}@{self.dtbs}.save: procedure failed")
+                self.journal.M(f"{self.user_id}.save: procedure failed")
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -174,14 +279,14 @@ where user_id = {self.user_id}"""
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    from   siqo_lib    import SiqoJournal
+    from   siqo_lib                 import SiqoJournal
     journal = SiqoJournal('test-user', debug=5)
-    
-    user = User(journal, _DB_NAME, _DB_PATH)
-    
-#    user.createDb(who="who")
-#    user.sSqlScript('who', fName='pagman.ini')
 
+    from   database                 import Database
+    dtbs = Database(journal, 'test')
+    
+    user = User(journal, dtbs)
+    
     u = user.load('palo4')
 
 #==============================================================================

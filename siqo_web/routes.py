@@ -2,13 +2,20 @@
 #  SIQO Homepage: web routes operations
 #------------------------------------------------------------------------------
 import os
+import unicodedata
 
+import flask
 from   flask                    import Flask, url_for, render_template, make_response
 from   flask                    import request, session, abort, redirect
-from   flask_login              import LoginManager
+from   flask                    import get_flashed_messages, flash
+from   flask_login              import LoginManager, login_user
 from   markupsafe               import escape
 
+from   siqo_lib                 import SiqoJournal
 from   siqo_web.config          import Config
+from   siqo_web.database        import Database
+from   siqo_web.user            import User
+
 from   siqo_web.forms           import FormLogin
 import siqo_web.views           as views
 
@@ -18,14 +25,23 @@ import siqo_web.views           as views
 _VER      = 1.00
 _CWD      = os.getcwd()
 
+_DB_PATH  = f"{_CWD}/database/"
+_DB_NAME  = "pagman"
+
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
 
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
-journal = None
 _app    = None
+_login  = None
+
+journal = None
+journal = SiqoJournal('siqo-web', debug=5)
+
+dtbs = Database(journal, _DB_NAME, _DB_PATH)
+user = User(journal, dtbs)
 
 #==============================================================================
 # package's tools
@@ -34,7 +50,7 @@ def getApp():
 
     print("getApp():")
 
-    global _app
+    global _app, _login
 
     #--------------------------------------------------------------------------
     # Ak Flask aplikacia neexistuje, vytvorim ju
@@ -50,14 +66,14 @@ def getApp():
         _app.config.from_object(Config)
         print(f"getApp(): Flask app {_app} was created at {id(_app)} in {__name__}")
         
-        login = LoginManager(_app)
-        print(f"getApp(): LoginManager was created at {id(login)}")
+        _login = LoginManager(_app)
+        print(f"getApp(): LoginManager was created at {id(_login)}")
 
     #--------------------------------------------------------------------------
-    return _app
+    return (_app, _login)
 
 #------------------------------------------------------------------------------
-app = getApp()
+app, login = getApp()
 
 #==============================================================================
 # package's tools
@@ -85,6 +101,18 @@ def shutdownServer():
 
 
 #@app.before_request
+
+
+#==============================================================================
+# LOGIN operation
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+@login.user_loader
+def load_user(user_id):
+    
+    journal.M("load_user():")
+    return user.load(user_id)
+
 #==============================================================================
 # PATHs operation
 #------------------------------------------------------------------------------
@@ -116,8 +144,36 @@ def shutdown():
 def homepage():
 
     journal.M("homepage():")
-    return views.homepage()
+    return views.homepage(dtbs, user)
     
+#------------------------------------------------------------------------------
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # Here we use a class of some kind to represent and validate our
+    # client-side form data. For example, WTForms is a library that will
+    # handle this for us, and we use a custom LoginForm to validate.
+    form = FormLogin()
+    
+    if form.validate_on_submit():
+        # Login and validate the user.
+        # user should be an instance of your `User` class
+        login_user(user)
+
+        flask.flash('Logged in successfully.')
+
+        nextCmd = flask.request.args.get('next')
+        print(nextCmd)
+        # url_has_allowed_host_and_scheme should check if the url is safe
+        # for redirects, meaning it matches the request host.
+        # See Django's url_has_allowed_host_and_scheme for an example.
+        
+        #if not url_has_allowed_host_and_scheme(next, request.host):
+        #    return flask.abort(400)
+
+        return flask.redirect(next or flask.url_for('index'))
+    
+    return flask.render_template('login.html', form=form)
+
 #------------------------------------------------------------------------------
 @app.route('/logout')
 def logout():
