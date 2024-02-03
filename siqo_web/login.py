@@ -16,7 +16,6 @@ import siqo_lib.general         as gen
 
 import siqo_web.dms             as dms
 
-from   siqo_web.database        import Database
 from   siqo_web.config          import Config
 from   siqo_web.user            import User
 from   siqo_web.base            import Base
@@ -36,9 +35,9 @@ else                        : _IS_TEST = False
 #------------------------------------------------------------------------------
 
 #==============================================================================
-# Page
+# Login
 #------------------------------------------------------------------------------
-class Page(Base):
+class Login(Base):
     
     #==========================================================================
     # Content methods
@@ -50,7 +49,7 @@ class Page(Base):
         #----------------------------------------------------------------------
         # Nastavenie aktivneho elementu
         #----------------------------------------------------------------------
-#        self.setInitId("Login")
+        self.setInitId("Login")
 
         #----------------------------------------------------------------------
         # Doplnenie formLogin
@@ -81,6 +80,37 @@ class Page(Base):
         #----------------------------------------------------------------------
         if self.formLogin.validate_on_submit():
             
+            #------------------------------------------------------------------
+            # User uz je autentifikovany
+            #------------------------------------------------------------------
+            if False and self.user.is_authenticated:
+                
+                self.journal.M(f"{self.name}.respPost: '{self.user.user_id}' is autheticated already")
+                self.journal.O()
+                return redirect(url_for('homepage'))
+
+            #------------------------------------------------------------------
+            # Autentifikacia usera podla udajov z formulara
+            #------------------------------------------------------------------
+            user = self.formLogin.username.data
+            pasw = self.formLogin.password.data
+            rmbr = self.formLogin.remember.data
+            
+            self.user = User(self.journal)
+
+            if not self.user.authenticate(user, pasw):
+                
+                logout_user()
+                flash('Invalid username or password')
+                self.journal.M(f"{self.name}.respPost: Authentication failed")
+                self.journal.O()
+                return redirect(url_for('login'))
+
+            #------------------------------------------------------------------
+            # User je autentifikovany, zapisem do session
+            #------------------------------------------------------------------
+            login_user(self.user, remember=rmbr)
+
             self.journal.M(f"{self.name}.resp: User logged in")
             self.journal.O()
             return redirect(url_for('homepage'))
@@ -98,7 +128,7 @@ class Page(Base):
 #------------------------------------------------------------------------------
 
 #==============================================================================
-print(f"Page {_VER}")
+print(f"Login {_VER}")
 
 #==============================================================================
 #                              END OF FILE

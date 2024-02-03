@@ -1,18 +1,48 @@
-{% extends "_base.html" %}
+{% extends "base.html" %}
 
-{% block stage %}
-    <h1>Sign In</h1>
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}
-        </p>
-        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-        <p>{{ form.submit() }}</p>
-    </form>
-{% endblock %}
+<!---------------------------------------------------------------------------->
+<!-- Body -->
+<!---------------------------------------------------------------------------->
+
+    <!-----------------------------------------------------------------LOGIN-->
+    {% block login %}
+	
+        <form class="center" action="" method="post" novalidate>
+            {{ formLogin.hidden_tag() }}
+            <p>
+                {{ formLogin.username.label }}<br>
+                {{ formLogin.username(class_="ObjectInputString", size=32) }}<br>
+
+                {% if len(formLogin.username.errors)>0 %}
+              
+                    {% for error in formLogin.username.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                  
+                    <script>InitElement("Login")</script>
+                  
+                {% endif %}
+            </p>
+            <p>
+                {{ formLogin.password.label }}<br>
+                {{ formLogin.password(size=32) }}<br>
+
+                {% if len(formLogin.password.errors)>0 %}
+
+                    {% for error in formLogin.password.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                  
+                    <script>InitElement("Login")</script>
+                  
+                {% endif %}
+            </p>
+            <p>{{ formLogin.remember() }} {{ formLogin.remember.label }}</p>
+            <p>{{ formLogin.submit() }}</p>
+        </form>
+
+    {% endblock %}
+
+<!---------------------------------------------------------------------------->
+<!-- End of the file -->
+<!---------------------------------------------------------------------------->

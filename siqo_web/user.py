@@ -7,15 +7,13 @@ from   werkzeug.security        import generate_password_hash, check_password_ha
 from   flask_login              import UserMixin
 
 import siqo_lib.general         as gen
-
+from   siqo_web.database        import Database
+from   siqo_web.config          import Config
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = 1.00
-_CWD      = os.getcwd()
-
-_DB_TABLE = "SUSER"
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -23,41 +21,40 @@ else                        : _IS_TEST = False
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
-
-#==============================================================================
-# package's variables
-#------------------------------------------------------------------------------
+_ANONYM    = 'Anonymous'   # Default user_id for Guest user
 
 #==============================================================================
 # Class User
 #------------------------------------------------------------------------------
-class User(UserMixin):
+class User(UserMixin, Database):
     
     #==========================================================================
-    # Constructor & utilities
+    # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dtbs):
+    def __init__(self, journal):
         "Call constructor of User"
 
-        journal.I(f"User.init: from database '{dtbs.dtbs}'")
+        journal.I("User.init:")
         
         #----------------------------------------------------------------------
-        self.journal   = journal
-        
-        self.dtbs      = dtbs
-        self.tableName = _DB_TABLE
+        # Konstruktor Database
+        #----------------------------------------------------------------------
+        super().__init__(journal, Config.dtbsName, Config.dtbsPath)
+
+        #----------------------------------------------------------------------
+        self.tableName = Config.dtbsUser
 
         self.loaded    = False
         self.changed   = False
         self.verified  = False
         
-        self.user_id   = "Anonym"
+        self.user_id   = _ANONYM
         self.c_func    = 'L'          #  Users account status: W waiting for authentification A active L locked D deleted */
         self.lang_id   = 'SK'         #  Kod jazyka usera. Platí pre všetky aplikácie */
         self.c_type    = 'P'          #  Users type:A application P person */
-        self.fname     = 'Meno'       #  First name */
-        self.lname     = 'Priezvisko' #  Last name */
-        self.email     = None         #  E-mail address for authentification */
+        self.fname     = 'Guest'      #  First name */
+        self.lname     = 'User'       #  Last name */
+        self.email     = ''           #  E-mail address for authentification */
         self.password  = 'heslo'      #  Password hash
         self.authent   = None         #  Authentification code */
         self.n_fails   = 0            #  failed connections count */
@@ -70,11 +67,8 @@ class User(UserMixin):
     #--------------------------------------------------------------------------
     def __str__(self):
         "Prints info about this user"
-
-        toRet = ''
-        for line in self.info: toRet += line +'\n'
-
-        return toRet
+        
+        return f"User>{' '.join(self.info())}"
 
     #--------------------------------------------------------------------------
     def info(self):
@@ -82,14 +76,20 @@ class User(UserMixin):
 
         toRet = []
 
-        toRet.append(self.user_id )
-        toRet.append(self.password)
-        toRet.append(self.fname   )
-        toRet.append(self.lname   )
-        toRet.append(self.email   )
+        toRet.append(             self.user_id                  )
+        toRet.append(gen.coalesce(self.fname   , 'no_fname'   ) )
+        toRet.append(gen.coalesce(self.lname   , 'no_lname'   ) )
+        toRet.append(gen.coalesce(self.email   , 'no_email'   ) )
+        toRet.append(gen.coalesce(self.password, 'no_password') )
 
         return toRet
 
+    #--------------------------------------------------------------------------
+    def userName(self):
+        "Returns name of the user to show"
+        
+        return f"{self.fname} {self.lname}"
+        
     #--------------------------------------------------------------------------
     def reset(self):
         
@@ -100,13 +100,13 @@ class User(UserMixin):
         #----------------------------------------------------------------------
         # Len pre istotu nastavim defaultne hodnoty
         #----------------------------------------------------------------------
-        self.user_id   = "Anonym"
+        self.user_id   = _ANONYM
         self.c_func    = 'L'
         self.lang_id   = 'SK'
         self.c_type    = 'P'
-        self.fname     = 'Meno'
-        self.lname     = 'Priezvisko'
-        self.email     = None
+        self.fname     = 'Guest'
+        self.lname     = 'User'
+        self.email     = ''
         self.password  = 'heslo'
         self.authent   = None
         self.n_fails   = 0
@@ -115,17 +115,18 @@ class User(UserMixin):
         self.d_locked  = None
         
     #--------------------------------------------------------------------------
-    def authenticate(self, user, pasw):
+    def authenticate(self, user_id, pasw):
         
-        self.journal.I(f"{self.user_id}.authenticate:")
+        self.journal.I(f"{self.user_id}.authenticate: '{user_id}' with '{pasw}'")
         
-        self.load(user)
+        self.load(user_id)
         
         #----------------------------------------------------------------------
         # Kontrola existencie usera
         #----------------------------------------------------------------------
         if not self.loaded:
-            self.journal.I(f"{self.user_id}.authenticate: User 'user' does not exists")
+            self.reset()
+            self.journal.M(f"{self.user_id}.authenticate: User 'user_id' does not exists")
             self.journal.O()
             return False
 
@@ -133,7 +134,8 @@ class User(UserMixin):
         # Kontrola hesla
         #----------------------------------------------------------------------
         if not self.check_password(pasw):
-            self.journal.I(f"{self.user_id}.authenticate: Invalid credentials")
+            self.reset()
+            self.journal.M(f"{self.user_id}.authenticate: Invalid credentials")
             self.journal.O()
             return False
 
@@ -143,6 +145,7 @@ class User(UserMixin):
         
     #==========================================================================
     # Flask login methods
+    #--------------------------------------------------------------------------
     def is_authenticated(self):
         """This property should return True if the user is authenticated, i.e. 
         they have provided valid credentials. (Only authenticated users will 
@@ -198,17 +201,15 @@ class User(UserMixin):
         
         self.journal.I(f"{self.user_id}.load: user_id = '{user_id}'")
         
-        userData = self.dtbs.readTable(user_id, self.tableName, f" user_id = '{user_id}'")
+        userData = self.readTable(user_id, self.tableName, f" user_id = '{user_id}'")
         
         #----------------------------------------------------------------------
         # Skontrolujem existenciu usera
         #----------------------------------------------------------------------
-        if len(userData) != 1:
+        if type(userData)==int or len(userData) != 1:
             
-            self.loaded   = False
-            self.verified = False
-
-            journal.M(f"{self.user_id}.load: User '{user_id}' does not exist")
+            self.reset()
+            self.journal.M(f"{self.user_id}.load: User '{user_id}' does not exist")
             self.journal.O()
             return None
         
@@ -274,6 +275,29 @@ where user_id = {self.user_id}"""
         #----------------------------------------------------------------------
         self.journal.O()
 
+    #--------------------------------------------------------------------------
+    def users(self):
+        
+        self.journal.I(f"{self.user_id}.users:")
+        
+        userData = self.readTable(self.user_id, self.tableName)
+        
+        #----------------------------------------------------------------------
+        # Skontrolujem existenciu udajov
+        #----------------------------------------------------------------------
+        if type(userData)==int:
+            
+            self.loaded   = False
+            self.verified = False
+
+            self.journal.M(f"{self.user_id}.users: Method failed")
+            self.journal.O()
+            return None
+        
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return userData
+
 #==============================================================================
 # Test cases
 #------------------------------------------------------------------------------
@@ -282,12 +306,11 @@ if __name__ == '__main__':
     from   siqo_lib                 import SiqoJournal
     journal = SiqoJournal('test-user', debug=5)
 
-    from   database                 import Database
-    dtbs = Database(journal, 'test')
-    
-    user = User(journal, dtbs)
+    user = User(journal)
+    users = user.users()
     
     u = user.load('palo4')
+    print(type(u), ', ', u)
 
 #==============================================================================
 print(f"User {_VER}")

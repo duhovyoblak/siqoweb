@@ -2,7 +2,7 @@
 // (c) SIQO PagMan Application management function
 //------------------------------------------------------------------------------
 
-initId = "Content"
+initId = "x"
 
 //==============================================================================
 // Bar menu mgmt
@@ -54,15 +54,6 @@ function InitElement(id)
         
   // Priorita elem je >= ako existujuce nastavenie, nastavim na elem
   initId = id;
-}
-//------------------------------------------------------------------------------
-function ShowInit()
-{
-  // Zatlaci base elementy pozadia
-  HideBase();
-
-  // Vystavi element ID do popredia
-  document.getElementById(initId).style.display = "block";
 }
 //------------------------------------------------------------------------------
 function Debug( str )

@@ -20,9 +20,30 @@ else                        : _IS_TEST = False
 #------------------------------------------------------------------------------
 class Config:
     
+    cwd      = os.getcwd()
+    
+    dtbsPath = f"{cwd}/database/"
+    dtbsName = "pagman"
+    
+    dtbsUser = "SUSER"
+    dtbsRes  = "SOBJ_RESOURCE"
+
     if 'wsiqo-secret-key' in os.environ: SECRET_KEY = os.environ.get('wsiqo-secret-key')
     else                               : SECRET_KEY = "ekjwn47wtyqgpUHP43UGH3"
 
+#==============================================================================
+# Test cases
+#------------------------------------------------------------------------------
+if __name__ == '__main__':
+    
+    print(Config.cwd       )
+    print(Config.dtbsPath  )
+    print(Config.dtbsName  )
+    print(Config.dtbsUser  )
+
+
+    print(Config.SECRET_KEY)
+    
 #==============================================================================
 print(f"config {_VER}")
 

@@ -8,12 +8,11 @@ import flask
 from   flask                    import Flask, url_for, render_template, make_response
 from   flask                    import request, session, abort, redirect
 from   flask                    import get_flashed_messages, flash
-from   flask_login              import LoginManager, login_user
+from   flask_login              import LoginManager, login_required, login_user, current_user
 from   markupsafe               import escape
 
 from   siqo_lib                 import SiqoJournal
 from   siqo_web.config          import Config
-from   siqo_web.database        import Database
 from   siqo_web.user            import User
 
 from   siqo_web.forms           import FormLogin
@@ -23,10 +22,6 @@ import siqo_web.views           as views
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = 1.00
-_CWD      = os.getcwd()
-
-_DB_PATH  = f"{_CWD}/database/"
-_DB_NAME  = "pagman"
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -40,8 +35,6 @@ _login  = None
 journal = None
 journal = SiqoJournal('siqo-web', debug=5)
 
-dtbs = Database(journal, _DB_NAME, _DB_PATH)
-user = User(journal, dtbs)
 
 #==============================================================================
 # package's tools
@@ -67,13 +60,14 @@ def getApp():
         print(f"getApp(): Flask app {_app} was created at {id(_app)} in {__name__}")
         
         _login = LoginManager(_app)
+        _login.login_view = 'login'
         print(f"getApp(): LoginManager was created at {id(_login)}")
 
     #--------------------------------------------------------------------------
     return (_app, _login)
 
 #------------------------------------------------------------------------------
-app, login = getApp()
+app, loginManager = getApp()
 
 #==============================================================================
 # package's tools
@@ -106,12 +100,40 @@ def shutdownServer():
 #==============================================================================
 # LOGIN operation
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-@login.user_loader
-def load_user(user_id):
+@loginManager.user_loader
+def load_user(user_id='Anonymous'):
+    """This callback is used to reload the user object from the user ID stored 
+    in the session. It should take the str ID of a user, and return the 
+    corresponding user object. It should return None (not raise an exception) if
+    the ID is not valid."""
     
-    journal.M("load_user():")
-    return user.load(user_id)
+    journal.I(f"load_user(): '{user_id}'")
+    
+    user  = User(journal)
+    toRet = user.load(user_id)
+    
+    if toRet is None: journal.M(f"load_user(): User '{user_id}' does not exists", True)
+    
+    journal.O()
+    return toRet
+
+#------------------------------------------------------------------------------
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+
+    journal.M("login():")
+    return views.login()
+    
+#------------------------------------------------------------------------------
+@app.route('/logout')
+def logout():
+    
+    journal.M("logout():")
+    
+    # remove the username from the session if it's there
+    session.pop('username', None)
+
+    return redirect(url_for('index'))
 
 #==============================================================================
 # PATHs operation
@@ -123,6 +145,13 @@ def index():
     journal.M("index():")
     return views.index()
 
+#------------------------------------------------------------------------------
+@app.route('/base', methods=['GET'])
+def base():
+
+    journal.M("base():")
+    return views.base()
+    
 #------------------------------------------------------------------------------
 @app.get('/shutdown')
 def shutdown():
@@ -141,49 +170,12 @@ def shutdown():
 
 #------------------------------------------------------------------------------
 @app.route('/homepage', methods=['GET', 'POST'])
+@login_required
 def homepage():
 
     journal.M("homepage():")
-    return views.homepage(dtbs, user)
+    return views.homepage()
     
-#------------------------------------------------------------------------------
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    # Here we use a class of some kind to represent and validate our
-    # client-side form data. For example, WTForms is a library that will
-    # handle this for us, and we use a custom LoginForm to validate.
-    form = FormLogin()
-    
-    if form.validate_on_submit():
-        # Login and validate the user.
-        # user should be an instance of your `User` class
-        login_user(user)
-
-        flask.flash('Logged in successfully.')
-
-        nextCmd = flask.request.args.get('next')
-        print(nextCmd)
-        # url_has_allowed_host_and_scheme should check if the url is safe
-        # for redirects, meaning it matches the request host.
-        # See Django's url_has_allowed_host_and_scheme for an example.
-        
-        #if not url_has_allowed_host_and_scheme(next, request.host):
-        #    return flask.abort(400)
-
-        return flask.redirect(next or flask.url_for('index'))
-    
-    return flask.render_template('login.html', form=form)
-
-#------------------------------------------------------------------------------
-@app.route('/logout')
-def logout():
-    
-    journal.M("logout():")
-    
-    # remove the username from the session if it's there
-    session.pop('username', None)
-
-    return redirect(url_for('index'))
 
 #------------------------------------------------------------------------------
 @app.get('/user/<username>')

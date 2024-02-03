@@ -7,7 +7,6 @@ from   datetime                 import datetime, timedelta
 
 import sqlite3
 import siqo_lib.general         as gen
-from   siqo_lib                 import SiqoJournal
 
 #==============================================================================
 # package's constants
@@ -35,7 +34,7 @@ class Database:
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dtbs, path=''):
+    def __init__(self, journal, dtbs, path='', autoInit=False):
         "Call constructor of Database and initialise it"
         
         journal.I(f"Database({dtbs}).init:")
@@ -59,7 +58,7 @@ class Database:
         #----------------------------------------------------------------------
         # Ak je prazdna, pokusim sa ju vytvorit a inicializovat
         #----------------------------------------------------------------------
-        if len(self.tables()) == 0:
+        if autoInit and len(self.tables()) == 0:
             
             self.createDb  (who=self.dtbs)
             self.sSqlScript(who=self.dtbs, fName=f"{self.dtbs}.ini")
@@ -359,7 +358,7 @@ class Database:
         
         rows = self.readDb(who, sql)
 
-        if type(atts) != list:
+        if type(rows) != list:
             self.journal.I(f'{who}@{self.dtbs}.readTable: failed', True)
             self.journal.O()
             return -2
@@ -657,9 +656,11 @@ class Database:
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
+    from   siqo_lib                 import SiqoJournal
     journal = SiqoJournal('test-db', debug=5)
 
-    db = Database(journal, "test")
+    from   siqo_web.config          import Config
+    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=True)
  
     tables     = db.tables()
     attributes = db.attributes('SUSER')
