@@ -25,7 +25,7 @@ from   siqo_web.forms           import FormLogin
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = 1.00
+_VER      = '1.00'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -189,14 +189,19 @@ class Base(Database):
         #----------------------------------------------------------------------
         # POST Method: Vyhodnotim formulare
         #----------------------------------------------------------------------
-        resp = self.respPost()
-
-        if resp is not None: 
-            self.journal.O()
-            return resp
+        if request.method == 'POST':
+            
+            resp = self.respPost()
+            
+            #------------------------------------------------------------------
+            # Ak je POST response validna
+            #------------------------------------------------------------------
+            if resp is not None:
+                self.journal.O()
+                return resp
 
         #----------------------------------------------------------------------
-        # GET Method: Ziskam template
+        # Default response: Ziskam template a vratim html
         #----------------------------------------------------------------------
         resp = self.respGet()
         self.journal.O()

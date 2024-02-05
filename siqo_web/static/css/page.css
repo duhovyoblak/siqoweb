@@ -3,40 +3,6 @@
 /*----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------*/
-/* Default Elements                                                           */
-/*----------------------------------------------------------------------------*/
-* {
-  margin           :0;
-  padding          :0px;
-  border           :0px;
-//  box-sizing: border-box;
-}
-/*----------------------------------------------------------------------------*/
-html {
-  color            :gray; 
-  background       :url("struct_0002.jpg");
-  width            :100%;
-}
-/*----------------------------------------------------------------------------*/
-body {
-  width            :800px;
-  margin           :auto;
-
-  color            :gray; 
-  background       :rgb(224,240,255);
-  
-  font-family      :verdana,tahoma, helvetica,sans-serif;
-  font-size        :0.9em;
-  overflow         :scroll;
-}
-/*----------------------------------------------------------------------------*/
-.center {
-  margin           : auto;
-  padding          : 70px 0px 0px 0px;
-  width            : 35%;
-  border           : 0px;
-}
-/*----------------------------------------------------------------------------*/
 /* Input Elements                                                             */
 /*----------------------------------------------------------------------------*/
 input.LoginControlBtn {
@@ -67,127 +33,6 @@ input[type="radio"]
   border           :1px solid rgb(220, 220, 220);
   border-radius    :1px 1px 1px 1px;
   cursor           :pointer;
-}
-/*----------------------------------------------------------------------------*/
-/* Page Header Elements                                                       */
-/*----------------------------------------------------------------------------*/
-div.Break {
-  background       :transparent;
-  position         :relative;
-  height           :6px;
-}
-/*----------------------------------------------------------------------------*/
-div.Header {
-  background       :url("struct_0004.jpg");
-  position         :relative;
-}
-/*----------------------------------------------------------------------------*/
-div.HeaderTitle
-{
-  position         :relative;
-  float            :left;
-  top              :0px;
-  width            :40%;
-  
-}
-/*----------------------------------------------------------------------------*/
-div.HeaderComment
-{
-  text-align       :right;
-}
-/*----------------------------------------------------------------------------*/
-/* Bar Menu Elements                                                          */
-/*----------------------------------------------------------------------------*/
-div.BarMenu
-{
-  background       :url("struct_0004.jpg");
-  box-shadow       :0px 5px 10px rgba(0, 0, 0, 0.2) inset;
-
-  position         :relative;
-  height           :1.8em;
-  border-top       :1px solid gray;
-}
-/*----------------------------------------------------------------------------*/
-div.BarMenuItem
-{
-  color            :#002966; 
-
-  font-family      :calibri,verdana,arial,sans-serif;
-  font-size        :0.9em;
-
-  position         :relative;
-  display          :inline;
-  float            :right;
-  
-  margin           :0px 3px 0px 3px;
-  padding          :5px;
-  cursor           :pointer;
-}
-/*----------------------------------------------------------------------------*/
-div.BarMenuItem:hover, div.BarMenuLeft:hover
-{
-  color            :#660033; 
-  text-decoration  :underline;
-}
-/*----------------------------------------------------------------------------*/
-div.BarMenuItemWindow
-{
-  background       :#E0ECF3;
-  opacity          :0.94;
-
-  font-family      :calibri,verdana,arial,sans-serif;
-  font-size        :0.9em;
-
-  display          :none;
-  margin           :0px 3px 0px 3px;
-  padding          :15px;
-  border           :1px solid #002966;
-//  border-radius    :4px;
-  cursor           :auto;
-  
-  position         :absolute;
-  top              :100%;
-  right            :1%;
-  
-  z-index          :111;
-}
-/*----------------------------------------------------------------------------*/
-div.BarMenuLeft
-{
-  color            :#002966; 
-
-  font-family      :calibri,verdana,arial,sans-serif;
-  font-size        :0.9em;
-
-  position         :relative;
-  display          :inline;
-  float            :left;
-  
-  margin           :0px 3px 0px 3px;
-  padding          :5px;
-  cursor           :pointer;
-}
-/*----------------------------------------------------------------------------*/
-/* Flah Elements                                                              */
-/*----------------------------------------------------------------------------*/
-div.Flash
-{
-  color            :#273327; 
-  background       :url("struct_0004.jpg");
-  position         :relative;
-  left             :0px;
-  top              :0px;
-}
-/*----------------------------------------------------------------------------*/
-/* Login Elements                                                             */
-/*----------------------------------------------------------------------------*/
-div.Login
-{
-  color            :#273327; 
-  background       :url("struct_0004.jpg");
-  position         :relative;
-  left             :0px;
-  top              :0px;
 }
 /*----------------------------------------------------------------------------*/
 /* Stage Menu Elements                                                        */
@@ -242,26 +87,6 @@ div.StageCourtain
 /*----------------------------------------------------------------------------*/
 /* Tirage Elements                                                            */
 /*----------------------------------------------------------------------------*/
-div.Tirage
-{
-  position         :relative;
-  color            :gray; 
-  background       :url("struct_0004.jpg");
-  box-shadow       :0px 5px 10px rgba(0, 0, 0, 0.2) inset;
-  height           :1.7em;
-}
-/*----------------------------------------------------------------------------*/
-div.TirageItem
-{
-  color            :gray; 
-  background       :transparent;
-  font-family      :calibri,verdana,arial,sans-serif;
-  font-size        :0.8em;
-  display          :inline;
-  float            :left;
-  margin           :0px 3px 0px 3px;
-  padding          :5px;
-}
 /*----------------------------------------------------------------------------*/
 /* (c) SIQO css definition                                                    */
 /*----------------------------------------------------------------------------*/

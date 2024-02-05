@@ -11,7 +11,7 @@ import siqo_lib.general         as gen
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER       = 1.00
+_VER       = '1.01'
 _CWD       = os.getcwd()
 
 _PING_LAG  =    2    # Number of hours after which ping is recomended
@@ -58,7 +58,7 @@ class Database:
         #----------------------------------------------------------------------
         # Ak je prazdna, pokusim sa ju vytvorit a inicializovat
         #----------------------------------------------------------------------
-        if autoInit and len(self.tables()) == 0:
+        if autoInit:
             
             self.createDb  (who=self.dtbs)
             self.sSqlScript(who=self.dtbs, fName=f"{self.dtbs}.ini")
@@ -381,6 +381,28 @@ class Database:
             toRet.append(drow)
 
         #----------------------------------------------------------------------
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def selectItem(self, who, sql):
+
+        self.journal.I(f'{who}@{self.dtbs}.selectItem: {sql}')
+        toRet = None
+
+        #----------------------------------------------------------------------
+        # Ziskam raw udaje
+        #----------------------------------------------------------------------
+        rows = self.readDb(who, sql)
+        
+        if type(rows) == int:
+            self.journal.M(f'{who}@{self.dtbs}.selectItem: Method failed', True)
+            self.journal.O(f"{who}@{self.dtbs}.selectItem: '{toRet}'")
+            return toRet
+
+        #----------------------------------------------------------------------
+        toRet  = rows[0][0]
+        
         self.journal.O()
         return toRet
 

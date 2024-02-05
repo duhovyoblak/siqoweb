@@ -17,7 +17,7 @@ import siqo_lib.general         as gen
 import siqo_web.dms             as dms
 
 from   siqo_web.config          import Config
-from   siqo_web.user            import User
+from   siqo_web.user            import User, _ANONYM
 from   siqo_web.base            import Base
 from   siqo_web.forms           import FormLogin
 
@@ -25,7 +25,7 @@ from   siqo_web.forms           import FormLogin
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = 1.00
+_VER      = '1.00'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -46,11 +46,6 @@ class Login(Base):
         
         self.journal.I(f"{self.name}.loadExtra:")
         
-        #----------------------------------------------------------------------
-        # Nastavenie aktivneho elementu
-        #----------------------------------------------------------------------
-        self.setInitId("Login")
-
         #----------------------------------------------------------------------
         # Doplnenie formLogin
         #----------------------------------------------------------------------
@@ -76,29 +71,46 @@ class Login(Base):
         self.journal.I(f"{self.name}.respPost:")
         
         #----------------------------------------------------------------------
-        # Ak je POST, najprv vyhodnotim formular formLogin
+        # Continue as Guest User
+        #----------------------------------------------------------------------
+        if self.formLogin.conti.data:
+                
+                user_id = _ANONYM
+                pasw    = '?'
+                rmbr    = False
+
+                self.user = User(self.journal)
+                self.user.authenticate(user_id, pasw)
+                login_user(self.user, remember=rmbr)
+
+                self.journal.M(f"{self.name}.resp: Continue as Guest User")
+                self.journal.O()
+                return redirect(url_for('homepage'))
+
+        #----------------------------------------------------------------------
+        # User uz je autentifikovany
+        #------------------------------------------------------------------
+        if False and self.user.is_authenticated:
+               
+            self.journal.M(f"{self.name}.respPost: '{self.user.user_id}' is autheticated already")
+            self.journal.O()
+            return redirect(url_for('homepage'))
+
+        #----------------------------------------------------------------------
+        # Vyhodnotim formular formLogin
         #----------------------------------------------------------------------
         if self.formLogin.validate_on_submit():
             
             #------------------------------------------------------------------
-            # User uz je autentifikovany
-            #------------------------------------------------------------------
-            if False and self.user.is_authenticated:
-                
-                self.journal.M(f"{self.name}.respPost: '{self.user.user_id}' is autheticated already")
-                self.journal.O()
-                return redirect(url_for('homepage'))
-
-            #------------------------------------------------------------------
             # Autentifikacia usera podla udajov z formulara
             #------------------------------------------------------------------
-            user = self.formLogin.username.data
-            pasw = self.formLogin.password.data
-            rmbr = self.formLogin.remember.data
+            user_id = self.formLogin.username.data
+            pasw    = self.formLogin.password.data
+            rmbr    = self.formLogin.remember.data
             
             self.user = User(self.journal)
 
-            if not self.user.authenticate(user, pasw):
+            if not self.user.authenticate(user_id, pasw):
                 
                 logout_user()
                 flash('Invalid username or password')
@@ -116,7 +128,7 @@ class Login(Base):
             return redirect(url_for('homepage'))
  
         #----------------------------------------------------------------------
-        # Nie je POST
+        # Default redirect
         #----------------------------------------------------------------------
         self.journal.O()
         return None

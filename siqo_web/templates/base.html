@@ -22,6 +22,10 @@
 <!-- Body -->
 <!---------------------------------------------------------------------------->
 <body>
+    <!------------------------------------------------------JAVASCRIPT INTIT-->
+    <script>InitElement("{{initId}}")</script>
+    {% block js %}{% endblock %}
+
     <!----------------------------------------------------------------HEADER-->
     <div class="Header" id="Header" onclick="ShowElement('Content')">
     
@@ -37,7 +41,7 @@
     <!----------------------------------------------------------------NAVBAR-->
     <div class="BarMenu" id="BarMenu">
     
-        <div class="BarMenuItem" id="BarMenuUser" onclick="ShowElement('Login')">
+        <div class="BarMenuItem" id="BarMenuUser" onclick="url_for('login')">
             {{userName}}
         </div>
 
@@ -60,13 +64,8 @@
         {% endwith %}
     </div>
 
-    <!-----------------------------------------------------------------LOGIN-->
-    <div class="Login" id="Login" style="height:{{height}}px; display:none">
-        {% block login %}{% endblock %}
-    </div>
-    
     <!---------------------------------------------------------------CONTENT-->
-    <div class="Stage" id="Content" style="height:{{height}}px; display:none">
+    <div class="Content" id="Content" style="height:{{height}}px; display:none">
         {% block content %}{% endblock %}
     </div>
 
@@ -89,7 +88,7 @@
     </div>
     
 <!------------------------------------------------------------INITIALISATION-->
-<script>ShowElement("{{initId}}")</script> 
+<script>ShowInitElement()</script> 
 
 <!---------------------------------------------------------------------------->
 </body>

@@ -29,7 +29,8 @@ class FormLogin(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()] )
     remember = BooleanField ('Remember Me')
     
-    submit = SubmitField('Sign In')
+    conti = SubmitField('Continue as Guest User')
+    login = SubmitField('Sign In')
     
 
 

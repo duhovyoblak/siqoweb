@@ -115,7 +115,7 @@ class User(UserMixin, Database):
         self.d_locked  = None
         
     #--------------------------------------------------------------------------
-    def authenticate(self, user_id, pasw):
+    def authenticate(self, user_id, pasw='?'):
         
         self.journal.I(f"{self.user_id}.authenticate: '{user_id}' with '{pasw}'")
         
@@ -131,9 +131,9 @@ class User(UserMixin, Database):
             return False
 
         #----------------------------------------------------------------------
-        # Kontrola hesla
+        # Kontrola hesla alebo _ANONYM
         #----------------------------------------------------------------------
-        if not self.check_password(pasw):
+        if not (user_id==_ANONYM or self.check_password(pasw)):
             self.reset()
             self.journal.M(f"{self.user_id}.authenticate: Invalid credentials")
             self.journal.O()

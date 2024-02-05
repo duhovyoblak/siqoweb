@@ -21,7 +21,7 @@ import siqo_web.views           as views
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = 1.00
+_VER      = '1.00'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False

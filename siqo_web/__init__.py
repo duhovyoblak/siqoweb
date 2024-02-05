@@ -19,7 +19,7 @@ import siqo_web.routes          as rou
 #==============================================================================
 # package's constants & private vars
 #------------------------------------------------------------------------------
-_VER      = 1.00
+_VER      = '1.00'
 _CWD      = os.getcwd()
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 

@@ -2,7 +2,7 @@
 // (c) SIQO PagMan Application management function
 //------------------------------------------------------------------------------
 
-initId = "x"
+initId = "x";
 
 //==============================================================================
 // Bar menu mgmt
@@ -31,7 +31,6 @@ function HideBase()
 {
   // Zatlaci vsetky elementy do pozadia
   document.getElementById("Flash"  ).style.display = "none";
-  document.getElementById("Login"  ).style.display = "none";
   document.getElementById("Content").style.display = "none";
 }
 //------------------------------------------------------------------------------
@@ -49,16 +48,19 @@ function InitElement(id)
   // Flash ma prioritu 1, uz nemozno nastavit na vyssiu prioritu
   if (initId=='Flash') return;
         
-  // Login ma prioritu 2, mozno zvysit iba na Flash
-  if (initId=='Login' && id!='Flash') return;
-        
   // Priorita elem je >= ako existujuce nastavenie, nastavim na elem
   initId = id;
 }
 //------------------------------------------------------------------------------
+function ShowInitElement()
+{
+  ShowElement(initId);
+}
+//------------------------------------------------------------------------------
 function Debug( str )
 {
-  document.getElementById("SubTitle").innerHTML = str;
+  s = document.getElementById("HeaderComment").innerHTML = str;
+  document.getElementById("HeaderComment").innerHTML = s + "," + str;
 }
 //------------------------------------------------------------------------------
 // Koniec skriptu

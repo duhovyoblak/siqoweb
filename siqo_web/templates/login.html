@@ -1,11 +1,20 @@
 {% extends "base.html" %}
 
 <!---------------------------------------------------------------------------->
+<!-- Head -->
+<!---------------------------------------------------------------------------->
+{% block head %}
+
+    <link   href="{{url_for('static', filename='css/page.css')}}" rel="stylesheet" type="text/css">
+
+{% endblock %}
+
+<!---------------------------------------------------------------------------->
 <!-- Body -->
 <!---------------------------------------------------------------------------->
 
-    <!-----------------------------------------------------------------LOGIN-->
-    {% block login %}
+    <!---------------------------------------------------------------CONTENT-->
+    {% block content %}
 	
         <form class="center" action="" method="post" novalidate>
             {{ formLogin.hidden_tag() }}
@@ -19,7 +28,7 @@
                         <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
                   
-                    <script>InitElement("Login")</script>
+                    <script>InitElement("Content")</script>
                   
                 {% endif %}
             </p>
@@ -33,12 +42,14 @@
                         <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
                   
-                    <script>InitElement("Login")</script>
+                    <script>InitElement("Content")</script>
                   
                 {% endif %}
             </p>
+			
             <p>{{ formLogin.remember() }} {{ formLogin.remember.label }}</p>
-            <p>{{ formLogin.submit() }}</p>
+            <p>{{ formLogin.conti(class_="LoginControlBtn") }}</p>
+            <p>{{ formLogin.login(class_="LoginControlBtn") }}</p>
         </form>
 
     {% endblock %}
