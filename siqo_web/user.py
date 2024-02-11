@@ -42,8 +42,6 @@ class User(UserMixin, Database):
         super().__init__(journal, Config.dtbsName, Config.dtbsPath)
 
         #----------------------------------------------------------------------
-        self.tableName = Config.dtbsUser
-
         self.loaded    = False
         self.changed   = False
         self.verified  = False
@@ -201,7 +199,7 @@ class User(UserMixin, Database):
         
         self.journal.I(f"{self.user_id}.load: user_id = '{user_id}'")
         
-        userData = self.readTable(user_id, self.tableName, f" user_id = '{user_id}'")
+        userData = self.readTable(user_id, Config.tabUser, f" user_id = '{user_id}'")
         
         #----------------------------------------------------------------------
         # Skontrolujem existenciu usera
@@ -222,7 +220,7 @@ class User(UserMixin, Database):
         self.lname     = userData[0]['LNAME'    ]
         self.email     = userData[0]['EMAIL'    ]
         self.password  = userData[0]['PASSWORD' ]
-        self.authent   = userData[0]['AUTHENT'  ]
+        self.auth_code = userData[0]['AUTH_CODE']
         self.n_fails   = userData[0]['N_FAILS'  ]
         self.d_created = userData[0]['D_CREATED']
         self.d_changed = userData[0]['D_CHANGED']
@@ -243,7 +241,7 @@ class User(UserMixin, Database):
         #----------------------------------------------------------------------
         if self.changed or force:
             
-            sql = f"""UPDATE {self.tableName}
+            sql = f"""UPDATE {Config.tabUser}
 set
  user_id   = {self.user_id}
 ,c_func    = {self.c_func }
@@ -280,7 +278,7 @@ where user_id = {self.user_id}"""
         
         self.journal.I(f"{self.user_id}.users:")
         
-        userData = self.readTable(self.user_id, self.tableName)
+        userData = self.readTable(self.user_id, Config.tabUser)
         
         #----------------------------------------------------------------------
         # Skontrolujem existenciu udajov

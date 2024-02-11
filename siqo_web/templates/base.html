@@ -30,22 +30,24 @@
     <div class="Header" id="Header" onclick="ShowElement('Content')">
     
         <div class="HeaderTitle" id="HeaderTitle">
-            <h1>{{page['Title']}}</h1>
+            <h1>{{__HEAD__['res']['Title'][lang]}}</h1>
         </div>
         <div class="HeaderComment" id="HeaderComment">
-            <p>{{page['Comment']}}</p>
+            <p>{{__HEAD__['res']['Comment'][lang]}}</p>
         </div>
-        <h4>{{page['SubTitle']}}</h4>
+        <h4>{{__HEAD__['res']['SubTitle'][lang]}}</h4>
     </div>
 
     <!----------------------------------------------------------------NAVBAR-->
     <div class="BarMenu" id="BarMenu">
     
-        <div class="BarMenuItem" id="BarMenuUser" onclick="url_for('login')">
-            {{userName}}
-        </div>
+        {% for barKey, barItem in __NAVB__['res'].items() %}
+        
+            <div class="BarMenuItem" id="{{barKey[]}}">
+		        <a href="{{barItem['URL']}}">{{barItem['SK']}}</a>
+            </div>
 
-        {% block barMenu %}{% endblock %}
+		{% endfor %}
     </div>
 
     <!------------------------------------------------------FLASHED-MESSAGES-->

@@ -15,6 +15,7 @@ _VER       = '1.01'
 _CWD       = os.getcwd()
 
 _PING_LAG  =    2    # Number of hours after which ping is recomended
+_TIMEOUT   =   10    # Default timeout in seconds for SQL statement
 _SQL_WATCH =   10    # Max duration of SQL in seconds without forced journal
 _SQL_BATCH = 1000    # Default data batch for 
 _SQL_SMPL  =  100    # Max first chars from SQL statement for print into journal
@@ -34,7 +35,7 @@ class Database:
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dtbs, path='', autoInit=False):
+    def __init__(self, journal, dtbs, path='', autoInit=False, timeout=_TIMEOUT):
         "Call constructor of Database and initialise it"
         
         journal.I(f"Database({dtbs}).init:")
@@ -42,6 +43,7 @@ class Database:
         self.journal       = journal
         self.path          = path
         self.dtbs          = dtbs
+        self.timeout       = timeout
         
         self.con           = None
         self.cur           = None
@@ -69,11 +71,13 @@ class Database:
     #==========================================================================
     # Internal methods
     #--------------------------------------------------------------------------
-    def openDb(self):
+    def openDb(self, timeout=0):
 
         self.journal.I(f"{self.dtbs}.:openDb")
+        
+        if timeout == 0: timeout = self.timeout
 
-        self.con      = sqlite3.connect(f"{self.path}{self.dtbs}.db")
+        self.con      = sqlite3.connect(f"{self.path}{self.dtbs}.db", timeout)
         self.cur      = self.con.cursor()
         self.isOpen   = True
         self.lastPing = datetime.now(gen._TIME_ZONE)
@@ -403,7 +407,7 @@ class Database:
         #----------------------------------------------------------------------
         toRet  = rows[0][0]
         
-        self.journal.O()
+        self.journal.O(toRet)
         return toRet
 
     #--------------------------------------------------------------------------
@@ -673,6 +677,59 @@ class Database:
             self.journal.O('')
             return -4
 
+    #==========================================================================
+    # Zapisanie journal-u
+    #--------------------------------------------------------------------------
+    def sJournal(self, user, sess='NO_SESS', page='NO_PAGE', obj='NO_OBJ', src='NO_SRC',
+                 act='NONE', res='OK', row=0, lvl=69, stat='', err=''):
+
+        self.journal.I(f"{user}@{self.dtbs}.sJournal:")
+
+        sess = gen.quoted(sess)
+        user = gen.quoted(user)
+        page = gen.quoted(page)
+   
+        obj  = gen.quoted(obj )
+        src  = gen.quoted(src )
+        act  = gen.quoted(act )
+        res  = gen.quoted(res )
+        stat = gen.quoted(stat)
+        err  = gen.quoted(err[:127])
+
+        #----------------------------------------------------------------------
+        # Nacitam aktualnu hodnotu parametra DEBUG LEVEL
+        #----------------------------------------------------------------------
+        debugl = int(self.paramGet('DEBUG LEVEL'))
+
+        #----------------------------------------------------------------------
+        # Zapisem Journal, ak je lvl < $debugl
+        #----------------------------------------------------------------------
+        if lvl < debugl:
+  
+            sql = f"""insert into SJOURNAL
+      ( JOURNAL_SID, D_CREATED, SESSION_ID, USER_ID,  PAGE_ID, OBJ_ID,  SOURCE, C_ACT, C_RES, N_ROWC, N_LVL, STAT, ERR  )
+values( NULL,       DATE('now'),{sess},     {user},   {page},  {obj},   {src},  {act}, {res}, {row},  {lvl},{stat},{err})"""
+  
+            #------------------------------------------------------------------
+            # Kontrola zapisu do DB
+            #------------------------------------------------------------------
+            if self.sSql(user, sql) < 1:
+                self.journal.M(f"{user}@{self.dtbs}.sJournal: Journal failed", True)
+
+        #----------------------------------------------------------------------
+        self.journal.O('')
+        
+    #==========================================================================
+    # Nacitanie hodnoty parametra z DB
+    #--------------------------------------------------------------------------
+    def paramGet(self, key):
+
+        key = gen.quoted(key)
+
+        sql = f"select S_VAL from SPARAMETER where PARAM_ID = {key}"
+         
+        return self.selectItem('PagMan', sql)
+
 #==============================================================================
 # Test cases
 #------------------------------------------------------------------------------
@@ -682,15 +739,17 @@ if __name__ == '__main__':
     journal = SiqoJournal('test-db', debug=5)
 
     from   siqo_web.config          import Config
-    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=True)
+    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=False)
  
     tables     = db.tables()
-    attributes = db.attributes('SUSER')
+    attributes = db.attributes(Config.tabUser)
     views      = db.views()
     indexes    = db.indexes()
-    indexes    = db.indexes('SUSER')
-    users      = db.readTable('who', 'SUSER')
-    palo4      = db.readTable('who', 'SUSER', "user_id = 'palo4'")
+    indexes    = db.indexes(Config.tabUser)
+    users      = db.readTable('who', Config.tabUser)
+    palo4      = db.readTable('who', Config.tabUser, "user_id = 'palo4'")
+    
+    db.sJournal('palo4')
     
 #==============================================================================
 print(f"Database {_VER}")

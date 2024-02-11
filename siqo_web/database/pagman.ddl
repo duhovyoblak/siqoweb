@@ -1,21 +1,21 @@
 /*------------------------------------------------------*/
-/* Table SJOURNAL
+/* Table PM_JOURNAL
 /*------------------------------------------------------*/
-DROP TABLE IF EXISTS SJOURNAL;
+DROP TABLE IF EXISTS PM_JOURNAL;
 
-CREATE TABLE IF NOT EXISTS SJOURNAL (
-   JOURNAL_SID  INTEGER          NOT NULL               /*  Identifikácia záznamu INTEGER PRIMARY KEY will autoincrement */
-  ,D_CREATED    TIMESTAMP        NOT NULL               /*  Čas vzniku záznamu */
-  ,USER_ID      VARCHAR(32)      NOT NULL               /*  User ktorý bol prihlásený pri vzniku záznamu */
-  ,PAGE_ID      VARCHAR(32)      NOT NULL               /*  Identifikácia stránky na ktorej vznikol záznam */
-  ,OBJ_ID       VARCHAR(32)      NOT NULL               /*  Identifikácia objektu */
-  ,SOURCE       VARCHAR(32)      NOT NULL               /*  Metóda, v ktorej záznam vznikol */
-  ,C_ACT        VARCHAR(32)      NOT NULL               /*  Kód akcie */
-  ,C_RES        CHAR(3)          NOT NULL               /*  Výsledok akcie OK/WN/ER */
-  ,N_ROWC       BIGINT(5)        NOT NULL               /*  Počet dotknutých riadkov/objektov */
-  ,N_LVL        SMALLINT         NOT NULL               /*  Závažnosť chybového stavu */
-  ,STAT         VARCHAR(4000)        NULL               /*  Vyhodnocovaný výraz */
-  ,ERR          VARCHAR(128)         NULL               /*  Kód chyby */
+CREATE TABLE IF NOT EXISTS PM_JOURNAL (
+   JOURNAL_SID  INTEGER          NOT NULL                     /*  Identifikácia záznamu INTEGER PRIMARY KEY will autoincrement */
+  ,D_CREATED    TIMESTAMP        NOT NULL                     /*  Čas vzniku záznamu */
+  ,USER_ID      VARCHAR(32)      NOT NULL                     /*  User ktorý bol prihlásený pri vzniku záznamu */
+  ,PAGE_ID      VARCHAR(32)      NOT NULL                     /*  Identifikácia stránky na ktorej vznikol záznam */
+  ,OBJ_ID       VARCHAR(32)      NOT NULL                     /*  Identifikácia objektu */
+  ,SOURCE       VARCHAR(32)      NOT NULL                     /*  Metóda, v ktorej záznam vznikol */
+  ,C_ACT        VARCHAR(32)      NOT NULL                     /*  Kód akcie */
+  ,C_RES        CHAR(3)          NOT NULL                     /*  Výsledok akcie OK/WN/ER */
+  ,N_ROWC       BIGINT(5)        NOT NULL                     /*  Počet dotknutých riadkov/objektov */
+  ,N_LVL        SMALLINT         NOT NULL                     /*  Závažnosť chybového stavu */
+  ,STAT         VARCHAR(4000)        NULL                     /*  Vyhodnocovaný výraz */
+  ,ERR          VARCHAR(128)         NULL                     /*  Kód chyby */
 
   ,PRIMARY KEY (JOURNAL_SID)
 )
@@ -23,12 +23,12 @@ CREATE TABLE IF NOT EXISTS SJOURNAL (
 ;
 
 /*------------------------------------------------------*/
-/* Table SLANGUAGE */
+/* Table PM_LANGUAGE */
 /*------------------------------------------------------*/
-DROP TABLE IF EXISTS SLANGUAGE;
+DROP TABLE IF EXISTS PM_LANGUAGE;
 
-CREATE TABLE IF NOT EXISTS SLANGUAGE (
-   LANG_ID      VARCHAR(32)      NOT NULL               /*  Language code */
+CREATE TABLE IF NOT EXISTS PM_LANGUAGE (
+   LANG_ID      VARCHAR(32)      NOT NULL                     /* Language code */
   ,CODEPAGE     VARCHAR(32)      NOT NULL
   ,NAME         VARCHAR(128)     NOT NULL
   ,D_CREATED    TIMESTAMP        NOT NULL
@@ -39,12 +39,12 @@ CREATE TABLE IF NOT EXISTS SLANGUAGE (
 ;
 
 /*------------------------------------------------------*/
-/* Table SPARAMETER */
+/* Table PM_PARAMETER */
 /*------------------------------------------------------*/
-DROP TABLE IF EXISTS SPARAMETER;
+DROP TABLE IF EXISTS PM_PARAMETER;
 
-CREATE TABLE IF NOT EXISTS SPARAMETER (
-   PARAM_ID     VARCHAR(32)      NOT NULL
+CREATE TABLE IF NOT EXISTS PM_PARAMETER (
+   PARAM_ID     VARCHAR(32)      NOT NULL                     /* Jednoznačná identifikácia parametra */
   ,S_VAL        VARCHAR(256)     NOT NULL
   ,NAME         VARCHAR(128)     NOT NULL
   ,C_FUNC       CHAR(1)          DEFAULT 'A'
@@ -59,18 +59,50 @@ CREATE TABLE IF NOT EXISTS SPARAMETER (
 ;
 
 /*------------------------------------------------------*/
-/* Table SOBJECT */
+/* Table PM_USER */
 /*------------------------------------------------------*/
-DROP TABLE IF EXISTS SOBJECT;
+DROP TABLE IF EXISTS PM_USER;
 
-CREATE TABLE IF NOT EXISTS SOBJECT (
-   PAGE_ID      VARCHAR(32)      NOT NULL
-  ,OBJ_ID       VARCHAR(32)      NOT NULL
-  ,C_FUNC       CHAR(1)          NOT NULL
-  ,NOTES        VARCHAR(4000)        NULL
-  ,D_CREATED    TIMESTAMP        NOT NULL
-  ,D_CHANGED    TIMESTAMP        NOT NULL
-  ,WHO          VARCHAR(32)      DEFAULT 'SIQO'
+CREATE TABLE IF NOT EXISTS PM_USER (
+   USER_ID      VARCHAR(32)      NOT NULL                     /* Jednoznačná dentifikácia usera, Login */
+
+  ,C_TYPE       CHAR(1)          DEFAULT 'P'                  /* User type: A application P person */
+  ,C_FUNC       CHAR(1)          DEFAULT 'L'                  /* Users account status: W waiting for authentification A active L locked D deleted */
+  ,LANG_ID      VARCHAR(32)      DEFAULT 'SK'                 /* Kod jazyka usera. Platí pre všetky aplikácie */
+  ,FNAME        VARCHAR(64)          NULL                     /* First name */
+  ,LNAME        VARCHAR(64)      NOT NULL                     /* Last name */
+  ,EMAIL        VARCHAR(128)         NULL                     /* E-mail address for authentification */
+  ,PASSWORD     VARCHAR(32)      DEFAULT 'heslo'              /* Password hash */
+  ,AUTH_CODE    VARCHAR(128)         NULL                     /* Authentification code */
+  ,N_FAILS      TINYINT          DEFAULT 0                    /* failed connections count */
+  ,D_CREATED    TIMESTAMP        NOT NULL                     /* creations date */
+  ,D_CHANGED    TIMESTAMP        NOT NULL                     /* Date of last connection */
+  ,D_LOCKED     TIMESTAMP            NULL                     /* Meta last chage date */
+  ,WHO          VARCHAR(32)      NOT NULL                     /* User ktorý vykonal ostatnú zmenu */
+
+  ,PRIMARY KEY (USER_ID)
+  ,FOREIGN KEY (LANG_ID)         REFERENCES PM_LANGUAGE(LANG_ID)
+)
+/* Zoznam userov Page managera */
+;
+
+CREATE INDEX FKI_USR_LANG ON PM_USER(LANG_ID);
+
+/*------------------------------------------------------*/
+/* Table PM_OBJECT */
+/*------------------------------------------------------*/
+DROP TABLE IF EXISTS PM_OBJECT;
+
+CREATE TABLE IF NOT EXISTS PM_OBJECT (
+   PAGE_ID      VARCHAR(32)      NOT NULL                     /* Stránka ktorej objekt patrí - časť primárneho kľúča */
+  ,OBJ_ID       VARCHAR(32)      NOT NULL                     /* Jednoznačná identifikácia objektu vrámci stránky - časť primárneho kľúča */
+
+  ,OBJ_PAR      VARCHAR(32)      NOT NULL DEFAULT '__PAGE__'  /* Parent objekt, musí patriť stránke PAGE_ID */
+  ,C_FUNC       CHAR(1)          NOT NULL                     /* Object status A aktívny N neaktívny */
+  ,NOTES        VARCHAR(4000)        NULL                     /* Poznámky k objektu */
+  ,D_CREATED    TIMESTAMP        NOT NULL                     /* Dátum vytvorenia objektu */
+  ,D_CHANGED    TIMESTAMP        NOT NULL                     /* Dátum ostatnej zmeny objektu */
+  ,WHO          VARCHAR(32)      DEFAULT 'SIQO'               /* User ktorý vykonal ostatnú zmenu objektu */
 
   ,PRIMARY KEY (PAGE_ID, OBJ_ID)
 )
@@ -78,197 +110,172 @@ CREATE TABLE IF NOT EXISTS SOBJECT (
 ;
 
 /*------------------------------------------------------*/
-/* Table SOBJ_RESOURCE */
+/* Table PM_OBJ_RESOURCE */
 /*------------------------------------------------------*/
-DROP TABLE IF EXISTS SOBJ_RESOURCE ;
+DROP TABLE IF EXISTS PM_OBJ_RESOURCE ;
 
-CREATE TABLE IF NOT EXISTS SOBJ_RESOURCE (
-   PAGE_ID      VARCHAR(32)      NOT NULL
-  ,OBJ_ID       VARCHAR(32)      NOT NULL
-  ,LANG_ID      VARCHAR(32)      NOT NULL
-  ,S_KEY        VARCHAR(32)      NOT NULL
-  ,S_VAL        VARCHAR(4000)    DEFAULT 'Test string'
-  ,C_TYPE       VARCHAR(8)       DEFAULT 'VAL'
-  ,D_CREATED    TIMESTAMP        NOT NULL
-  ,D_CHANGED    TIMESTAMP            NULL                /*  Meta */
-  ,WHO          VARCHAR(32)      DEFAULT 'SIQO'
+CREATE TABLE IF NOT EXISTS PM_OBJ_RESOURCE (
+   PAGE_ID      VARCHAR(32)      NOT NULL                     /* Stránka ktorej objekt patrí - časť primárneho kľúča */
+  ,OBJ_ID       VARCHAR(32)      NOT NULL                     /* Jednoznačná identifikácia objektu vrámci stránky - časť primárneho kľúča */
+  ,RES_ID       VARCHAR(32)      NOT NULL                     /* Identifikácia resource vrámci objektu - časť primárneho kľúča */
+  ,S_KEY        VARCHAR(32)      NOT NULL                     /* Kľúč resource hodnoty (LANG/TYPE/CLASS/...)- časť primárneho kľúča */
 
-  ,PRIMARY KEY (PAGE_ID, OBJ_ID, LANG_ID, S_KEY)
-  ,FOREIGN KEY (LANG_ID)         REFERENCES SLANGUAGE(LANG_ID)
-  ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES SOBJECT  (PAGE_ID, OBJ_ID)
+  ,C_FUNC       CHAR(1)          NOT NULL                     /* Resource status A aktívny N neaktívny */
+  ,S_VAL        VARCHAR(4000)    DEFAULT 'Test string'        /* Hodnota resource */
+  ,D_CREATED    TIMESTAMP        NOT NULL                     /* Dátum vytvorenia resource */
+  ,D_CHANGED    TIMESTAMP            NULL                     /* Dátum ostatnej zmeny resource */
+  ,WHO          VARCHAR(32)      DEFAULT 'SIQO'               /* User ktorý vykonal ostatnú zmenu objektu */
+
+  ,PRIMARY KEY (PAGE_ID, OBJ_ID, RES_ID, S_KEY)
+  ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES PM_OBJECT (PAGE_ID, OBJ_ID)
 )
 /* Staticka cache literalov a vyhodnotitelnych vyrazov pre kombinaciu PAGE/LANGUAGE/OBJECT */
 ;
 
-CREATE INDEX FKI_RES_LANG ON SOBJ_RESOURCE(LANG_ID);
-CREATE INDEX FKI_RES_OBJ  ON SOBJ_RESOURCE(PAGE_ID, OBJ_ID);
+CREATE INDEX FKI_RES_OBJ  ON PM_OBJ_RESOURCE(PAGE_ID, OBJ_ID);
 
 /*------------------------------------------------------*/
-/* Table SUSER */
+/* Table PM_OBJ_USER_ROLE */
 /*------------------------------------------------------*/
-DROP TABLE IF EXISTS SUSER;
+DROP TABLE IF EXISTS PM_OBJ_USER_ROLE;
 
-CREATE TABLE IF NOT EXISTS SUSER (
-   USER_ID      VARCHAR(32)      NOT NULL                /*  Identifikácia usera, Login */
-  ,C_FUNC       CHAR(1)          DEFAULT 'L'             /*  Users account status: W waiting for authentification A active L locked D deleted */
-  ,LANG_ID      VARCHAR(32)      DEFAULT 'SK'            /*  Kod jazyka usera. Platí pre všetky aplikácie */
-  ,C_TYPE       CHAR(1)          DEFAULT 'P'             /*  Users type:A application P person */
-  ,FNAME        VARCHAR(64)          NULL                /*  First name */
-  ,LNAME        VARCHAR(64)      NOT NULL                /*  Last name */
-  ,EMAIL        VARCHAR(128)         NULL                /*  E-mail address for authentification */
-  ,PASSWORD     VARCHAR(32)      DEFAULT 'heslo'         /*  Password by md5 */
-  ,AUTHENT      VARCHAR(128)         NULL                /*  Authentification code */
-  ,N_FAILS      TINYINT          DEFAULT 0               /*  failed connections count */
-  ,D_CREATED    TIMESTAMP        NOT NULL                /*  creations date */
-  ,D_CHANGED    TIMESTAMP        NOT NULL                /*  Date of last connection */
-  ,D_LOCKED     TIMESTAMP            NULL                /*  Meta last chage date */
-  ,WHO          VARCHAR(32)      NOT NULL                /*  Meta */
-  
-  ,PRIMARY KEY (USER_ID)
-  ,FOREIGN KEY (LANG_ID)         REFERENCES SLANGUAGE(LANG_ID)
-)
-/* Zoznam userov Page managera */
-;
+CREATE TABLE IF NOT EXISTS PM_OBJ_USER_ROLE (
+   PAGE_ID      VARCHAR(32)      DEFAULT 'PAGMAN'             /* Stránka ktorej objekt patrí - časť primárneho kľúča */
+  ,OBJ_ID       VARCHAR(32)      DEFAULT 'PagManObject'       /* Jednoznačná identifikácia objektu vrámci stránky - časť primárneho kľúča */
+  ,USER_ID      VARCHAR(32)      DEFAULT 'Anonymous'          /*  Jednoznačná dentifikácia usera - časť primárneho kľúča */
 
-CREATE INDEX FKI_USR_LANG ON SUSER(LANG_ID);
+  ,S_ROLE       VARCHAR(32)      DEFAULT 'Unknown'            /* Hodnota autorizácie usera k objektu */
+  ,C_FUNC       CHAR(1)          DEFAULT 'A'                  /* Stav autorizacie pre rolu A aktivna N neaktivna */
+  ,D_CREATED    TIMESTAMP        NOT NULL                     /* Dátum vytvorenia autorizácie */
+  ,D_CHANGED    TIMESTAMP        NOT NULL                     /* Dátum ostatnej zmeny autorizácie */
+  ,WHO          VARCHAR(32)      DEFAULT SIQO                 /* User ktorý vykonal ostatnú zmenu objektu */
 
-/*------------------------------------------------------*/
-/* Table SSESSION */
-/*------------------------------------------------------*/
-DROP TABLE IF EXISTS SSESSION;
-
-CREATE TABLE IF NOT EXISTS SSESSION (
-   SESSION_ID   VARCHAR(32)      NOT NULL                /*  Sssion ID */
-  ,C_FUNC       CHAR(1)          DEFAULT 'E'             /*  Stav session A aktívna E exspirovaná R zrušená pre nesúlad NK */
-  ,USER_ADDRESS VARCHAR(32)      DEFAULT 'localhost'     /*  IP adresa klienta, ktorý volá stránku */
-  ,USER_AGENT   VARCHAR(128)     DEFAULT 'NO_AGENT'      /*  Identifikácia agenta (prehliadača), ktorý volá stránku */
-  ,USER_HOST    VARCHAR(128)     DEFAULT 'NO_HOST'
-  ,USER_ID      VARCHAR(32)      DEFAULT 'Anonymous'     /*  User, priradený session */
-  ,PAGE_ID      VARCHAR(32)      DEFAULT 'NO_PAGE'
-  ,LANG_ID      VARCHAR(32)      DEFAULT 'SK'
-  ,D_CREATED    TIMESTAMP        NOT NULL                /*  Čas vzniku session */
-  ,D_CHANGED    TIMESTAMP        NOT NULL                /*  Čas zmeny hodnôt (najmä refresh) session */
-  ,D_CLOSED     TIMESTAMP            NULL                /*  Čas exspirácie a/lebo zrušenia session */
-  ,MESSAGE      VARCHAR(1024)        NULL
-  
-  ,PRIMARY KEY (SESSION_ID)
-  ,FOREIGN KEY (USER_ID)    REFERENCES SUSER (USER_ID)
-)
-;
-
-CREATE INDEX FKI_SESS_USR ON SSESSION(USER_ID);
-
-/*------------------------------------------------------*/
-/* Table SOBJ_USER_ROLE */
-/*------------------------------------------------------*/
-DROP TABLE IF EXISTS SOBJ_USER_ROLE;
-
-CREATE TABLE IF NOT EXISTS SOBJ_USER_ROLE (
-   USER_ID      VARCHAR(32)      DEFAULT 'Anonymous'
-  ,PAGE_ID      VARCHAR(32)      DEFAULT 'PAGMAN'
-  ,OBJ_ID       VARCHAR(32)      DEFAULT 'PagManObject'
-  ,S_ROLE       VARCHAR(32)      DEFAULT 'Unknown'
-  ,C_FUNC       CHAR(1)          DEFAULT 'A'            /*  Stav autorizacie pre rolu A aktivna N neaktivna */
-  ,D_CREATED    TIMESTAMP        NOT NULL
-  ,D_CHANGED    TIMESTAMP        NOT NULL               /*  Meta */
-  ,WHO          VARCHAR(32)      DEFAULT SIQO           /*  Meta */
-  
-  ,PRIMARY KEY (USER_ID, PAGE_ID, OBJ_ID)
-  ,FOREIGN KEY (USER_ID)         REFERENCES SUSER   (USER_ID)
-  ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES SOBJECT (PAGE_ID, OBJ_ID)
+  ,PRIMARY KEY (PAGE_ID, OBJ_ID, USER_ID)
+  ,FOREIGN KEY (USER_ID)         REFERENCES PM_USER   (USER_ID)
+  ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES PM_OBJECT (PAGE_ID, OBJ_ID)
 )
 /*  Autorizacie ROLE pre kombinaciu USER/OBJECT */
 ;
 
-CREATE INDEX FKI_ROL_OBJ ON SOBJ_USER_ROLE(PAGE_ID, OBJ_ID);
+CREATE INDEX FKI_ROL_OBJ ON PM_OBJ_USER_ROLE(PAGE_ID, OBJ_ID);
 
 /*------------------------------------------------------*/
-/* Table SOBJ_CACHE */
+/* Table PM_OBJ_CACHE */
 /*------------------------------------------------------*/
-DROP TABLE IF EXISTS SOBJ_CACHE;
+DROP TABLE IF EXISTS PM_OBJ_CACHE;
 
-CREATE TABLE IF NOT EXISTS SOBJ_CACHE (
-   USER_ID      VARCHAR(32)      DEFAULT 'Anonymous'
-  ,PAGE_ID      VARCHAR(32)      NOT NULL
-  ,OBJ_ID       VARCHAR(32)      NOT NULL
-  ,S_KEY        VARCHAR(32)      NOT NULL               /*  Kluc hodnoty */
-  ,S_VAL        VARCHAR(4000)    NOT NULL               /*  Hodnota kluca */
-  ,D_CHANGED    TIMESTAMP        NOT NULL               /*  Meta */
-  
-  ,PRIMARY KEY (USER_ID, PAGE_ID, OBJ_ID, S_KEY)
-  ,FOREIGN KEY (USER_ID)         REFERENCES SUSER (USER_ID)
-  ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES SOBJECT (PAGE_ID, OBJ_ID)
+CREATE TABLE IF NOT EXISTS PM_OBJ_CACHE (
+   PAGE_ID      VARCHAR(32)      NOT NULL                     /* Stránka ktorej objekt patrí - časť primárneho kľúča */
+  ,OBJ_ID       VARCHAR(32)      NOT NULL                     /* Jednoznačná identifikácia objektu vrámci stránky - časť primárneho kľúča */
+  ,USER_ID      VARCHAR(32)      DEFAULT 'Anonymous'          /* Jednoznačná dentifikácia usera - časť primárneho kľúča */
+  ,S_KEY        VARCHAR(32)      NOT NULL                     /* Kľúč hodnoty - časť primárneho kľúča */
+
+  ,S_VAL        VARCHAR(4000)    NOT NULL                     /* Hodnota cache */
+  ,D_CHANGED    TIMESTAMP        NOT NULL                     /* Dátum ostatnej zmeny cache */
+
+  ,PRIMARY KEY (PAGE_ID, OBJ_ID, USER_ID, S_KEY)
+  ,FOREIGN KEY (USER_ID)         REFERENCES PM_USER (USER_ID)
+  ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES PM_OBJECT (PAGE_ID, OBJ_ID)
 )
 /* Cache OBJECT/USER na perzistentné ukladanie hodnôt, vložených userom alebo získaných v priebehu práce s aplikáciou. Cache neexspiruje, ale prepisuje sa pri každom volaní */
 ;
 
-CREATE INDEX FKI_CACH_USR ON SOBJ_CACHE(USER_ID);
-CREATE INDEX FKI_CACH_OBJ ON SOBJ_CACHE(PAGE_ID, OBJ_ID);
+CREATE INDEX FKI_CACH_USR ON PM_OBJ_CACHE(USER_ID);
+CREATE INDEX FKI_CACH_OBJ ON PM_OBJ_CACHE(PAGE_ID, OBJ_ID);
 
 /*------------------------------------------------------*/
-/* Table SDMS */
+/* Table PM_SESSION */
 /*------------------------------------------------------*/
-DROP TABLE IF EXISTS SDMS;
+DROP TABLE IF EXISTS PM_SESSION;
 
-CREATE TABLE IF NOT EXISTS SDMS (
-   DOC_ID       INTEGER          NOT NULL               /*  ID dokumentu INTEGER PRIMARY KEY will autoincrement */
-  ,C_FUNC       CHAR(1)          DEFAULT 'E'            /*  Satv dokumentu */
-  ,USER_ID      VARCHAR(32)      NOT NULL               /*  Vlastnik dokumentu */
-  ,D_CREATED    TIMESTAMP        NOT NULL               /*  Datum vlozenia do DMS */
-  ,C_TYPE       VARCHAR(8)       NOT NULL               /*  Typ dokumentu - fileextension */
-  ,FILENAME     VARCHAR(128)     NOT NULL               /*  Nazov suboru v DMS */
-  ,ORIGNAME     VARCHAR(128)     NOT NULL               /*  Nazov originalneho suboru */
-  ,THUMBNAME    VARCHAR(128)         NULL               /*  Nazov suboru nahladu dokumentu */
-  ,N_SIZE       INT                  NULL               /*  Velkost dokumentu v Byte */
-  ,C_PUB        CHAR(1)          DEFAULT 'N'            /*  Priznak PUBLIC (Y/N) */
-  ,TITLE        VARCHAR(128)         NULL               /*  Nazov dokumentu */
-  ,NOTES        VARCHAR(4000)        NULL               /*  Poznamky k dokumentu */
-  ,D_VALID      INT                  NULL               /*  Datum zaciatku platnosti dokumentu */
-  ,D_EXPIRY     INT                  NULL               /*  Datum konca platnosti dokumentu */
-  ,MD5          VARCHAR(64)          NULL               /*  Hash of the file */
-  
+CREATE TABLE IF NOT EXISTS PM_SESSION (
+   SESSION_ID   VARCHAR(32)      NOT NULL                     /* Sssion ID */
+
+  ,C_FUNC       CHAR(1)          DEFAULT 'E'                  /* Stav session A aktívna E exspirovaná R zrušená pre nesúlad NK */
+  ,USER_ADDRESS VARCHAR(32)      DEFAULT 'localhost'          /* IP adresa klienta, ktorý volá stránku */
+  ,USER_AGENT   VARCHAR(128)     DEFAULT 'NO_AGENT'           /* Identifikácia agenta (prehliadača), ktorý volá stránku */
+  ,USER_HOST    VARCHAR(128)     DEFAULT 'NO_HOST'
+  ,USER_ID      VARCHAR(32)      DEFAULT 'Anonymous'          /* User, priradený session */
+  ,PAGE_ID      VARCHAR(32)      DEFAULT 'NO_PAGE'
+  ,LANG_ID      VARCHAR(32)      DEFAULT 'SK'
+  ,D_CREATED    TIMESTAMP        NOT NULL                     /* Čas vzniku session */
+  ,D_CHANGED    TIMESTAMP        NOT NULL                     /* Čas zmeny hodnôt (najmä refresh) session */
+  ,D_CLOSED     TIMESTAMP            NULL                     /* Čas exspirácie a/lebo zrušenia session */
+  ,MESSAGE      VARCHAR(1024)        NULL
+
+  ,PRIMARY KEY (SESSION_ID)
+  ,FOREIGN KEY (USER_ID)    REFERENCES PM_USER (USER_ID)
+)
+;
+
+CREATE INDEX FKI_SESS_USR ON PM_SESSION(USER_ID);
+
+/*------------------------------------------------------*/
+/* Table PM_DMS */
+/*------------------------------------------------------*/
+DROP TABLE IF EXISTS PM_DMS;
+
+CREATE TABLE IF NOT EXISTS PM_DMS (
+   DOC_ID       INTEGER          NOT NULL                     /* ID dokumentu INTEGER PRIMARY KEY will autoincrement */
+
+  ,C_FUNC       CHAR(1)          DEFAULT 'E'                  /* Stav dokumentu E entered A aktívny D N */
+  ,USER_ID      VARCHAR(32)      NOT NULL                     /* Vlastnik dokumentu */
+  ,D_CREATED    TIMESTAMP        NOT NULL                     /* Datum vlozenia do DMS */
+  ,C_TYPE       VARCHAR(8)       NOT NULL                     /* Typ dokumentu - fileextension */
+  ,FILENAME     VARCHAR(128)     NOT NULL                     /* Nazov suboru v DMS */
+  ,ORIGNAME     VARCHAR(128)     NOT NULL                     /* Nazov originalneho suboru */
+  ,THUMBNAME    VARCHAR(128)         NULL                     /* Nazov suboru nahladu dokumentu */
+  ,N_SIZE       INT                  NULL                     /* Velkost dokumentu v Byte */
+  ,C_PUB        CHAR(1)          DEFAULT 'N'                  /* Priznak PUBLIC (Y/N) */
+  ,TITLE        VARCHAR(128)         NULL                     /* Nazov dokumentu */
+  ,NOTES        VARCHAR(4000)        NULL                     /* Poznamky k dokumentu */
+  ,D_VALID      INT                  NULL                     /* Datum zaciatku platnosti dokumentu */
+  ,D_EXPIRY     INT                  NULL                     /* Datum konca platnosti dokumentu */
+  ,MD5          VARCHAR(64)          NULL                     /* Hash of the file */
+
   ,PRIMARY KEY (DOC_ID)
-  ,FOREIGN KEY (USER_ID)         REFERENCES SUSER (USER_ID)
+  ,FOREIGN KEY (USER_ID)         REFERENCES PM_USER (USER_ID)
 )
 /* Master tabulka Data Management Systemu */
 ;
 
-CREATE INDEX FKI_DMS_USR ON SDMS(USER_ID);
+CREATE INDEX FKI_DMS_USR ON PM_DMS(USER_ID);
 
 /*------------------------------------------------------*/
-/* Table SITEM */
+/* Table PM_FORUM */
 /*------------------------------------------------------*/
-DROP TABLE IF EXISTS SITEM;
+DROP TABLE IF EXISTS PM_FORUM;
 
-CREATE TABLE IF NOT EXISTS SITEM (
-   ITEM_ID      INTEGER              NOT NULL           /*  Identifikácia Itemu. INTEGER PRIMARY KEY will autoincrement */
-  ,PARENT_ID    INT                  DEFAULT 0          /*  Identifikácia Itemu-rodiča */
-  ,USER_ID      VARCHAR(32)          NOT NULL           /*  Majiteľ itemu */
-  ,FORUM_ID     VARCHAR(32)          DEFAULT 'SYSTEM'   /*  Identifikacia fora */
-  ,C_FUNC       CHAR(1)              DEFAULT 'N'        /*  Funkčnosť Itemu (New, Active, Deleted) */
-  ,N_LVL        INT                  DEFAULT 0          /*  Úroveň vnorenia do stromovej štruktúry */
-  ,TITLE        VARCHAR(128)             NULL           /*  Názov Itemu */
-  ,NARRATOR     VARCHAR(128)             NULL           /*  Rozprávač - kontext */
-  ,ITEM         VARCHAR(16383)       NOT NULL           /*  Obsah Itemu */
-  ,D_CREATED    TIMESTAMP            NOT NULL           /*  Dátum vytvorenia Itemu */
-  ,D_CHANGED    TIMESTAMP            NOT NULL           /*  Dátum poslednej zmeny Itemu */
-  ,WHO          VARCHAR(32)          NOT NULL           /*  User ID, ktorý vykonal poslednú zmenu */
+CREATE TABLE IF NOT EXISTS PM_FORUM (
+   ITEM_ID      INTEGER              NOT NULL                 /* Identifikácia Itemu. INTEGER PRIMARY KEY will autoincrement */
+   
+  ,PARENT_ID    INT                  DEFAULT 0                /* Identifikácia Itemu-rodiča */
+  ,USER_ID      VARCHAR(32)          NOT NULL                 /* Majiteľ itemu */
+  ,FORUM_ID     VARCHAR(32)          DEFAULT 'SYSTEM'         /* Identifikacia fora */
+  ,C_FUNC       CHAR(1)              DEFAULT 'N'              /* Funkčnosť Itemu (New, Active, Deleted) */
+  ,N_LVL        INT                  DEFAULT 0                /* Úroveň vnorenia do stromovej štruktúry */
+  ,TITLE        VARCHAR(128)             NULL                 /* Názov Itemu */
+  ,NARRATOR     VARCHAR(128)             NULL                 /* Rozprávač - kontext */
+  ,ITEM         VARCHAR(16383)       NOT NULL                 /* Obsah Itemu */
+  ,D_CREATED    TIMESTAMP            NOT NULL                 /* Dátum vytvorenia Itemu */
+  ,D_CHANGED    TIMESTAMP            NOT NULL                 /* Dátum poslednej zmeny Itemu */
+  ,WHO          VARCHAR(32)          NOT NULL                 /* User ID, ktorý vykonal poslednú zmenu */
 
   ,PRIMARY KEY (ITEM_ID)
-  ,FOREIGN KEY (USER_ID)    REFERENCES SUSER (USER_ID)
+  ,FOREIGN KEY (USER_ID)    REFERENCES PM_USER (USER_ID)
 )
 /* Zoznam textov usporiadanych do vlaken */
 ;
 
-CREATE INDEX FKI_ITM_USR ON SITEM(USER_ID);
+CREATE INDEX FKI_ITM_USR ON PM_FORUM(USER_ID);
 
 /*------------------------------------------------------*/
-/* Table SBACKUP */
+/* Table PM_BACKUP */
 /*------------------------------------------------------*/
-DROP TABLE IF EXISTS SBACKUP;
+DROP TABLE IF EXISTS PM_BACKUP;
 
-CREATE TABLE IF NOT EXISTS SBACKUP (
-   BACKUP_ID    INTEGER              NOT NULL           /* INTEGER PRIMARY KEY will autoincrement */
+CREATE TABLE IF NOT EXISTS PM_BACKUP (
+   BACKUP_ID    INTEGER              NOT NULL                 /* INTEGER PRIMARY KEY will autoincrement */
   ,TITLE        VARCHAR(128)         NOT NULL
   ,D_CREATED    VARCHAR(45)          NOT NULL
   ,C_FUNC       CHAR(1)              NOT NULL

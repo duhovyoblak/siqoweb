@@ -88,6 +88,17 @@ class Login(Base):
                 return redirect(url_for('homepage'))
 
         #----------------------------------------------------------------------
+        # Logout
+        #----------------------------------------------------------------------
+        if self.formLogin.logout.data:
+                
+                logout_user()
+            
+                self.journal.M(f"{self.name}.resp: Logout")
+                self.journal.O()
+                return redirect(url_for('homepage'))
+
+        #----------------------------------------------------------------------
         # User uz je autentifikovany
         #------------------------------------------------------------------
         if False and self.user.is_authenticated:

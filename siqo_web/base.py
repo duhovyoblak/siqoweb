@@ -16,9 +16,9 @@ import siqo_lib.general         as gen
 
 import siqo_web.dms             as dms
 
-from   siqo_web.database        import Database
 from   siqo_web.config          import Config
 from   siqo_web.user            import User
+from   siqo_web.object          import Object
 from   siqo_web.forms           import FormLogin
 
 
@@ -37,29 +37,43 @@ else                        : _IS_TEST = False
 #==============================================================================
 # Base
 #------------------------------------------------------------------------------
-class Base(Database):
+class Base(Object):
     
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, name, env, height, template="base.html"):
+    def __init__(self, journal, page, env, height, template="base.html"):
         "Call constructor of Base and initialise it"
         
-        journal.I(f"Base({name}).init:")
+        journal.I(f"Base({page}).init:")
+        
+        user = current_user
+        print(type(user), ', ', user)
+        
+        if user is not None and str(user)[:5]=='User>': 
+            
+            userId   = user.user_id
+            userName = user.userName()
+            lang     = user.lang_id
+            
+        else: 
+            userId   = 'Anonymous'
+            userName = 'Guest User'
+            lang     = 'SK'
 
         #----------------------------------------------------------------------
         # Konstruktor Database
         #----------------------------------------------------------------------
-        super().__init__(journal, Config.dtbsName, Config.dtbsPath)
+        super().__init__(journal, page, userId, objPar='__ROOT__', rMode= 'STRICT', crForm='Y', lvl=5)
 
         #----------------------------------------------------------------------
         # Definicia stranky
         #----------------------------------------------------------------------
         self.journal       = journal
-        self.name          = name
-        self.resTable      = Config.dtbsRes
         self.loaded        = False
         self.env           = env
+        self.userName      = userName
+        self.lang          = lang
         self.template      = template
         self.height        = height
         self.initId        = "Content"
@@ -68,9 +82,7 @@ class Base(Database):
         #----------------------------------------------------------------------
         # Aktualny user a jazyk
         #----------------------------------------------------------------------
-        self.lang = 'SK'
-        self.user = current_user
-        journal.M(f"Base({name}).init: user = '{self.user}'")
+        journal.M(f"Base({self.page}).init: user = '{self.user}'")
 
         #----------------------------------------------------------------------
         # Inicializacia statickeho contextu
@@ -80,8 +92,8 @@ class Base(Database):
         #----------------------------------------------------------------------
         # Doplnenie dynamickeho contextu
         #----------------------------------------------------------------------
-        self.page   = self.loadPage()
-        self.addContext(self.page)
+        self.pageRes   = self.loadPageResource()
+        self.addContext(self.pageRes)
 
         self.cont   = self.loadContent()
         self.addContext(self.cont)
@@ -99,7 +111,7 @@ class Base(Database):
     #--------------------------------------------------------------------------
     def loadExtra(self):
         
-        self.journal.I(f"{self.name}.initExtra:")
+        self.journal.I(f"{self.page}.initExtra:")
         
         self.journal.O()
         return {}
@@ -107,51 +119,52 @@ class Base(Database):
     #--------------------------------------------------------------------------
     def loadContent(self):
         
-        self.journal.I(f"{self.name}.loadContent:")
+        self.journal.I(f"{self.page}.loadContent:")
         
         self.journal.O()
         return {'content':[{'key':'val'}]}
 
     #--------------------------------------------------------------------------
-    def loadPage(self):
+    def loadPageResource(self):
         
-        self.journal.I(f"{self.name}.loadPage:")
+        self.journal.I(f"{self.page}.loadPageResource:")
         
-        sql = f"""SELECT S_KEY, S_VAL, C_TYPE FROM {self.resTable} 
-                  WHERE 
-                  PAGE_ID = '{self.name}' AND OBJ_ID = '__PAGE__' AND LANG_ID = '{self.lang}'"""
-        
-        rows = self.readDb(self.name, sql)
+        res = self.objectGet(self.user)
         
         #----------------------------------------------------------------------
-        # Skontrolujem existenciu dat
+        # Default polozka v NavBar je User
         #----------------------------------------------------------------------
-        if type(rows)==int:
+        if 'res' not in res['__NAVB__'].keys(): res['__NAVB__']['res'] = {}
+
+        if 'User' not in res['__NAVB__']['res'].keys():
             
-            self.loaded = False
-            self.journal.M(f"{self.name}.loadPage: Method failed", True)
-            self.journal.O()
-            return None
-        
-        #----------------------------------------------------------------------
-        # Skonvertujem data
-        #----------------------------------------------------------------------
-        dic = {}
-        
-        for row in rows:
-            dic[row[0]] = row[1]
+            #------------------------------------------------------------------
+            # Polozku 'User' umiestnim na zaciatok dict a doplnim z res['__NAVB__']['res']
+            #------------------------------------------------------------------
+            dic = {"User":{"SK":self.userName, "URL":"login"}}
+            
+            for key, val in res['__NAVB__']['res'].items():
+                dic[key] = val
+            
+            #------------------------------------------------------------------
+            # Resource s doplnenym 'User' vratim do res['__NAVB__']['res']
+            #------------------------------------------------------------------
+            res['__NAVB__']['res'] = dic
         
         #----------------------------------------------------------------------
         self.loaded = True
+        self.journal.M(f"{self.name}.loadPageResource: {gen.dictString(res)}")
+        
+        #----------------------------------------------------------------------
         self.journal.O()
-        return {'page':dic}
+        return res
     
     #==========================================================================
     # Response generators
     #--------------------------------------------------------------------------
     def respPost(self):
      
-        self.journal.I(f"{self.name}.respPost: Default None post response")
+        self.journal.I(f"{self.page}.respPost: Default None post response")
         
         self.journal.O()
         return None
@@ -159,7 +172,7 @@ class Base(Database):
     #--------------------------------------------------------------------------
     def respGet(self):
      
-        self.journal.I(f"{self.name}.respGet: Default html get response from template='{self.template}'")
+        self.journal.I(f"{self.page}.respGet: Default html get response from template='{self.template}'")
         
         template = self.env.get_template(self.template)
         self.journal.M(f"{self.name}.resp: template loaded")
@@ -177,7 +190,7 @@ class Base(Database):
     #--------------------------------------------------------------------------
     def resp(self):
      
-        self.journal.I(f"{self.name}.resp:")
+        self.journal.I(f"{self.page}.resp:")
         
         #----------------------------------------------------------------------
         # Skontrolujem stav stranky, vyskocim ak nie je pripravena
@@ -213,7 +226,7 @@ class Base(Database):
     def renderItem(self, item):
         "Returns HTML for json-encoded item"
     
-        self.journal.I(f"{self.name}.renderItem:")
+        self.journal.I(f"{self.page}.renderItem:")
 
         toRet = ""
     
@@ -226,7 +239,7 @@ class Base(Database):
     def initContext(self):
         "Creates context"
     
-        self.journal.I(f"{self.name}.initContext:")
+        self.journal.I(f"{self.page}.initContext:")
         self.context = {}
 
         #----------------------------------------------------------------------
@@ -241,6 +254,7 @@ class Base(Database):
         #----------------------------------------------------------------------
         self.context["height"       ]= self.height
         self.context["initId"       ]= self.initId
+        self.context["lang"         ]= self.lang
 
         #----------------------------------------------------------------------
         # Navigation Bar
@@ -256,28 +270,40 @@ class Base(Database):
     def addContext(self, cont):
         "Add optional context"
         
-        self.journal.I(f"{self.name}.addContext: {cont.keys()}")
+        self.journal.I(f"{self.page}.addContext: {cont.keys()}")
         self.context.update(cont)
         self.journal.O()
 
     #--------------------------------------------------------------------------
     def addFlash(self, mess):
 
-        self.journal.I(f"{self.name}.addFlash: {mess}")
+        self.journal.I(f"{self.page}.addFlash: {mess}")
         flash(mess)
         self.journal.O()
 
     #--------------------------------------------------------------------------
     def setInitId(self, initId):
 
-        self.journal.I(f"{self.name}.initId: {initId}")
+        self.journal.I(f"{self.page}.initId: {initId}")
         self.addContext({"initId":initId})
         self.journal.O()
 
 #==============================================================================
 # Test cases
 #------------------------------------------------------------------------------
+if __name__ == '__main__':
+    
+    from   siqo_lib                 import SiqoJournal
+    journal = SiqoJournal('test-base', debug=5)
+    
+    env = Environment(
+    
+     autoescape = select_autoescape()
+    ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
+    )
 
+    page = Base(journal, 'Homepage', env, 700)
+    
 #==============================================================================
 print(f"Base {_VER}")
 

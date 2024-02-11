@@ -48,8 +48,9 @@
             </p>
 			
             <p>{{ formLogin.remember() }} {{ formLogin.remember.label }}</p>
-            <p>{{ formLogin.conti(class_="LoginControlBtn") }}</p>
-            <p>{{ formLogin.login(class_="LoginControlBtn") }}</p>
+            <p>{{ formLogin.conti(class_="LoginControlBtn") }}
+               {{ formLogin.logout(class_="LoginControlBtn") }}
+               {{ formLogin.login(class_="LoginControlBtn") }}</p>
         </form>
 
     {% endblock %}

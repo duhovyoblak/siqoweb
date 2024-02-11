@@ -25,11 +25,16 @@ class Config:
     dtbsPath = f"{cwd}/database/"
     dtbsName = "pagman"
     
-    tabUser     = "SUSER"
-    tabObj      = "SOBJECT"
-    tabObjRes   = "SOBJ_RESOURCE"
-    tabObjRole  = "SOBJ_USER_ROLE"
-    tabObjCache = "SOBJ_CACHE"
+    tabParam    = "PM_PARAM"
+    
+    tabUser     = "PM_USER"
+    tabObj      = "PM_OBJECT"
+    tabObjRes   = "PM_OBJ_RESOURCE"
+    tabObjRole  = "PM_OBJ_USER_ROLE"
+    tabObjCache = "PM_OBJ_CACHE"
+
+    tabCdm      = "PM_CDM"
+    tabForum    = "PM_FORUM"
 
     if 'wsiqo-secret-key' in os.environ: SECRET_KEY = os.environ.get('wsiqo-secret-key')
     else                               : SECRET_KEY = "ekjwn47wtyqgpUHP43UGH3"
