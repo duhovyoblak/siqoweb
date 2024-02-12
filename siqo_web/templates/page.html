@@ -4,7 +4,12 @@
 <!-- Head -->
 <!---------------------------------------------------------------------------->
 
-{% block head %}{% endblock %}
+{% block head %}
+
+    <link   href="{{url_for('static', filename='css/page.css' )}}" rel="stylesheet" type="text/css">
+    <script src= "{{url_for('static', filename='js/page.js'   )}}" type="text/javascript"></script>
+
+{% endblock %}
 
 <!---------------------------------------------------------------------------->
 <!-- Body -->
@@ -14,27 +19,38 @@
     {% block barMenu %}{% endblock %}
 
     <!---------------------------------------------------------------CONTENT-->
-	{% block content %}
+    {% block content %}
 
         <!----------------------------------------------------STAGE-SELECTOR-->
         <div class="StageSelector">
-        
-            {% for sel in selectors %}
-                <div class="StageSelectorItem">
-                    <input type="radio" name="SSB" id={{sel['id']}} value={{sel['value']}} onclick={{sel['onclick']}}>
-                    <label for={{sel['id']}}>{{sel['title']}}</label><br>
-                </div>
+
+            {% for stage, stageDef in __STAG__['obj'].items() %}
+			
+                {% for ncSel, res in stageDef['obj'].items() %}
+
+                    {% if ncSel.startswith('SName') %}
+
+                        {% for id, item in res['res'].items() %}
+
+                            <div class="StageSelectorItem">
+                                <input type="radio" name="SSB" id="{{id}}" value="{{item['POS']}}" onclick="ShowStage('{{item['POS']}}')">
+                                <label for={{id}}>{{item[lang]}}</label><br>
+                            </div>
+
+                        {% endfor %}
+                    {% endif %}                     
+                {% endfor %}
             {% endfor %}
+
         </div>
 
         <!-----------------------------------------------------STAGE-CONTENT-->
-        {% for pnl in panels %}
-            <div class="StagePanel" name="SP" id={{pnl['id']}} style={{pnl['style']}}>
+        {% for stage, stageDef in __STAG__['obj'].items() %}
+ 
 
-                <h2>{{pnl['header']}}</h2>
-                {{pnl['item']}}
-            </div>
+
         {% endfor %}
+
     {% endblock %}
 
 <!---------------------------------------------------------------------------->

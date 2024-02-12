@@ -307,6 +307,17 @@ if __name__ == '__main__':
 #==============================================================================
 print(f"Base {_VER}")
 
+"""for stage, stageDef in stages['obj'].items():
+    print(stage, ',', stageDef)
+    
+    for ncSel, res in stageDef['obj'].items():
+        print('--',ncSel)
+        
+        if ncSel.startswith('SName'):
+            
+            for key, item in res['res'].items():
+                print('-------->', key, '-', item)
+"""
 #==============================================================================
 #                              END OF FILE
 #------------------------------------------------------------------------------
