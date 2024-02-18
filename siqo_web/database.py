@@ -749,6 +749,8 @@ if __name__ == '__main__':
     users      = db.readTable('who', Config.tabUser)
     palo4      = db.readTable('who', Config.tabUser, "user_id = 'palo4'")
     
+    #db.sSqlScript('ja', 'pagman.ini')
+    
     db.sJournal('palo4')
     
 #==============================================================================

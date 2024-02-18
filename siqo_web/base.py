@@ -16,6 +16,8 @@ import siqo_lib.general         as gen
 
 import siqo_web.dms             as dms
 
+from   siqo_web                 import html
+
 from   siqo_web.config          import Config
 from   siqo_web.user            import User
 from   siqo_web.object          import Object
@@ -34,6 +36,57 @@ else                        : _IS_TEST = False
 # package's variables
 #------------------------------------------------------------------------------
 
+
+#==============================================================================
+# package's methods
+#------------------------------------------------------------------------------
+def renderItem(item, lang):
+    "Returns HTML for json-encoded item"
+    
+    if 'type' in item.keys(): typ = item['type']
+    else                    : typ = 'PARA'
+    
+    toRet = ''
+
+    #--------------------------------------------------------------------------
+    # Rozlisi Backward, Forward alebo nieco ine
+    #--------------------------------------------------------------------------
+    if False: return toRet
+
+    #--------------------------------------------------------------------------
+    # Skusim vsetky zname typy
+    #--------------------------------------------------------------------------
+    elif typ == 'LINK'         : toRet = html.inputButton(item)
+    elif typ == 'CHECKBOX'     : toRet = html.inputCheckBox(item)
+    elif typ == 'RADIO'        : toRet = html.inputRadio(item)
+    elif typ == 'TEXT'         : toRet = html.inputText(item)
+
+    elif typ == 'LABEL'        : toRet = html.label(item)
+    elif typ == 'PARA'         : toRet = html.p(item)
+    elif typ == 'P-START'      : toRet = html.pStart(item)
+    elif typ == 'P-CONT'       : toRet = html.pCont(item)
+    elif typ == 'P-STOP'       : toRet = html.pStop(item)
+    elif typ == 'IMAGE'        : toRet = html.image(item)
+
+    elif typ == 'NEWLINE'      : toRet = html.newLine()
+    elif typ == 'BREAK'        : toRet = html.breakLine()
+    elif typ == 'SPLIT'        : toRet = html.split(item)
+    elif typ == 'FUNC'         : toRet = html.fcia(item)
+    elif typ == 'HTML'         : toRet = html.html(item)
+
+    elif typ == 'HEADTITLE'    : toRet = html.headTtile(item, lang)
+    elif typ == 'HEADSUBTIT'   : toRet = html.headSubTitle(item, lang)
+    elif typ == 'HEADCOMMENT'  : toRet = html.headComment(item, lang)
+
+    elif typ == 'BARMENUITEM'  : toRet = html.barMenuItem(item, lang)
+
+    elif typ == 'STAGESELECTOR': toRet = html.stageSelector(item, lang)
+
+    elif typ == 'DIVSTART'     : toRet = html.divStart(item)
+    elif typ == 'DIVSTOP'      : toRet = html.divStop(item)
+    
+    return toRet
+    
 #==============================================================================
 # Base
 #------------------------------------------------------------------------------
@@ -48,7 +101,6 @@ class Base(Object):
         journal.I(f"Base({page}).init:")
         
         user = current_user
-        print(type(user), ', ', user)
         
         if user is not None and str(user)[:5]=='User>': 
             
@@ -82,7 +134,8 @@ class Base(Object):
         #----------------------------------------------------------------------
         # Aktualny user a jazyk
         #----------------------------------------------------------------------
-        journal.M(f"Base({self.page}).init: user = '{self.user}'")
+        journal.M(f"Base({self.page}).init: user = '{userName}'")
+        journal.M(f"Base({self.page}).init: lang = '{self.lang}'")
 
         #----------------------------------------------------------------------
         # Inicializacia statickeho contextu
@@ -130,34 +183,81 @@ class Base(Object):
         self.journal.I(f"{self.page}.loadPageResource:")
         
         res = self.objectGet(self.user)
+        toRet = {'heads':{}, 'navs':{}, 'stages':{'sels':{}, 'cnts':{}}}
         
         #----------------------------------------------------------------------
-        # Default polozka v NavBar je User
+        # Heads items
         #----------------------------------------------------------------------
-        if 'res' not in res['__NAVB__'].keys(): res['__NAVB__']['res'] = {}
+        if '__HEAD__' in res.keys() and 'res' in res['__HEAD__'].keys():
+            
+            for key, item in res['__HEAD__']['res'].items():
+                
+                if   key == 'Title'   : item['type'] = 'HEADTITLE'
+                elif key == 'SubTitle': item['type'] = 'HEADSUBTIT'
+                elif key == 'Comment' : item['type'] = 'HEADCOMMENT'
+        
+                toRet['heads'][key] = item
 
-        if 'User' not in res['__NAVB__']['res'].keys():
+        #----------------------------------------------------------------------
+        # NavBar items
+        #----------------------------------------------------------------------
+        if '__NAVB__' in res.keys() and 'res' in res['__NAVB__'].keys():
+
+            #------------------------------------------------------------------
+            # Default polozka v NavBar je User
+            #------------------------------------------------------------------
+            if 'User' not in res['__NAVB__']['res'].keys():
+            
+                #--------------------------------------------------------------
+                # Polozku 'User' umiestnim na zaciatok dict a doplnim z res['__NAVB__']['res']
+                #------------------------------------------------------------------
+                dic = {"User":{"type":"BARMENUITEM", "SK":self.userName, "URL":"login"}}
+            
+                for key, item in res['__NAVB__']['res'].items():
+                    
+                    item["type"] = "BARMENUITEM"
+                    
+                    dic[key] = item
             
             #------------------------------------------------------------------
-            # Polozku 'User' umiestnim na zaciatok dict a doplnim z res['__NAVB__']['res']
+            # Resource s doplnenym 'User' vlozim do Navs
             #------------------------------------------------------------------
-            dic = {"User":{"SK":self.userName, "URL":"login"}}
-            
-            for key, val in res['__NAVB__']['res'].items():
-                dic[key] = val
-            
-            #------------------------------------------------------------------
-            # Resource s doplnenym 'User' vratim do res['__NAVB__']['res']
-            #------------------------------------------------------------------
-            res['__NAVB__']['res'] = dic
+            toRet['navs'] = dic
         
+        #----------------------------------------------------------------------
+        # Stage items
+        #----------------------------------------------------------------------
+        if '__STAG__' in res.keys() and 'obj' in res['__STAG__'].keys():
+            
+            for stageId, stage in res['__STAG__']['obj'].items():
+    
+                pos = stage['res']['StageDef']['POS']
+    
+                for ncSel, ncRes in stage['obj'].items():
+        
+                    if ncSel.startswith('SName'):
+            
+                        for key, item in ncRes['res'].items():
+                            
+                            item['type'] = 'STAGESELECTOR'
+                            item['pos' ] = pos
+                            
+                            toRet['stages']['sels'][key] = item
+                
+                    else:
+                        for key, item in ncRes['res'].items():
+
+                            item['pos' ] = pos
+
+                            toRet['stages']['cnts'][key] = item
+
         #----------------------------------------------------------------------
         self.loaded = True
-        self.journal.M(f"{self.name}.loadPageResource: {gen.dictString(res)}")
+        self.journal.M(f"{self.name}.loadPageResource: {gen.dictString(toRet)}")
         
         #----------------------------------------------------------------------
         self.journal.O()
-        return res
+        return toRet
     
     #==========================================================================
     # Response generators
@@ -180,7 +280,6 @@ class Base(Object):
         #----------------------------------------------------------------------
         # Vygenerujem html
         #----------------------------------------------------------------------
-        print(self.context)
         resp = make_response(template.render(**self.context), 200)
         resp.headers['X-Something'] = 'A value'
 
@@ -223,18 +322,6 @@ class Base(Object):
     #==========================================================================
     # Internal methods
     #--------------------------------------------------------------------------
-    def renderItem(self, item):
-        "Returns HTML for json-encoded item"
-    
-        self.journal.I(f"{self.page}.renderItem:")
-
-        toRet = ""
-    
-        toRet = item
-    
-        self.journal.O()
-        return toRet
-    
     #--------------------------------------------------------------------------
     def initContext(self):
         "Creates context"
@@ -248,13 +335,14 @@ class Base(Object):
         self.context["len"                 ]= len
         self.context["url_for"             ]= url_for
         self.context["get_flashed_messages"]= get_flashed_messages
+        self.context["renderItem"          ]= renderItem
         
         #----------------------------------------------------------------------
         # Definicia stranky
         #----------------------------------------------------------------------
-        self.context["height"       ]= self.height
-        self.context["initId"       ]= self.initId
-        self.context["lang"         ]= self.lang
+        self.context["height"]= self.height
+        self.context["initId"]= self.initId
+        self.context["lang"  ]= self.lang
 
         #----------------------------------------------------------------------
         # Navigation Bar
@@ -302,21 +390,29 @@ if __name__ == '__main__':
     ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
     )
 
-    page = Base(journal, 'Homepage', env, 700)
+    page = Base(journal, 'Login', env, 700)
     
 #==============================================================================
 print(f"Base {_VER}")
 
-"""for stage, stageDef in stages['obj'].items():
-    print(stage, ',', stageDef)
+"""
+for stageId, stage in page.context['__STAG__']['obj'].items():
     
-    for ncSel, res in stageDef['obj'].items():
+    pos = stage['res']['StageDef']['POS']
+    print(stageId, ', pos = ', pos)
+    
+    for ncSel, res in stage['obj'].items():
         print('--',ncSel)
         
         if ncSel.startswith('SName'):
             
             for key, item in res['res'].items():
                 print('-------->', key, '-', item)
+                
+        else:
+            for key, item in res['res'].items():
+                print('........>', key, '-', item)
+            
 """
 #==============================================================================
 #                              END OF FILE

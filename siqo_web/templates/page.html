@@ -23,30 +23,18 @@
 
         <!----------------------------------------------------STAGE-SELECTOR-->
         <div class="StageSelector">
+		
+		    {% for selKey, selItem in stages['sels'].items() %}
+		
+    		    {{ renderItem(selItem, lang)|safe }}
 
-            {% for stage, stageDef in __STAG__['obj'].items() %}
-			
-                {% for ncSel, res in stageDef['obj'].items() %}
-
-                    {% if ncSel.startswith('SName') %}
-
-                        {% for id, item in res['res'].items() %}
-
-                            <div class="StageSelectorItem">
-                                <input type="radio" name="SSB" id="{{id}}" value="{{item['POS']}}" onclick="ShowStage('{{item['POS']}}')">
-                                <label for={{id}}>{{item[lang]}}</label><br>
-                            </div>
-
-                        {% endfor %}
-                    {% endif %}                     
-                {% endfor %}
             {% endfor %}
 
         </div>
 
         <!-----------------------------------------------------STAGE-CONTENT-->
-        {% for stage, stageDef in __STAG__['obj'].items() %}
- 
+        {% for contKey, contItem in stages['cnts'].items() %}
+
 
 
         {% endfor %}

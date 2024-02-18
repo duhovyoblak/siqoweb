@@ -55,11 +55,10 @@ class Page(Base):
         #----------------------------------------------------------------------
         # Doplnenie formLogin
         #----------------------------------------------------------------------
-        self.formLogin = FormLogin()
 
         #----------------------------------------------------------------------
         self.journal.O()
-        return {"formLogin":self.formLogin}
+        return {}
  
     #--------------------------------------------------------------------------
     def loadContent(self):
@@ -96,6 +95,19 @@ class Page(Base):
 #==============================================================================
 # Test cases
 #------------------------------------------------------------------------------
+if __name__ == '__main__':
+    
+    from   siqo_lib                 import SiqoJournal
+    journal = SiqoJournal('test-base', debug=5)
+    
+    env = Environment(
+    
+     autoescape = select_autoescape()
+    ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
+    )
+
+    page = Page(journal, 'Homepage', env, 700)
+    
 
 #==============================================================================
 print(f"Page {_VER}")

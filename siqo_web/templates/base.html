@@ -29,24 +29,18 @@
     <!----------------------------------------------------------------HEADER-->
     <div class="Header" id="Header" onclick="ShowElement('Content')">
     
-        <div class="HeaderTitle" id="HeaderTitle">
-            <h1>{{__HEAD__['res']['Title'][lang]}}</h1>
-        </div>
-        <div class="HeaderComment" id="HeaderComment">
-            <p>{{__HEAD__['res']['Comment'][lang]}}</p>
-        </div>
-        <h4>{{__HEAD__['res']['SubTitle'][lang]}}</h4>
+		{{ renderItem( heads['Title'   ], lang)|safe }}
+		{{ renderItem( heads['Comment' ], lang)|safe }}
+		{{ renderItem( heads['SubTitle'], lang)|safe }}
     </div>
 
     <!----------------------------------------------------------------NAVBAR-->
     <div class="BarMenu" id="BarMenu">
     
-        {% for barKey, barItem in __NAVB__['res'].items() %}
+        {% for barKey, barItem in navs.items() %}
+		
+    		{{ renderItem(barItem, lang)|safe }}
         
-            <div class="BarMenuItem" id="{{barKey[]}}">
-		        <a href="{{barItem['URL']}}">{{barItem['SK']}}</a>
-            </div>
-
 		{% endfor %}
     </div>
 
