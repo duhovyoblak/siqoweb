@@ -107,11 +107,13 @@ class Object(Database):
 
         self.journal.I(f"{self.name}.objectGet: For parent '{objPar}'")
 
+
+        # objs = [{objId = {'items':[ {itemId:{attributes}} ], 'objs':[objs] } }]
+
         #----------------------------------------------------------------------
         # Inicializacia odpovede
         #----------------------------------------------------------------------
-        if objPar == '__PAGE__': toRet = {"__HEAD__":{}, "__NAVB__":{}, "__STAG__":{}}
-        else                   : toRet = {}
+        toRet = []
         
         #----------------------------------------------------------------------
         # Ziskanie stromu objektov
@@ -123,7 +125,8 @@ class Object(Database):
         cols = ('PAGE_ID', 'OBJ_ID', 'OBJ_PAR', 'C_FUNC', 'NOTES', 'D_CREATED', 'D_CHANGED', 'WHO')
         
         sql = f"""select {','.join(cols)} from {Config.tabObj} 
-                  where PAGE_ID = {pag} and OBJ_PAR = {par}"""
+                  where PAGE_ID = {pag} and OBJ_PAR = {par}
+                  order by OBJ_ID"""
         
         rows = self.readDb(who, sql)
         
@@ -139,36 +142,49 @@ class Object(Database):
         #----------------------------------------------------------------------
         # Vlozenie dat do stromu
         #----------------------------------------------------------------------
+        prevObjId = ''
+        objId     = ''
+        obj = {}
+
         for row in rows:
-            
             #------------------------------------------------------------------
             # Ak je objekt funkcny, vlozim ho do stromu
             #------------------------------------------------------------------
             if row[3] == 'A':
                 
-                #--------------------------------------------------------------
-                # Zzalozenie noveho objektu do stromu
-                #--------------------------------------------------------------
                 objId = row[1]
-                toRet[objId] = {"res":{}, "obj":{}}
-                
                 self.journal.M(f"{self.name}.objectGet:'{objId}' found")
                 
                 #--------------------------------------------------------------
+                # Ak je to novy objId, vlozim predchadzajuci do zoznamu a resetnem object
+                #--------------------------------------------------------------
+                if prevObjId != objId:
+                    
+                    if prevObjId != '': toRet.append(obj)
+                    
+                    prevObjId = objId
+                    obj = { objId:{"items":[], "objs":[] } }
+                    
+                #--------------------------------------------------------------
                 # Ziskam resource k tomuto objektu
                 #--------------------------------------------------------------
-                res = self.resourceGet(who, objId=objId, )
-                toRet[objId]["res"] = res
+                items = self.resourceGet(who, objId=objId, )
+                obj[objId]["items"] = items
 
                 #--------------------------------------------------------------
                 # Rekurzivnym volanim zistim, ci tento objekt obsahuje vnorene objekty
                 #--------------------------------------------------------------
-                inObj = self.objectGet(who, objPar=objId)
+                inObjs = self.objectGet(who, objPar=objId)
                 
-                # Ak existuje vnoreny objetk, tak ho vlozim
-                if len(inObj) > 0: toRet[objId]["obj"] = inObj
+                # Ak existuju vnorene objekty, tak ich vlozim
+                if len(inObjs) > 0: obj[objId]["objs"] = inObjs
 
             #------------------------------------------------------------------
+
+        #----------------------------------------------------------------------
+        # Dokoncim vlozenie posledneho objektu
+        #----------------------------------------------------------------------
+        if objId != '': toRet.append(obj)
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -218,10 +234,10 @@ class Object(Database):
     # Praca s Resources (page-obj-resource-key)
     #--------------------------------------------------------------------------
     def resourceGet(self, who, objId):
-        "Ziskam resource pre tuto kombinaciu page-obj-resource-key"
+        "Ziskam list resources pre kombinaciu page-obj"
 
         self.journal.I(f"{self.name}.resourceGet: obj='{objId}' for '{who}'")
-        toRet = {}
+        toRet = []
 
         #----------------------------------------------------------------------
         # Ziskanie resource
@@ -229,12 +245,12 @@ class Object(Database):
         pag = gen.quoted(self.page)
         obj = gen.quoted(objId    )
         
-        #             0       1        2       3           4           5     6
-        cols = ('RES_ID','S_KEY','C_FUNC','S_VAL','D_CREATED','D_CHANGED','WHO')
+        #              0       1        2       3           4           5     6
+        cols = ('ITEM_ID','S_KEY','C_FUNC','S_VAL','D_CREATED','D_CHANGED','WHO')
 
         sql = f"""select {','.join(cols)} from {Config.tabObjRes}
-                  where PAGE_ID = {pag}
-                  and   OBJ_ID  = {obj}"""
+                  where PAGE_ID = {pag} and   OBJ_ID  = {obj}
+                  order by ITEM_ID"""
   
         rows = self.readDb(who, sql)
         self.journal.M(f"{self.name}.resourceGet: '{rows}'")
@@ -249,22 +265,43 @@ class Object(Database):
             return toRet
     
         #----------------------------------------------------------------------
-        # Vlozim udaje do struktury
+        # Vlozim udaje do struktury [ {item:{}} ]
         #----------------------------------------------------------------------
+        prevItemId = ''
+        itemId     = ''
+        item = {}
+
         for row in rows:
-            
             #------------------------------------------------------------------
             # Ak je resource funkcna, vlozim ju do stromu
             #------------------------------------------------------------------
             if row[2]=='A':
                 
-                resId = row[0]
-                key   = row[1]
-                val   = row[3]
-                
-                if resId not in toRet.keys(): toRet[resId] = {}
-                
-                toRet[resId][key] = val
+                itemId = row[0]
+                key    = row[1]
+                val    = row[3]
+
+                #--------------------------------------------------------------
+                # Ak je to novy itemId, vlozim predchadzajuci do zoznamu a resetnem item
+                #--------------------------------------------------------------
+                if prevItemId != itemId:
+                    
+                    if prevItemId != '': toRet.append(item)
+                    
+                    prevItemId = itemId
+                    item = {itemId:{}}
+                    
+                #--------------------------------------------------------------
+                # Akumulujem atributy aktualneho itemu
+                #--------------------------------------------------------------
+                item[itemId][key] = val
+
+            #------------------------------------------------------------------
+
+        #----------------------------------------------------------------------
+        # Dokoncim vlozenie posledneho objektu
+        #----------------------------------------------------------------------
+        if itemId != '': toRet.append(item)
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -612,7 +649,7 @@ if __name__ == '__main__':
     obj = Object(journal, 'Homepage', 'palo4')
     
     rec = obj.objectGet('ja')
-    res = obj.resourceGet('ja', '__HEAD__')
+    #res = obj.resourceGet('ja', '__STAG__')
 
 
 #==============================================================================

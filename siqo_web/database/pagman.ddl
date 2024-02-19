@@ -117,7 +117,7 @@ DROP TABLE IF EXISTS PM_OBJ_RESOURCE ;
 CREATE TABLE IF NOT EXISTS PM_OBJ_RESOURCE (
    PAGE_ID      VARCHAR(32)      NOT NULL                     /* Stránka ktorej objekt patrí - časť primárneho kľúča */
   ,OBJ_ID       VARCHAR(32)      NOT NULL                     /* Jednoznačná identifikácia objektu vrámci stránky - časť primárneho kľúča */
-  ,RES_ID       VARCHAR(32)      NOT NULL                     /* Identifikácia resource vrámci objektu - časť primárneho kľúča */
+  ,ITEM_ID      VARCHAR(32)      NOT NULL                     /* Identifikácia itemu vrámci objektu - časť primárneho kľúča */
   ,S_KEY        VARCHAR(32)      NOT NULL                     /* Kľúč resource hodnoty (LANG/TYPE/CLASS/...)- časť primárneho kľúča */
 
   ,C_FUNC       CHAR(1)          NOT NULL                     /* Resource status A aktívny N neaktívny */
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS PM_OBJ_RESOURCE (
   ,D_CHANGED    TIMESTAMP            NULL                     /* Dátum ostatnej zmeny resource */
   ,WHO          VARCHAR(32)      DEFAULT 'SIQO'               /* User ktorý vykonal ostatnú zmenu objektu */
 
-  ,PRIMARY KEY (PAGE_ID, OBJ_ID, RES_ID, S_KEY)
+  ,PRIMARY KEY (PAGE_ID, OBJ_ID, ITEM_ID, S_KEY)
   ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES PM_OBJECT (PAGE_ID, OBJ_ID)
 )
 /* Staticka cache literalov a vyhodnotitelnych vyrazov pre kombinaciu PAGE/LANGUAGE/OBJECT */
