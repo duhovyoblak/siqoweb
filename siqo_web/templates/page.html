@@ -35,6 +35,7 @@
         <!-----------------------------------------------------STAGE-CONTENT-->
         {% for contKey, contItem in stages['cnts'].items() %}
 
+    		    {{ renderItem(contItem, lang)|safe }}
 
 
         {% endfor %}

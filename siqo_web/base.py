@@ -16,8 +16,7 @@ import siqo_lib.general         as gen
 
 import siqo_web.dms             as dms
 
-from   siqo_web                 import html
-
+from   siqo_web.html            import renderItem
 from   siqo_web.config          import Config
 from   siqo_web.user            import User
 from   siqo_web.object          import Object
@@ -39,54 +38,6 @@ else                        : _IS_TEST = False
 
 #==============================================================================
 # package's methods
-#------------------------------------------------------------------------------
-def renderItem(item, lang):
-    "Returns HTML for json-encoded item"
-    
-    if 'type' in item.keys(): typ = item['type']
-    else                    : typ = 'PARA'
-    
-    toRet = ''
-
-    #--------------------------------------------------------------------------
-    # Rozlisi Backward, Forward alebo nieco ine
-    #--------------------------------------------------------------------------
-    if False: return toRet
-
-    #--------------------------------------------------------------------------
-    # Skusim vsetky zname typy
-    #--------------------------------------------------------------------------
-    elif typ == 'LINK'         : toRet = html.inputButton(item)
-    elif typ == 'CHECKBOX'     : toRet = html.inputCheckBox(item)
-    elif typ == 'RADIO'        : toRet = html.inputRadio(item)
-    elif typ == 'TEXT'         : toRet = html.inputText(item)
-
-    elif typ == 'LABEL'        : toRet = html.label(item)
-    elif typ == 'PARA'         : toRet = html.p(item)
-    elif typ == 'P-START'      : toRet = html.pStart(item)
-    elif typ == 'P-CONT'       : toRet = html.pCont(item)
-    elif typ == 'P-STOP'       : toRet = html.pStop(item)
-    elif typ == 'IMAGE'        : toRet = html.image(item)
-
-    elif typ == 'NEWLINE'      : toRet = html.newLine()
-    elif typ == 'BREAK'        : toRet = html.breakLine()
-    elif typ == 'SPLIT'        : toRet = html.split(item)
-    elif typ == 'FUNC'         : toRet = html.fcia(item)
-    elif typ == 'HTML'         : toRet = html.html(item)
-
-    elif typ == 'HEADTITLE'    : toRet = html.headTtile(item, lang)
-    elif typ == 'HEADSUBTIT'   : toRet = html.headSubTitle(item, lang)
-    elif typ == 'HEADCOMMENT'  : toRet = html.headComment(item, lang)
-
-    elif typ == 'BARMENUITEM'  : toRet = html.barMenuItem(item, lang)
-
-    elif typ == 'STAGESELECTOR': toRet = html.stageSelector(item, lang)
-
-    elif typ == 'DIVSTART'     : toRet = html.divStart(item)
-    elif typ == 'DIVSTOP'      : toRet = html.divStop(item)
-    
-    return toRet
-    
 #==============================================================================
 # Base
 #------------------------------------------------------------------------------

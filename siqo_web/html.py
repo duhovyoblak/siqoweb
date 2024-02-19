@@ -19,6 +19,66 @@ else                        : _IS_TEST = False
 
 #==============================================================================
 # HTML library
+#------------------------------------------------------------------------------
+def renderItem(item, lang):
+    "Returns HTML for json-encoded item"
+    
+    if 'type' in item.keys(): typ = item['type']
+    else                    : typ = 'P'
+    
+    toRet = ''
+
+    #--------------------------------------------------------------------------
+    # Rozlisi Backward, Forward alebo nieco ine
+    #--------------------------------------------------------------------------
+    if False: return toRet
+
+    #--------------------------------------------------------------------------
+    # Skusim vsetky zname typy
+    #--------------------------------------------------------------------------
+    elif typ == 'LINK'         : toRet = inputButton(item, lang)
+    elif typ == 'CHECKBOX'     : toRet = inputCheckBox(item, lang)
+    elif typ == 'RADIO'        : toRet = inputRadio(item, lang)
+    elif typ == 'TEXT'         : toRet = inputText(item, lang)
+
+    elif typ == 'LABEL'        : toRet = label(item, lang)
+    elif typ == 'P'            : toRet = p(item, lang)
+    elif typ == 'P-START'      : toRet = pStart(item, lang)
+    elif typ == 'P-CONT'       : toRet = pCont(item, lang)
+    elif typ == 'P-STOP'       : toRet = pStop(item, lang)
+    elif typ == 'IMAGE'        : toRet = image(item, lang)
+
+    elif typ == 'HEADTITLE'    : toRet = headTtile(item, lang)
+    elif typ == 'HEADSUBTIT'   : toRet = headSubTitle(item, lang)
+    elif typ == 'HEADCOMMENT'  : toRet = headComment(item, lang)
+
+    elif typ == 'BARMENUITEM'  : toRet = barMenuItem(item, lang)
+
+    elif typ == 'STAGESELECTOR': toRet = stageSelector(item, lang)
+
+    elif typ == 'NEWLINE'      : toRet = newLine()
+    elif typ == 'BREAK'        : toRet = breakLine()
+    elif typ == 'SPLIT'        : toRet = split()
+    
+    elif typ == 'FUNC'         : toRet = fcia(item)
+    elif typ == 'HTML'         : toRet = html(item)
+    elif typ == 'DIVSTART'     : toRet = divStart(item)
+    elif typ == 'DIVSTOP'      : toRet = divStop(item)
+    
+    return toRet
+    
+#------------------------------------------------------------------------------
+def itemDrop(item, key):
+    
+    if key in item.keys(): 
+        
+        val = item[key]
+        item[key] = ''
+        
+    else: val = '_none_'
+    
+    return (item, val)
+    
 #==============================================================================
 # Jednoriadkove HTML vyrazy
 #------------------------------------------------------------------------------
@@ -34,67 +94,71 @@ def breakLine():
 #------------------------------------------------------------------------------
 # Headers
 #------------------------------------------------------------------------------
-def h1(txt, idx =''):
+def h1(item, lang):
+    
+    (item, txt) = itemDrop(item, lang)
 
-     return f'<h1 {html_attribute("id", idx)}>{html_entities(txt)}</h1> \n'
-
-#------------------------------------------------------------------------------
-def h2(txt, idx =''):
-
-    return f'<h2 {html_attribute("id", idx)}>{html_entities(txt)}</h2> \n'
+    return f'<h1 {html_atts(item)}>{txt}</h1> \n'
 
 #------------------------------------------------------------------------------
-def h3(txt, idx =''):
+def h2(item, lang):
 
-    return f'<h3 {html_attribute("id", idx)}>{html_entities(txt)}</h3> \n'
+    (item, txt) = itemDrop(item, lang)
+
+    return f'<h2 {html_atts(item)}>{txt}</h2> \n'
 
 #------------------------------------------------------------------------------
-def h4(txt, idx =''):
+def h3(item, lang):
 
-    return f'<h4 {html_attribute("id", idx)}>{html_entities(txt)}</h4> \n'
+    (item, txt) = itemDrop(item, lang)
+
+    return f'<h3 {html_atts(item)}>{txt}</h3> \n'
+
+#------------------------------------------------------------------------------
+def h4(item, lang):
+
+    (item, txt) = itemDrop(item, lang)
+
+    return f'<h4 {html_atts(item)}>{txt}</h4> \n'
 
 #------------------------------------------------------------------------------
 # Link <a href="url"?args>txt</a>
 #------------------------------------------------------------------------------
-def a(url, txt, atts={}, args=None):
+def a(item, lang):
+
+    (item, url) = itemDrop(item, 'url')
+    (item, arg) = itemDrop(item, 'arg')
+    (item, txt) = itemDrop(item, lang )
 
     link = url
-    if args is not None: link += f'?{args}'
+    if arg != '_none_': link += f'?{arg}'
     
-    atts["href"] = link
+    item["href"] = link
 
-    return f'<a {html_atts(atts)}>{html_entities(txt)}</a>'
+    return f'<a {html_atts(item)}>{txt}</a>'
 
 #------------------------------------------------------------------------------
-def p(txt, atts={}, htmlEncoded=True, isHidden=False):
+def p(item, lang):
+
+    (item, hid) = itemDrop(item, 'hidden')
+    (item, txt) = itemDrop(item, lang )
 
     #--------------------------------------------------------------------------
     # If paragraph is not hidden
     #--------------------------------------------------------------------------
-    if not isHidden:
-      
-        if htmlEncoded:
-            return f'<p {html_atts(atts)}>{html_entities(txt)}</p> \n'
-           
-        else:
-            # POZOR, BEZPECNOSTNA DIERA vyriesena cez HTMLSecure !!!
-            return f'<p {html_atts(atts)}>{HTMLSecure(txt)}</p> \n'
-    
-    #--------------------------------------------------------------------------
-    # If paragraph is hidden
-    #--------------------------------------------------------------------------
-    else:
-        return f'<p hidden {html_atts(atts)}>{html_entities(txt)}</p> \n'
+    if hid == '_none_' or not hid: return f'<p {html_atts(item)}>{txt}</p>\n'
+    else                         : return f'<p hidden {html_atts(item)}>{txt}</p>\n'
 
 #------------------------------------------------------------------------------
-def pStart(atts={}):
+def pStart(item, lang):
 
-    return f'<p {html_atts(atts)}>'
+    return f'<p {html_atts(item)}>'
 
 #------------------------------------------------------------------------------
-def pCont(txt):
+def pCont(item, lang):
 
-    return html_entities(txt)
+    (item, txt) = itemDrop(item, lang )
+    return txt
 
 #------------------------------------------------------------------------------
 def pStop():
@@ -104,39 +168,41 @@ def pStop():
 #------------------------------------------------------------------------------
 def split():
 
-    return p('––«•»––', atts={"class":"center"})
+    atts = {"SK":"––«•»––", "class":"center"}
+    return p(atts, 'SK')
 
 #------------------------------------------------------------------------------
-def html(code):
+def html(item, lang):
 
-    return f'{code} \n'
-
-#------------------------------------------------------------------------------
-def pre(txt, atts={}):
-
-    return f'<pre {html_atts(atts)}>{html_entities(txt)}</pre> \n'
+    (item, code) = itemDrop(item, 'html')
+    return f'{code}\n'
 
 #------------------------------------------------------------------------------
-def label(txt, idx, atts={}):
+def pre(item, lang):
 
-    return f'<label for="{idx}" {html_atts(atts)}>{html_entities(txt)}</label> \n'
+    (item, txt) = itemDrop(item, lang)
+    return f'<pre {html_atts(item)}>{txt}</pre>\n'
+
+#------------------------------------------------------------------------------
+def label(item, lang):
+
+    (item, txt) = itemDrop(item, lang)
+    return f'<label {html_atts(item)}>{txt}</label>\n'
 
 #==============================================================================
 # Viacriadkove HTML vyrazy
 #------------------------------------------------------------------------------
-def divStart(classx, name='', idx='', h='', w='', t='', l='', onClick='', flt=''):
+def divStart(item):
     
-    if name=='': name = classx
-    if idx =='': idx  = classx
-    
+    """
     atts = { "class"  : classx
             ,"name"   : name
             ,"id"     : idx
             ,"onClick": onClick
             ,"style"  : f'height:{h} width:{w} top:{t} left:{l} float:{flt}'
            }
-
-    return f'<div {html_atts(atts)}>\n'
+    """
+    return f'<div {html_atts(item)}>\n'
 
 #------------------------------------------------------------------------------
 def divStop():
@@ -144,40 +210,42 @@ def divStop():
     return '</div> \n'
 
 #------------------------------------------------------------------------------
-def divBreak(h='', w=''):
+def divBreak(item, lang):
 
     atts = { "class"  : "Break"
-            ,"style"  : f'height:{h} width:{w}'
+#            ,"style"  : f'height:{h} width:{w}'
            }
 
     return f'<div {html_atts(atts)}></div> \n'
 
 #------------------------------------------------------------------------------
-def textThumb(idx, url, title, alt, h='', w='', flt='left'):
+def textThumb(item, lang):
  
-    toRet = divStart("ObjectText", idx, idx, h, w, '', '', '', flt)
+#    toRet = divStart("ObjectText", idx, idx, h, w, '', '', '', flt)
+    toRet = divStart(item)
 
-    toRet += a(url, p('lorem ipsum'), atts={"target":"_blank"})
+#    toRet += a(url, p('lorem ipsum'), atts={"target":"_blank"})
        
-    if title != '':
-        toRet += p(title, atts={"class":"txt file"})
+#    if title != '':
+#        toRet += p(title, atts={"class":"txt file"})
    
     toRet += divStop()
     
     return toRet
 
 #------------------------------------------------------------------------------
-def image(idx, url, title, alt, h='', w='', flt='left'):
+def image(item, lang):
  
-    toRet = divStart("ObjectImage", idx, idx, h, w, '', '', '', flt)
+#    toRet = divStart("ObjectImage", idx, idx, h, w, '', '', '', flt)
+    toRet = divStart(item)
 
-    atts = {"src":url, "style":"width:100% max-height:90%", "alt":alt}
-    txt = f'<img {html_atts(atts)}>'
+#    atts = {"src":url, "style":"width:100% max-height:90%", "alt":alt}
+#    txt = f'<img {html_atts(atts)}>'
 
-    toRet += a(url, txt, atts={"target":"_blank"})
+    toRet += a(item, lang)
 
-    if title != '':
-        toRet += p(title, atts={"class":"foto"})
+#    if title != '':
+#        toRet += p(title, atts={"class":"foto"})
    
     toRet += divStop()
     
@@ -195,7 +263,7 @@ def inputRadio(item, lang):
     #--------------------------------------------------------------------------
     if 'checked' in item.keys():
         
-        if item['ckecked']: checkType = 'checked'
+        if item['checked']: checkType = 'checked'
         else              : checkType = ''
         
         item['checked'] = ''
@@ -219,8 +287,9 @@ def inputRadio(item, lang):
     return toRet
 
 #------------------------------------------------------------------------------
-def inputCheckBox(classx, name, value, idx='', edit=True, onChange='', last=''):
+def inputCheckBox(item, lang):
 
+    """
     atts = { "type"    : "checkbox"
             ,"class"   : classx
             ,"name"    : name
@@ -230,13 +299,15 @@ def inputCheckBox(classx, name, value, idx='', edit=True, onChange='', last=''):
            }
     
     if not edit: editType = 'readonly'
-    else       : editType = ''
-    
-    return f'<input {html_atts(atts)} {editType}/>{last}\n'
+    else       : editType = ""
+    """
+    editType = ''
+    return f'<input {html_atts(item)} {editType}/>\n'
 
 #------------------------------------------------------------------------------
-def inputText(classx, name, value, idx='', size=10, maxlength=40, edit=True, onChange=''):
+def inputText(item, lang):
 
+    """
     atts = { "type"     : "text"
             ,"class"    : classx
             ,"name"     : name
@@ -249,16 +320,19 @@ def inputText(classx, name, value, idx='', size=10, maxlength=40, edit=True, onC
     
     if not edit: editType = 'readonly'
     else       : editType = ''
-    
-    return f'<input {html_atts(atts)} {editType}/>\n'
+    """
+    editType = ''
+    return f'<input {html_atts(item)} {editType}/>\n'
 
 #------------------------------------------------------------------------------
 # Head block
 #------------------------------------------------------------------------------
 def headTtile(item, lang):
   
-    toRet  = divStart("HeaderTitle", name="HeaderTitle", idx="HeaderTitle")
-    toRet += h1(item[lang])
+    atts = {"class":"HeaderTitle", "name":"HeaderTitle", "id":"HeaderTitle"}
+ 
+    toRet  = divStart(atts)
+    toRet += h1(item, lang)
     toRet += divStop()
     
     print('headTitle :', toRet)
@@ -267,8 +341,10 @@ def headTtile(item, lang):
 #------------------------------------------------------------------------------
 def headComment(item, lang):
   
-    toRet  = divStart("HeaderComment", name="HeaderComment", idx="HeaderComment")
-    toRet += h1(item[lang])
+    atts = {"class":"HeaderComment", "name":"HeaderComment", "id":"HeaderComment"}
+
+    toRet  = divStart(atts)
+    toRet += h1(item, lang)
     toRet += divStop()
 
     return toRet
@@ -276,15 +352,17 @@ def headComment(item, lang):
 #------------------------------------------------------------------------------
 def headSubTitle(item, lang):
   
-    return h4(item[lang])
+    return h4(item, lang)
 
 #------------------------------------------------------------------------------
 # NavBar block
 #------------------------------------------------------------------------------
 def barMenuItem(item, lang):
-                                                          # barKey
-    toRet  = divStart("BarMenuItem", name="BarMenuItem", idx="BarMenuItem")
-    toRet += a(item['URL'], item[lang])
+    
+    atts = {"class":"BarMenuItem", "name":"BarMenuItem", "id":"BarMenuItem"}
+    
+    toRet  = divStart(atts)
+    toRet += a(item, lang)
     toRet += divStop()
     
     return toRet
@@ -294,8 +372,9 @@ def barMenuItem(item, lang):
 #------------------------------------------------------------------------------
 def stageSelector(item, lang):
   
-    toRet  = divStart("StageSelectorItem")
-    
+    #--------------------------------------------------------------------------
+    # Pripravim atributy do itemu
+    #--------------------------------------------------------------------------
     pos = item['pos']
     item['pos'] = ''
     
@@ -304,8 +383,44 @@ def stageSelector(item, lang):
     item['value'  ] = pos
     item['onclick'] = f"ShowStage('{pos}')"
     
+    if pos == '1': item['checked'] = True
+    else         : item['checked'] = False
+
+    atts = {"class":"StageSelectorItem", "name":"StageSelectorItem", "id":"StageSelectorItem"}
+        
+    #--------------------------------------------------------------------------
+    # Render itemu
+    #--------------------------------------------------------------------------
+    toRet  = divStart(atts)
     toRet += inputRadio(item, lang)
+    toRet += divStop()
+
+    return toRet
+
+#------------------------------------------------------------------------------
+def stagePanel(item, lang):
+  
+    #--------------------------------------------------------------------------
+    # Pripravim atributy do itemu
+    #--------------------------------------------------------------------------
+    pos = item['pos']
+    item['pos'] = ''
     
+    item['name'   ] = 'SSB'
+    item['id'     ] = f"SSB_{pos}"
+    item['value'  ] = pos
+    item['onclick'] = f"ShowStage('{pos}')"
+    
+    if pos == '1': style = "display:block"
+    else         : style = "display:none"
+    
+    atts = {"class":"StagePanel", "name":"SP", "id":f"SP_{pos}", "style":style}
+
+    #--------------------------------------------------------------------------
+    # Render itemu
+    #--------------------------------------------------------------------------
+    toRet  = divStart(atts)
+    toRet += renderItem(item, lang)
     toRet += divStop()
 
     return toRet
