@@ -4,6 +4,7 @@
 #
 #------------------------------------------------------------------------------
 import os
+import re
 
 #==============================================================================
 # package's constants
@@ -16,6 +17,8 @@ else                        : _IS_TEST = False
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
+journal = None
+db      = None
 
 #==============================================================================
 # HTML library
@@ -48,7 +51,7 @@ def itemRender(item, lang):
     "Returns HTML for json-encoded item"
     
     (item, typ) = itemDrop(item, 'TYPE')
-    if typ == '_none_': typ = 'P'
+    if typ == '': typ = 'P'
     
     print()
     print(typ,'->', item)
@@ -109,7 +112,7 @@ def itemDrop(item, key):
         val = item[key]
         item[key] = ''
         
-    else: val = '_none_'
+    else: val = ''
     
     return (item, val)
     
@@ -144,7 +147,7 @@ def a(item, lang):
     (item, txt) = itemDrop(item, lang )
 
     link = url
-    if arg != '_none_': link += f'?{arg}'
+    if arg != '': link += f'?{arg}'
     
     item["href"] = link
 
@@ -152,6 +155,59 @@ def a(item, lang):
 
 #------------------------------------------------------------------------------
 # Paragraph
+#------------------------------------------------------------------------------
+def pDecode(txt, lang):
+    
+    toRet = txt
+    
+    #--------------------------------------------------------------------------
+    # Nahradenie split
+    #--------------------------------------------------------------------------
+    splits = re.findall(r'{SPLIT.*?}', txt)
+    
+    for spl in splits:
+        
+        splitHtml = split()
+        toRet = re.sub(spl, splitHtml, toRet)
+    
+    #--------------------------------------------------------------------------
+    # Nahradenie liniek
+    #--------------------------------------------------------------------------
+    links = re.findall(r'{LINK.+?}', txt)
+    
+    for link in links:
+        
+        parts = link[1:-1].split(',')
+        args  = {'URL':parts[1], lang:parts[2]}
+        aHtml = a(args, lang)
+        
+        toRet = re.sub(link, aHtml, toRet)
+    
+    #--------------------------------------------------------------------------
+    # Nahradenie obrazkov
+    #--------------------------------------------------------------------------
+    images = re.findall(r'{IMAGE.+?}', txt)
+    
+    for image in images:
+        
+        parts = image[1:-1].split(',')
+        # {IMAGE, 57, , 40%, right}
+        
+        args  = {'sdmId' :parts[1].strip()
+                ,'height':parts[2].strip()
+                ,'width' :parts[3].strip()
+                }
+        
+        if len(parts)>4: args['float'] = parts[4].strip()
+        else           : args['float'] = 'left'
+
+        imageHtml = imageThumb(args, lang)
+
+        toRet = re.sub(image, imageHtml, toRet)
+
+    #--------------------------------------------------------------------------
+    return toRet
+    
 #------------------------------------------------------------------------------
 def p(item, lang):
     
@@ -165,8 +221,8 @@ def pStart(item, lang):
 
     (item, hid) = itemDrop(item, 'hidden')
     (item, txt) = itemDrop(item, lang )
-
-#    item['style'] = "display:block"
+    
+    txt = pDecode(txt, lang)
 
     #--------------------------------------------------------------------------
     # If paragraph is/is not hidden
@@ -178,14 +234,18 @@ def pStart(item, lang):
 def pCont(item, lang):
 
     (item, txt) = itemDrop(item, lang )
+
+    txt = pDecode(txt, lang)
+
     return txt
 
 #------------------------------------------------------------------------------
 def pStop(item = {}, lang='SK'):
 
     (item, txt) = itemDrop(item, lang )
-    if txt == '_none_': txt = ''
     
+    txt = pDecode(txt, lang)
+
     return f'{txt}</p>\n'
 
 #------------------------------------------------------------------------------
@@ -223,14 +283,6 @@ def label(item, lang):
 #------------------------------------------------------------------------------
 def divStart(item):
     
-    """
-    atts = { "class"  : classx
-            ,"name"   : name
-            ,"id"     : idx
-            ,"onClick": onClick
-            ,"style"  : f'height:{h} width:{w} top:{t} left:{l} float:{flt}'
-           }
-    """
     return f'<div {html_atts(item)}>\n'
 
 #------------------------------------------------------------------------------
@@ -241,9 +293,7 @@ def divStop():
 #------------------------------------------------------------------------------
 def divBreak(item, lang):
 
-    atts = { "class"  : "Break"
-#            ,"style"  : f'height:{h} width:{w}'
-           }
+    atts = { "class": "Break"}
 
     return f'<div {html_atts(atts)}></div> \n'
 
@@ -264,18 +314,60 @@ def textThumb(item, lang):
 
 #------------------------------------------------------------------------------
 def image(item, lang):
+    
+    return f'<img {html_atts(item)}>' 
+    
+#------------------------------------------------------------------------------
+def imageThumb(item, lang):
  
-#    toRet = divStart("ObjectImage", idx, idx, h, w, '', '', '', flt)
-    toRet = divStart(item)
+    #--------------------------------------------------------------------------
+    # Informacie v iteme
+    #--------------------------------------------------------------------------
+    (item, sdmId ) = itemDrop(item, 'sdmId' )
+    (item, height) = itemDrop(item, 'height')
+    (item, width ) = itemDrop(item, 'width' )
+    (item, flt   ) = itemDrop(item, 'float' )
 
-#    atts = {"src":url, "style":"width:100% max-height:90%", "alt":alt}
-#    txt = f'<img {html_atts(atts)}>'
+    #--------------------------------------------------------------------------
+    # Informacie ziskane z SDM podla sdmId
+    #--------------------------------------------------------------------------
 
-    toRet += a(item, lang)
 
-#    if title != '':
-#        toRet += p(title, atts={"class":"foto"})
-   
+    (item, uri   ) = itemDrop(item, 'uri'   )
+    (item, title ) = itemDrop(item, 'title' )
+    
+    #--------------------------------------------------------------------------
+    # Div
+    #--------------------------------------------------------------------------
+    args = {"class"  :"ObjectImage"
+           ,"name"   :f"sdm_{sdmId}"
+           ,"id"     :f"sdm_{sdmId}"
+           ,"style"  :f"height:{height}; width:{width}; float:{flt}"
+           }
+    toRet = divStart(args)
+
+    #--------------------------------------------------------------------------
+    # Link
+    #--------------------------------------------------------------------------
+    args = {"src"    :uri
+           ,"style"  :"width:100% max-height:90%"
+           ,"alt"    :"SIQO DMS is loading image..."
+           }
+
+    linkTxt = image(args, lang)
+    
+    args = {"URL":uri, "target":"_blank", "lang":linkTxt}
+    toRet += a(args, lang)
+    
+    #--------------------------------------------------------------------------
+    # Titul
+    #--------------------------------------------------------------------------
+    args = {"class":"foto", lang:title}
+    toRet += p(args, lang)
+
+    #--------------------------------------------------------------------------
+    # Div Stop
+    #--------------------------------------------------------------------------
     toRet += divStop()
     
     return toRet
@@ -487,7 +579,6 @@ def stageStop(item, lang):
     item['TYPE'   ] = typeStash
     item['name'   ] = 'SContent'
     
-    print('SS', item)
     #--------------------------------------------------------------------------
     # Render itemu
     #--------------------------------------------------------------------------
@@ -495,7 +586,6 @@ def stageStop(item, lang):
     toRet += divStop()
 
     return toRet
-
 
 #------------------------------------------------------------------------------
 # HTML Tabulka

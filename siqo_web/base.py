@@ -15,8 +15,8 @@ from   jinja2                   import Environment, PackageLoader, select_autoes
 import siqo_lib.general         as gen
 
 import siqo_web.dms             as dms
+import siqo_web.html            as html
 
-from   siqo_web.html            import itemListRender
 from   siqo_web.config          import Config
 from   siqo_web.user            import User
 from   siqo_web.object          import Object
@@ -209,8 +209,7 @@ class Base(Object):
                             
                             itemId = list(obj['items'][0].keys())[0]
                             
-                            if 'TYPE' not in  obj['items'][0][itemId].keys():
-                                typeStash = 'P'
+                            if 'TYPE' not in  obj['items'][0][itemId].keys(): typeStash = 'P'
                             else: typeStash = obj['items'][0][itemId]['TYPE']
                             
                             obj['items'][0][itemId]['TYPE'     ] = 'STAGEBOTH'
@@ -224,9 +223,8 @@ class Base(Object):
 
                             itemId = list(obj['items'][0].keys())[0]
 
-                            if 'TYPE' not in  obj['items'][0][itemId].keys():
-                                typeStash = 'P'
-                            typeStash = obj['items'][0][itemId]['TYPE']
+                            if 'TYPE' not in  obj['items'][0][itemId].keys(): typeStash = 'P'
+                            else: typeStash = obj['items'][0][itemId]['TYPE']
                             
                             obj['items'][0][itemId]['TYPE'     ] = 'STAGESTART'
                             obj['items'][0][itemId]['typeStash'] = typeStash
@@ -238,9 +236,8 @@ class Base(Object):
 
                             itemId = list(obj['items'][-1].keys())[0]
 
-                            if 'TYPE' not in  obj['items'][-1][itemId].keys():
-                                typeStash = 'P'
-                            typeStash = obj['items'][-1][itemId]['TYPE']
+                            if 'TYPE' not in  obj['items'][-1][itemId].keys(): typeStash = 'P'
+                            else: typeStash = obj['items'][-1][itemId]['TYPE']
                             
                             obj['items'][-1][itemId]['TYPE'     ] = 'STAGESTOP'
                             obj['items'][-1][itemId]['typeStash'] = typeStash
@@ -332,7 +329,7 @@ class Base(Object):
         self.context["len"                 ] = len
         self.context["url_for"             ] = url_for
         self.context["get_flashed_messages"] = get_flashed_messages
-        self.context["itemListRender"      ] = itemListRender
+        self.context["itemListRender"      ] = html.itemListRender
         
         #----------------------------------------------------------------------
         # Definicia stranky
