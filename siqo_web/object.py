@@ -108,12 +108,12 @@ class Object(Database):
         self.journal.I(f"{self.name}.objectGet: For parent '{objPar}'")
 
 
-        # objs = [{objId = {'items':[ {itemId:{attributes}} ], 'objs':[objs] } }]
+        # objs = { objId = {'items':[ {itemId:{attributes}} ], 'objs':{objs} } }
 
         #----------------------------------------------------------------------
         # Inicializacia odpovede
         #----------------------------------------------------------------------
-        toRet = []
+        toRet = {}
         
         #----------------------------------------------------------------------
         # Ziskanie stromu objektov
@@ -143,7 +143,6 @@ class Object(Database):
         # Vlozenie dat do stromu
         #----------------------------------------------------------------------
         prevObjId = ''
-        objId     = ''
         obj = {}
 
         for row in rows:
@@ -160,16 +159,16 @@ class Object(Database):
                 #--------------------------------------------------------------
                 if prevObjId != objId:
                     
-                    if prevObjId != '': toRet.append(obj)
+                    if prevObjId != '': toRet[prevObjId] = obj
                     
                     prevObjId = objId
-                    obj = { objId:{"items":[], "objs":[] } }
+                    obj = { "items":[], "objs":{} }
                     
                 #--------------------------------------------------------------
                 # Ziskam resource k tomuto objektu
                 #--------------------------------------------------------------
                 items = self.resourceGet(who, objId=objId, )
-                obj[objId]["items"] = items
+                obj["items"] = items
 
                 #--------------------------------------------------------------
                 # Rekurzivnym volanim zistim, ci tento objekt obsahuje vnorene objekty
@@ -177,14 +176,14 @@ class Object(Database):
                 inObjs = self.objectGet(who, objPar=objId)
                 
                 # Ak existuju vnorene objekty, tak ich vlozim
-                if len(inObjs) > 0: obj[objId]["objs"] = inObjs
+                if len(inObjs) > 0: obj["objs"] = inObjs
 
             #------------------------------------------------------------------
 
         #----------------------------------------------------------------------
         # Dokoncim vlozenie posledneho objektu
         #----------------------------------------------------------------------
-        if objId != '': toRet.append(obj)
+        if prevObjId != '': toRet[prevObjId] = obj
 
         #----------------------------------------------------------------------
         self.journal.O()

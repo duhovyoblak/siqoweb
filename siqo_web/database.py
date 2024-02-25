@@ -739,7 +739,7 @@ if __name__ == '__main__':
     journal = SiqoJournal('test-db', debug=5)
 
     from   siqo_web.config          import Config
-    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=False)
+    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=True)
  
     tables     = db.tables()
     attributes = db.attributes(Config.tabUser)

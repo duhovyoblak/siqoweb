@@ -60,10 +60,10 @@ function ShowStageContent()
 function ShowStage( key )
 {
   // Zatlaci vsetky panely do pozadia
-  panel = document.getElementsByName("SP");
+  panels = document.getElementsByName("SP");
     
-  for (var i = 0; i < panel.length; i++) { 
-    panel[i].style.display = "none";
+  for (var i = 0; i < panels.length; i++) { 
+    panels[i].style.display = "none";
   }
 
   // Vystavi key do popredia

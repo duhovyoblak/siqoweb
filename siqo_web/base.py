@@ -16,7 +16,7 @@ import siqo_lib.general         as gen
 
 import siqo_web.dms             as dms
 
-from   siqo_web.html            import renderItem
+from   siqo_web.html            import itemListRender
 from   siqo_web.config          import Config
 from   siqo_web.user            import User
 from   siqo_web.object          import Object
@@ -126,89 +126,135 @@ class Base(Object):
         self.journal.I(f"{self.page}.loadContent:")
         
         self.journal.O()
-        return {'content':[{'key':'val'}]}
+        return {'__CONT__':{}}
 
     #--------------------------------------------------------------------------
     def loadPageResource(self):
         
         self.journal.I(f"{self.page}.loadPageResource:")
         
-        res = self.objectGet(self.user)
-        toRet = {'heads':{}, 'navs':{}, 'stages':{'sels':{}, 'cnts':{}}}
+        res   = self.objectGet(self.user)
+        toRet = {'__HEAD__':{}, '__NAVB__':{}, '__STAG__':{}}
         
         #----------------------------------------------------------------------
         # Heads items
         #----------------------------------------------------------------------
-        if '__HEAD__' in res.keys() and 'res' in res['__HEAD__'].keys():
+        if '__HEAD__' in res.keys() and 'items' in res['__HEAD__'].keys():
             
-            for key, item in res['__HEAD__']['res'].items():
+            #------------------------------------------------------------------
+            # Vsetkym polozkam v Head nastavim prislusny type
+            #------------------------------------------------------------------
+            for item in res['__HEAD__']['items']:
                 
-                if   key == 'Title'   : item['type'] = 'HEADTITLE'
-                elif key == 'SubTitle': item['type'] = 'HEADSUBTIT'
-                elif key == 'Comment' : item['type'] = 'HEADCOMMENT'
-        
-                toRet['heads'][key] = item
+                if   '1_Title'    in item.keys(): item['1_Title'   ]['TYPE'] = 'HEADTITLE'
+                elif '2_SubTitle' in item.keys(): item['2_SubTitle']['TYPE'] = 'HEADSUBTIT'
+                elif '3_Comment'  in item.keys(): item['3_Comment' ]['TYPE'] = 'HEADCOMMENT'
 
         #----------------------------------------------------------------------
         # NavBar items
         #----------------------------------------------------------------------
-        if '__NAVB__' in res.keys() and 'res' in res['__NAVB__'].keys():
+        if '__NAVB__' in res.keys() and 'items' in res['__NAVB__'].keys():
 
             #------------------------------------------------------------------
-            # Default polozka v NavBar je User
+            # 0-ta polozka v NavBar je UserItem - ak nie je, potom ho tam vlozim
             #------------------------------------------------------------------
-            if 'User' not in res['__NAVB__']['res'].keys():
-            
-                #--------------------------------------------------------------
-                # Polozku 'User' umiestnim na zaciatok dict a doplnim z res['__NAVB__']['res']
-                #------------------------------------------------------------------
-                dic = {"User":{"type":"BARMENUITEM", "SK":self.userName, "URL":"login"}}
-            
-                for key, item in res['__NAVB__']['res'].items():
-                    
-                    item["type"] = "BARMENUITEM"
-                    
-                    dic[key] = item
+            if len(res['__NAVB__']['items'])==0 or 'User' not in res['__NAVB__']['items'][0].keys():
+
+                userItem = {"User":{"SK":self.userName, "URL":"login"}}
+                res['__NAVB__']['items'].insert(0, userItem)
             
             #------------------------------------------------------------------
-            # Resource s doplnenym 'User' vlozim do Navs
+            # Vsetkym polozkam v NavBar nastavim type=BARMENUITEM
             #------------------------------------------------------------------
-            toRet['navs'] = dic
-        
+            for item in res['__NAVB__']['items']:
+                
+                for itemId, args in item.items():
+                    args["TYPE"] = "BARMENUITEM"
+
         #----------------------------------------------------------------------
         # Stage items
         #----------------------------------------------------------------------
-        if '__STAG__' in res.keys() and 'obj' in res['__STAG__'].keys():
+        if '__STAG__' in res.keys() and 'objs' in res['__STAG__'].keys():
             
-            for stageId, stage in res['__STAG__']['obj'].items():
+            #------------------------------------------------------------------
+            # Prejdem vsetky stage
+            #------------------------------------------------------------------
+            for stageId, stage in res['__STAG__']['objs'].items():
     
-                pos = stage['res']['StageDef']['POS']
+                # Pozicia stage je definovana v 0-tom items v argumente POS
+                pos = stage['items'][0]['StagePos']['POS']
     
-                for ncSel, ncRes in stage['obj'].items():
+                #--------------------------------------------------------------
+                # V stage su dva objekty: SName a SCont
+                #--------------------------------------------------------------
+                for objId, obj in stage['objs'].items():
         
-                    if ncSel.startswith('SName'):
+                    if objId.startswith('SName'):
             
-                        for key, item in ncRes['res'].items():
+                        #------------------------------------------------------
+                        # Vsetkym itemom v Selectore doplnim typ a poziciu
+                        #------------------------------------------------------
+                        for item in obj['items']:
                             
-                            item['type'] = 'STAGESELECTOR'
-                            item['pos' ] = pos
+                            for itemId, args in item.items():
+                                args['TYPE'] = 'STAGESELECTOR'
+                                args['pos' ] = pos
                             
-                            toRet['stages']['sels'][key] = item
-                
                     else:
-                        for key, item in ncRes['res'].items():
+                        print(obj['items'])
+                        #------------------------------------------------------
+                        # Ak stage conntent obsahuje len 1 item
+                        #------------------------------------------------------
+                        if len(obj['items']) == 1:
+                            
+                            itemId = list(obj['items'][0].keys())[0]
+                            
+                            if 'TYPE' not in  obj['items'][0][itemId].keys():
+                                typeStash = 'P'
+                            else: typeStash = obj['items'][0][itemId]['TYPE']
+                            
+                            obj['items'][0][itemId]['TYPE'     ] = 'STAGEBOTH'
+                            obj['items'][0][itemId]['typeStash'] = typeStash
+                            obj['items'][0][itemId]['pos'      ] = pos
+                        
+                        else:
+                        #------------------------------------------------------
+                        # Prvy item zmenim na 'STAGESTART'
+                        #------------------------------------------------------
 
-                            item['pos' ] = pos
+                            itemId = list(obj['items'][0].keys())[0]
 
-                            toRet['stages']['cnts'][key] = item
+                            if 'TYPE' not in  obj['items'][0][itemId].keys():
+                                typeStash = 'P'
+                            typeStash = obj['items'][0][itemId]['TYPE']
+                            
+                            obj['items'][0][itemId]['TYPE'     ] = 'STAGESTART'
+                            obj['items'][0][itemId]['typeStash'] = typeStash
+                            obj['items'][0][itemId]['pos'      ] = pos
+                        
+                        #------------------------------------------------------
+                        # Posledny item zmenim na 'STAGESTOP'
+                        #------------------------------------------------------
 
+                            itemId = list(obj['items'][-1].keys())[0]
+
+                            if 'TYPE' not in  obj['items'][-1][itemId].keys():
+                                typeStash = 'P'
+                            typeStash = obj['items'][-1][itemId]['TYPE']
+                            
+                            obj['items'][-1][itemId]['TYPE'     ] = 'STAGESTOP'
+                            obj['items'][-1][itemId]['typeStash'] = typeStash
+                            obj['items'][-1][itemId]['pos'      ] = pos
+
+                #--------------------------------------------------------------
+            #------------------------------------------------------------------
         #----------------------------------------------------------------------
         self.loaded = True
-        self.journal.M(f"{self.name}.loadPageResource: {gen.dictString(toRet)}")
+        self.journal.M(f"{self.name}.loadPageResource: {gen.dictString(res)}")
         
         #----------------------------------------------------------------------
         self.journal.O()
-        return toRet
+        return res
     
     #==========================================================================
     # Response generators
@@ -283,10 +329,10 @@ class Base(Object):
         #----------------------------------------------------------------------
         # Funkcie
         #----------------------------------------------------------------------
-        self.context["len"                 ]= len
-        self.context["url_for"             ]= url_for
-        self.context["get_flashed_messages"]= get_flashed_messages
-        self.context["renderItem"          ]= renderItem
+        self.context["len"                 ] = len
+        self.context["url_for"             ] = url_for
+        self.context["get_flashed_messages"] = get_flashed_messages
+        self.context["itemListRender"      ] = itemListRender
         
         #----------------------------------------------------------------------
         # Definicia stranky
@@ -341,30 +387,23 @@ if __name__ == '__main__':
     ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
     )
 
-    page = Base(journal, 'Login', env, 700)
+    page = Base(journal, 'Homepage', env, 700)
+    rec = page.context
     
 #==============================================================================
 print(f"Base {_VER}")
 
 """
-for stageId, stage in page.context['__STAG__']['obj'].items():
-    
-    pos = stage['res']['StageDef']['POS']
-    print(stageId, ', pos = ', pos)
-    
-    for ncSel, res in stage['obj'].items():
-        print('--',ncSel)
-        
-        if ncSel.startswith('SName'):
-            
-            for key, item in res['res'].items():
-                print('-------->', key, '-', item)
-                
-        else:
-            for key, item in res['res'].items():
-                print('........>', key, '-', item)
-            
+for stageId, stage in page.context['__STAG__']['objs'].items():
+
+    print(stageId)
+
+    for objId, obj in stage['objs'].items():
+
+        if objId.startswith('SName'): print('selector ', objId, ', items ', obj['items'])
+        if objId.startswith('SCont'): print('content ',  objId, ', items ', obj['items'])
 """
+
 #==============================================================================
 #                              END OF FILE
 #------------------------------------------------------------------------------

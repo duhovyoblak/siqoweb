@@ -28,20 +28,12 @@
 
     <!----------------------------------------------------------------HEADER-->
     <div class="Header" id="Header" onclick="ShowElement('Content')">
-    
-		{{ renderItem( heads['Title'   ], lang)|safe }}
-		{{ renderItem( heads['Comment' ], lang)|safe }}
-		{{ renderItem( heads['SubTitle'], lang)|safe }}
+		{{ itemListRender(__HEAD__['items'], lang)|safe }}
     </div>
 
     <!----------------------------------------------------------------NAVBAR-->
     <div class="BarMenu" id="BarMenu">
-    
-        {% for barKey, barItem in navs.items() %}
-		
-    		{{ renderItem(barItem, lang)|safe }}
-        
-		{% endfor %}
+   		{{ itemListRender(__NAVB__['items'], lang)|safe }}
     </div>
 
     <!------------------------------------------------------FLASHED-MESSAGES-->

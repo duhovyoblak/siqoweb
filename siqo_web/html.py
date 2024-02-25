@@ -20,50 +20,84 @@ else                        : _IS_TEST = False
 #==============================================================================
 # HTML library
 #------------------------------------------------------------------------------
-def renderItem(item, lang):
+def itemListRender(itemLst, lang):
     "Returns HTML for json-encoded item"
     
-    if 'type' in item.keys(): typ = item['type']
-    else                    : typ = 'P'
+    toRet = ''
+
+    #--------------------------------------------------------------------------
+    # Prejdem zoznam itemov
+    #--------------------------------------------------------------------------
+    for itemDic in itemLst:
+        
+        print()
+        print('---->', itemDic)
+        
+        #----------------------------------------------------------------------
+        # Z itemDic vytiahnem jeho definiciu
+        #----------------------------------------------------------------------
+        item = list(itemDic.values())[0]
+        toRet += itemRender(item, lang)
+        
+    print()
+    print('<----', toRet)
+    return toRet
+    
+#------------------------------------------------------------------------------
+def itemRender(item, lang):
+    "Returns HTML for json-encoded item"
+    
+    (item, typ) = itemDrop(item, 'TYPE')
+    if typ == '_none_': typ = 'P'
+    
+    print()
+    print(typ,'->', item)
     
     toRet = ''
 
     #--------------------------------------------------------------------------
     # Rozlisi Backward, Forward alebo nieco ine
     #--------------------------------------------------------------------------
-    if False: return toRet
 
     #--------------------------------------------------------------------------
     # Skusim vsetky zname typy
     #--------------------------------------------------------------------------
-    elif typ == 'LINK'         : toRet = inputButton(item, lang)
-    elif typ == 'CHECKBOX'     : toRet = inputCheckBox(item, lang)
-    elif typ == 'RADIO'        : toRet = inputRadio(item, lang)
-    elif typ == 'TEXT'         : toRet = inputText(item, lang)
+    if   typ == 'CHECKBOX'      : toRet = inputCheckBox(item, lang)
+#    elif typ == 'BUTTON'        : toRet = inputButton(item, lang)
+    elif typ == 'RADIO'         : toRet = inputRadio(item, lang)
+    elif typ == 'TEXT'          : toRet = inputText(item, lang)
 
-    elif typ == 'LABEL'        : toRet = label(item, lang)
-    elif typ == 'P'            : toRet = p(item, lang)
-    elif typ == 'P-START'      : toRet = pStart(item, lang)
-    elif typ == 'P-CONT'       : toRet = pCont(item, lang)
-    elif typ == 'P-STOP'       : toRet = pStop(item, lang)
-    elif typ == 'IMAGE'        : toRet = image(item, lang)
+    elif typ == 'LABEL'         : toRet = label(item, lang)
+    elif typ == 'H1'            : toRet = h(item, lang, 1)
+    elif typ == 'H2'            : toRet = h(item, lang, 2)
+    elif typ == 'H3'            : toRet = h(item, lang, 3)
+    elif typ == 'H4'            : toRet = h(item, lang, 4)
+    elif typ == 'P'             : toRet = p(item, lang)
+    elif typ == 'P_START'       : toRet = pStart(item, lang)
+    elif typ == 'P_CONT'        : toRet = pCont(item, lang)
+    elif typ == 'P_STOP'        : toRet = pStop(item, lang)
+    elif typ == 'A'             : toRet = a(item, lang)
+    elif typ == 'IMAGE'         : toRet = image(item, lang)
 
-    elif typ == 'HEADTITLE'    : toRet = headTtile(item, lang)
-    elif typ == 'HEADSUBTIT'   : toRet = headSubTitle(item, lang)
-    elif typ == 'HEADCOMMENT'  : toRet = headComment(item, lang)
+    elif typ == 'HEADTITLE'     : toRet = headTtile(item, lang)
+    elif typ == 'HEADSUBTIT'    : toRet = headSubTitle(item, lang)
+    elif typ == 'HEADCOMMENT'   : toRet = headComment(item, lang)
 
-    elif typ == 'BARMENUITEM'  : toRet = barMenuItem(item, lang)
+    elif typ == 'BARMENUITEM'   : toRet = barMenuItem(item, lang)
 
-    elif typ == 'STAGESELECTOR': toRet = stageSelector(item, lang)
+    elif typ == 'STAGESELECTOR' : toRet = stageSelector(item, lang)
+    elif typ == 'STAGEBOTH'     : toRet = stageBoth(item, lang)
+    elif typ == 'STAGESTART'    : toRet = stageStart(item, lang)
+    elif typ == 'STAGESTOP'     : toRet = stageStop(item, lang)
 
-    elif typ == 'NEWLINE'      : toRet = newLine()
-    elif typ == 'BREAK'        : toRet = breakLine()
-    elif typ == 'SPLIT'        : toRet = split()
+    elif typ == 'NEWLINE'       : toRet = newLine()
+    elif typ == 'BREAK'         : toRet = breakLine()
+    elif typ == 'SPLIT'         : toRet = split()
     
-    elif typ == 'FUNC'         : toRet = fcia(item)
-    elif typ == 'HTML'         : toRet = html(item)
-    elif typ == 'DIVSTART'     : toRet = divStart(item)
-    elif typ == 'DIVSTOP'      : toRet = divStop(item)
+    elif typ == 'FUNC'          : toRet = ftion(item)
+    elif typ == 'HTML'          : toRet = html(item)
+    elif typ == 'DIVSTART'      : toRet = divStart(item)
+    elif typ == 'DIVSTOP'       : toRet = divStop(item)
     
     return toRet
     
@@ -94,40 +128,19 @@ def breakLine():
 #------------------------------------------------------------------------------
 # Headers
 #------------------------------------------------------------------------------
-def h1(item, lang):
+def h(item, lang, deg):
     
     (item, txt) = itemDrop(item, lang)
 
-    return f'<h1 {html_atts(item)}>{txt}</h1> \n'
-
-#------------------------------------------------------------------------------
-def h2(item, lang):
-
-    (item, txt) = itemDrop(item, lang)
-
-    return f'<h2 {html_atts(item)}>{txt}</h2> \n'
-
-#------------------------------------------------------------------------------
-def h3(item, lang):
-
-    (item, txt) = itemDrop(item, lang)
-
-    return f'<h3 {html_atts(item)}>{txt}</h3> \n'
-
-#------------------------------------------------------------------------------
-def h4(item, lang):
-
-    (item, txt) = itemDrop(item, lang)
-
-    return f'<h4 {html_atts(item)}>{txt}</h4> \n'
+    return f'<h{deg} {html_atts(item)}>{txt}</h1> \n'
 
 #------------------------------------------------------------------------------
 # Link <a href="url"?args>txt</a>
 #------------------------------------------------------------------------------
 def a(item, lang):
 
-    (item, url) = itemDrop(item, 'url')
-    (item, arg) = itemDrop(item, 'arg')
+    (item, url) = itemDrop(item, 'URL')
+    (item, arg) = itemDrop(item, 'ARG')
     (item, txt) = itemDrop(item, lang )
 
     link = url
@@ -138,21 +151,28 @@ def a(item, lang):
     return f'<a {html_atts(item)}>{txt}</a>'
 
 #------------------------------------------------------------------------------
+# Paragraph
+#------------------------------------------------------------------------------
 def p(item, lang):
+    
+    toRet  = pStart(item, lang)
+    toRet += pStop()
 
-    (item, hid) = itemDrop(item, 'hidden')
-    (item, txt) = itemDrop(item, lang )
-
-    #--------------------------------------------------------------------------
-    # If paragraph is not hidden
-    #--------------------------------------------------------------------------
-    if hid == '_none_' or not hid: return f'<p {html_atts(item)}>{txt}</p>\n'
-    else                         : return f'<p hidden {html_atts(item)}>{txt}</p>\n'
+    return toRet
 
 #------------------------------------------------------------------------------
 def pStart(item, lang):
 
-    return f'<p {html_atts(item)}>'
+    (item, hid) = itemDrop(item, 'hidden')
+    (item, txt) = itemDrop(item, lang )
+
+#    item['style'] = "display:block"
+
+    #--------------------------------------------------------------------------
+    # If paragraph is/is not hidden
+    #--------------------------------------------------------------------------
+    if hid == '_none_' or not hid: return f'<p        {html_atts(item)}>{txt}'
+    else                         : return f'<p hidden {html_atts(item)}>{txt}'
 
 #------------------------------------------------------------------------------
 def pCont(item, lang):
@@ -161,9 +181,12 @@ def pCont(item, lang):
     return txt
 
 #------------------------------------------------------------------------------
-def pStop():
+def pStop(item = {}, lang='SK'):
 
-    return '</p>\n'
+    (item, txt) = itemDrop(item, lang )
+    if txt == '_none_': txt = ''
+    
+    return f'{txt}</p>\n'
 
 #------------------------------------------------------------------------------
 def split():
@@ -176,6 +199,12 @@ def html(item, lang):
 
     (item, code) = itemDrop(item, 'html')
     return f'{code}\n'
+
+#------------------------------------------------------------------------------
+def ftion(item, lang):
+
+    (item, ftion) = itemDrop(item, 'func')
+    return f'{ftion}\n'
 
 #------------------------------------------------------------------------------
 def pre(item, lang):
@@ -332,10 +361,9 @@ def headTtile(item, lang):
     atts = {"class":"HeaderTitle", "name":"HeaderTitle", "id":"HeaderTitle"}
  
     toRet  = divStart(atts)
-    toRet += h1(item, lang)
+    toRet += h(item, lang, 1)
     toRet += divStop()
     
-    print('headTitle :', toRet)
     return toRet
 
 #------------------------------------------------------------------------------
@@ -344,7 +372,7 @@ def headComment(item, lang):
     atts = {"class":"HeaderComment", "name":"HeaderComment", "id":"HeaderComment"}
 
     toRet  = divStart(atts)
-    toRet += h1(item, lang)
+    toRet += p(item, lang)
     toRet += divStop()
 
     return toRet
@@ -352,7 +380,7 @@ def headComment(item, lang):
 #------------------------------------------------------------------------------
 def headSubTitle(item, lang):
   
-    return h4(item, lang)
+    return h(item, lang, 4)
 
 #------------------------------------------------------------------------------
 # NavBar block
@@ -375,8 +403,7 @@ def stageSelector(item, lang):
     #--------------------------------------------------------------------------
     # Pripravim atributy do itemu
     #--------------------------------------------------------------------------
-    pos = item['pos']
-    item['pos'] = ''
+    (item, pos) = itemDrop(item, 'pos')
     
     item['name'   ] = 'SSB'
     item['id'     ] = f"SSB_{pos}"
@@ -398,18 +425,16 @@ def stageSelector(item, lang):
     return toRet
 
 #------------------------------------------------------------------------------
-def stagePanel(item, lang):
+def stageBoth(item, lang):
   
     #--------------------------------------------------------------------------
     # Pripravim atributy do itemu
     #--------------------------------------------------------------------------
-    pos = item['pos']
-    item['pos'] = ''
+    (item, pos      ) = itemDrop(item, 'pos')
+    (item, typeStash) = itemDrop(item, 'typeStash')
     
-    item['name'   ] = 'SSB'
-    item['id'     ] = f"SSB_{pos}"
-    item['value'  ] = pos
-    item['onclick'] = f"ShowStage('{pos}')"
+    item['TYPE'   ] = typeStash
+    item['name'   ] = 'SContent'
     
     if pos == '1': style = "display:block"
     else         : style = "display:none"
@@ -420,10 +445,57 @@ def stagePanel(item, lang):
     # Render itemu
     #--------------------------------------------------------------------------
     toRet  = divStart(atts)
-    toRet += renderItem(item, lang)
+    toRet += itemRender(item, lang)
     toRet += divStop()
 
     return toRet
+
+#------------------------------------------------------------------------------
+def stageStart(item, lang):
+
+    #--------------------------------------------------------------------------
+    # Pripravim atributy do itemu
+    #--------------------------------------------------------------------------
+    (item, pos      ) = itemDrop(item, 'pos')
+    (item, typeStash) = itemDrop(item, 'typeStash')
+    
+    item['TYPE'   ] = typeStash
+    item['name'   ] = 'SContent'
+    
+    if pos == '1': style = "display:block"
+    else         : style = "display:none"
+    
+    atts = {"class":"StagePanel", "name":"SP", "id":f"SP_{pos}", "style":style}
+
+    #--------------------------------------------------------------------------
+    # Render itemu
+    #--------------------------------------------------------------------------
+    toRet  = divStart(atts)
+    toRet += itemRender(item, lang)
+
+    return toRet
+
+#------------------------------------------------------------------------------
+def stageStop(item, lang):
+
+    #--------------------------------------------------------------------------
+    # Pripravim atributy do itemu
+    #--------------------------------------------------------------------------
+    (item, pos      ) = itemDrop(item, 'pos')
+    (item, typeStash) = itemDrop(item, 'typeStash')
+    
+    item['TYPE'   ] = typeStash
+    item['name'   ] = 'SContent'
+    
+    print('SS', item)
+    #--------------------------------------------------------------------------
+    # Render itemu
+    #--------------------------------------------------------------------------
+    toRet  = itemRender(item, lang)
+    toRet += divStop()
+
+    return toRet
+
 
 #------------------------------------------------------------------------------
 # HTML Tabulka

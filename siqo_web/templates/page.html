@@ -24,20 +24,29 @@
         <!----------------------------------------------------STAGE-SELECTOR-->
         <div class="StageSelector">
 		
-		    {% for selKey, selItem in stages['sels'].items() %}
-		
-    		    {{ renderItem(selItem, lang)|safe }}
+    	    {% for stageId, stage in __STAG__['objs'].items() %}
+        	    {% for objId, obj in stage['objs'].items() %}
 
+                    {% if objId.startswith('SName') %}
+					
+    		            {{ itemListRender(obj['items'], lang)|safe }}
+                    
+					{% endif %}
+                {% endfor %}
             {% endfor %}
 
         </div>
 
         <!-----------------------------------------------------STAGE-CONTENT-->
-        {% for contKey, contItem in stages['cnts'].items() %}
+   	    {% for stageId, stage in __STAG__['objs'].items() %}
+       	    {% for objId, obj in stage['objs'].items() %}
 
-    		    {{ renderItem(contItem, lang)|safe }}
-
-
+                {% if objId.startswith('SCont') %}
+					
+   		            {{ itemListRender(obj['items'], lang)|safe }}
+                    
+				{% endif %}
+            {% endfor %}
         {% endfor %}
 
     {% endblock %}
