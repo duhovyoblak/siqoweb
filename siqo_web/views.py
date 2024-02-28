@@ -59,7 +59,7 @@ def base():
     
     journal.I('views.base()')
 
-    page = Base(journal, 'Login', env, height=670)
+    page = Base(journal, env, 'Login', height=670)
     resp = page.resp()
 
     journal.O()
@@ -70,7 +70,7 @@ def login():
     
     journal.I('views.login()')
 
-    page = Login(journal, 'Login', env, height=670, template="login.html")
+    page = Login(journal, env, 'Login', height=670, template="login.html")
     resp = page.resp()
 
     journal.O()
@@ -81,7 +81,7 @@ def homepage():
     
     journal.I('views.homepage()')
 
-    page = Page(journal, 'Homepage', env, height=670, template="page.html")
+    page = Page(journal, env, 'Homepage', height=670, template="page.html")
     resp = page.resp()
 
     journal.O()

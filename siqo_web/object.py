@@ -7,13 +7,14 @@ from   werkzeug.security        import generate_password_hash, check_password_ha
 from   flask_login              import UserMixin
 
 import siqo_lib.general         as gen
-from   siqo_web.database        import Database
 from   siqo_web.config          import Config
+from   siqo_web.database        import Database
+from   siqo_web.dms             import DMS
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.00'
+_VER      = '1.01'
 
 _LANG_DEF = 'SK'       # Default language
 _SYSUSER  = 'SIQO'     # System superuser
@@ -41,7 +42,7 @@ class Object(Database):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, page, user, objPar='__PAGE__', rMode= 'STRICT', crForm='Y', lvl=5):
+    def __init__(self, journal, user, classId, objPar='__PAGE__', rMode= 'STRICT', crForm='Y', lvl=5):
         "Call constructor of Object"
 
         journal.I("Object.init:")
@@ -54,11 +55,11 @@ class Object(Database):
         #----------------------------------------------------------------------
         # Identifikacia objektu
         #----------------------------------------------------------------------
-        self.name    = f"Object({page}.{objPar})"
+        self.name    = f"Object({classId}.{objPar})"
+        self.user    = user      # User, ku ktoremu patri objekt
         
         self.objPar  = objPar    # Identifikacia parent objektu vramci page
-        self.page    = page      # Page, ku ktoremu patri objekt
-        self.user    = user      # User, ku ktoremu patri objekt
+        self.classId = classId   # Typ objektu/Page, ku ktoremu patri objekt
 
         self.rMode   = rMode     # uroven kontroly privilegii, STRICT, ROOT
 
@@ -118,14 +119,14 @@ class Object(Database):
         #----------------------------------------------------------------------
         # Ziskanie stromu objektov
         #----------------------------------------------------------------------
-        pag = gen.quoted(self.page)
+        pag = gen.quoted(self.classId)
         par = gen.quoted(objPar   )
 
         #              0         1          2         3        4            5            6      7
-        cols = ('PAGE_ID', 'OBJ_ID', 'OBJ_PAR', 'C_FUNC', 'NOTES', 'D_CREATED', 'D_CHANGED', 'WHO')
+        cols = ('CLASS_ID', 'OBJ_ID', 'OBJ_PAR', 'C_FUNC', 'NOTES', 'D_CREATED', 'D_CHANGED', 'WHO')
         
         sql = f"""select {','.join(cols)} from {Config.tabObj} 
-                  where PAGE_ID = {pag} and OBJ_PAR = {par}
+                  where CLASS_ID = {pag} and OBJ_PAR = {par}
                   order by OBJ_ID"""
         
         rows = self.readDb(who, sql)
@@ -194,7 +195,7 @@ class Object(Database):
 
         self.journal.I(f"{self.name}.objectRegister: for '{who}'")
 
-        pag = gen.quoted(self.page  )
+        pag = gen.quoted(self.classId  )
         who = gen.quoted(who        )
         obj = 'd'
 
@@ -202,8 +203,8 @@ class Object(Database):
         # Verifikacia Objektu v DB
         #----------------------------------------------------------------------
         sql = f"""select C_FUNC from {Config.tabObj}
-                  where PAGE_ID = {pag}
-                  and   OBJ_ID  = {obj}"""
+                  where CLASS_ID = {pag}
+                  and   OBJ_ID   = {obj}"""
   
         if self.selectItem(who, sql ):
             
@@ -214,16 +215,16 @@ class Object(Database):
         # Registracia noveho objektu
         #----------------------------------------------------------------------
         sql = f"""insert into {Config.tabObj}
-                        ( PAGE_ID, OBJ_ID, C_FUNC, NOTES, D_CREATED, D_CHANGED,     WHO  )
+                        ( CLASS_ID, OBJ_ID, C_FUNC, NOTES, D_CREATED, D_CHANGED,     WHO  )
                   values( {pag},   {obj},  'A',   'Automatic register object procedure',
                                                           DATE('now'), DATE('now'), {who})"""
          
         if self.sSql(who, sql) > 0:
             
-            self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'objectRegister()', 'NO_ACT', 'OK', 
+            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'objectRegister()', 'NO_ACT', 'OK', 
                          stat="automatic object registration" )
         else:
-            self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'objectRegister()', 'NO_ACT', 'ER', 
+            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'objectRegister()', 'NO_ACT', 'ER', 
                          stat="Object registration failed for pag/obj" )
 
         #----------------------------------------------------------------------
@@ -241,14 +242,14 @@ class Object(Database):
         #----------------------------------------------------------------------
         # Ziskanie resource
         #----------------------------------------------------------------------
-        pag = gen.quoted(self.page)
+        pag = gen.quoted(self.classId)
         obj = gen.quoted(objId    )
         
         #              0       1        2       3           4           5     6
         cols = ('ITEM_ID','S_KEY','C_FUNC','S_VAL','D_CREATED','D_CHANGED','WHO')
 
         sql = f"""select {','.join(cols)} from {Config.tabObjRes}
-                  where PAGE_ID = {pag} and   OBJ_ID  = {obj}
+                  where CLASS_ID = {pag} and   OBJ_ID  = {obj}
                   order by ITEM_ID"""
   
         rows = self.readDb(who, sql)
@@ -314,14 +315,14 @@ class Object(Database):
         #----------------------------------------------------------------------
         # Pokusim sa zapisat resource do DB
         #----------------------------------------------------------------------
-        pag = gen.quoted(self.page  )
+        pag = gen.quoted(self.classId  )
         obj = gen.quoted(self.objLog)
         lan = gen.quoted(lang       )
         key = gen.quoted(resKey     )
         whx = gen.quoted(who        )
 
         sql = f"""insert into {Object.tabObjRes}
-                        ( PAGE_ID, OBJ_ID, LANG_ID, S_KEY, S_VAL,        D_CREATED,   D_CHANGED,   WHO  )
+                        ( CLASS_ID, OBJ_ID, LANG_ID, S_KEY, S_VAL,        D_CREATED,   D_CHANGED,   WHO  )
                   values( {pag},   {obj},  {lan},   {key}, '_resource_', DATE('now'), DATE('now'), {whx})"""
          
         #----------------------------------------------------------------------
@@ -329,7 +330,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         if self.sSQL(who, sql) > 0:
   
-            self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'resourceRegister()', 'OK', 
+            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'resourceRegister()', 'OK', 
                          23, "automatic resource registration" )  
 
         #----------------------------------------------------------------------
@@ -348,7 +349,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         if self.user == 'SIQO':
 
-            self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'roleGet()', 'OK', 
+            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleGet()', 'OK', 
                          22, "user usr role for pag.obj is Admin" ) 
             self.journal.O()
             return 'Admin'
@@ -373,7 +374,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         if role is not None:
 
-            self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'roleGet()', 'OK', 
+            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleGet()', 'OK', 
                          22, "user usr role for pag.obj is role" ) 
             self.journal.O()
             return role
@@ -384,7 +385,7 @@ class Object(Database):
             #------------------------------------------------------------------
             role = self.roleRegister(who)
 
-            self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'roleGet()', 'OK', 
+            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleGet()', 'OK', 
                          22, "user usr role for pag.obj was setted to toRet" ) 
 
             self.journal.O()
@@ -405,7 +406,7 @@ class Object(Database):
         # Pokus o insert role usera k objektu
         #----------------------------------------------------------------------
         usr = gen.quoted(who        )
-        pag = gen.quoted(self.page  )
+        pag = gen.quoted(self.classId  )
         obj = gen.quoted(self.objLog)
         rol = gen.quoted(anonRole   )
         who = usr
@@ -419,7 +420,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         if self.sSQL(self.user, sql ) > 0:
 
-            self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'roleRegister()', 'OK', 
+            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleRegister()', 'OK', 
                          20, "automatic role registration" )
 
         #----------------------------------------------------------------------
@@ -435,7 +436,7 @@ class Object(Database):
         # Ziskam rolu usera Anonymous k tomuto objektu
         #----------------------------------------------------------------------
         usr = gen.quoted('Anonymous')
-        pag = gen.quoted(self.page  )
+        pag = gen.quoted(self.classId  )
         obj = gen.quoted(self.objLog)
 
         sql = f"""select S_ROLE from {Object.tabObjRole}
@@ -451,7 +452,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         if role is not None:
 
-            self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'roleAnonymGet()', 'NO_ACT', 'OK', stat="Anonymous role for pag.obj is role" )
+            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleAnonymGet()', 'NO_ACT', 'OK', stat="Anonymous role for pag.obj is role" )
             self.journal.O()
             return role
     
@@ -489,7 +490,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         cnt = self.sSQL(who, sql)
 
-        self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'roleSet()', 'OK', 
+        self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleSet()', 'OK', 
                        21, "Role roi was set for usi and page pai" )
 
         #----------------------------------------------------------------------
@@ -515,7 +516,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         obj = gen.quoted(self.objLog)
         usr = gen.quoted(who        )
-        pag = gen.quoted(self.page  )
+        pag = gen.quoted(self.classId  )
         key = gen.quoted(key        )
 
         sql = f"""select S_VAL from {Object.tabObjCache}
@@ -540,7 +541,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         usr = gen.quoted(who        )
         obj = gen.quoted(self.objLog)
-        pag = gen.quoted(self.page  )
+        pag = gen.quoted(self.classId  )
         key = gen.quoted(key        )
         val = gen.quoted(val        )
 
@@ -570,13 +571,13 @@ class Object(Database):
             #------------------------------------------------------------------
             if self.sSQL(who, sql) < 1:
 
-                self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'cacheSet()', 'ER', 3, 
+                self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'cacheSet()', 'ER', 3, 
                            "key is NOT setted to val" )  
                 self.journal.O()
                 return
 
         #----------------------------------------------------------------------
-        self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'cacheSet()', 'OK', 
+        self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'cacheSet()', 'OK', 
                        38, "key is val" )  
 
         #----------------------------------------------------------------------
@@ -605,7 +606,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         cnt = self.sSQL(who, sql)
 
-        self.sJournal(self.user, 'NO_SESS', self.page, self.name, 'cacheClear()', 'OK', 
+        self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'cacheClear()', 'OK', 
                        38, "Cleared row rows for usi-pai-obi"       )  
 
         #----------------------------------------------------------------------
@@ -645,7 +646,7 @@ if __name__ == '__main__':
     from   siqo_lib                 import SiqoJournal
     journal = SiqoJournal('test-object', debug=4)
     
-    obj = Object(journal, 'Homepage', 'palo4')
+    obj = Object(journal, 'palo4', 'Homepage')
     
     rec = obj.objectGet('ja')
     #res = obj.resourceGet('ja', '__STAG__')

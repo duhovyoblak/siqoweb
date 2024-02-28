@@ -94,17 +94,17 @@ CREATE INDEX FKI_USR_LANG ON PM_USER(LANG_ID);
 DROP TABLE IF EXISTS PM_OBJECT;
 
 CREATE TABLE IF NOT EXISTS PM_OBJECT (
-   PAGE_ID      VARCHAR(32)      NOT NULL                     /* Stránka ktorej objekt patrí - časť primárneho kľúča */
+   CLASS_ID     VARCHAR(32)      NOT NULL                     /* Typ objektu/stránka - časť primárneho kľúča */
   ,OBJ_ID       VARCHAR(32)      NOT NULL                     /* Jednoznačná identifikácia objektu vrámci stránky - časť primárneho kľúča */
 
-  ,OBJ_PAR      VARCHAR(32)      NOT NULL DEFAULT '__PAGE__'  /* Parent objekt, musí patriť stránke PAGE_ID */
+  ,OBJ_PAR      VARCHAR(32)      NOT NULL DEFAULT '__PAGE__'  /* Parent objekt, musí patriť CLASS_ID */
   ,C_FUNC       CHAR(1)          NOT NULL                     /* Object status A aktívny N neaktívny */
   ,NOTES        VARCHAR(4000)        NULL                     /* Poznámky k objektu */
   ,D_CREATED    TIMESTAMP        NOT NULL                     /* Dátum vytvorenia objektu */
   ,D_CHANGED    TIMESTAMP        NOT NULL                     /* Dátum ostatnej zmeny objektu */
   ,WHO          VARCHAR(32)      DEFAULT 'SIQO'               /* User ktorý vykonal ostatnú zmenu objektu */
 
-  ,PRIMARY KEY (PAGE_ID, OBJ_ID)
+  ,PRIMARY KEY (CLASS_ID, OBJ_ID)
 )
 /* Zoznam objektov, používaných v SPAGE a menežovaných PageMan-om. Objekty môžu byť rôzneho druhu, napr. stránka, objekt na stránke, proces, atď. Objekt je základnou jednotkou riadenia práv */
 ;
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS PM_OBJECT (
 DROP TABLE IF EXISTS PM_OBJ_RESOURCE ;
 
 CREATE TABLE IF NOT EXISTS PM_OBJ_RESOURCE (
-   PAGE_ID      VARCHAR(32)      NOT NULL                     /* Stránka ktorej objekt patrí - časť primárneho kľúča */
+   CLASS_ID     VARCHAR(32)      NOT NULL                     /* Typ objektu/stránka ktorej objekt patrí - časť primárneho kľúča */
   ,OBJ_ID       VARCHAR(32)      NOT NULL                     /* Jednoznačná identifikácia objektu vrámci stránky - časť primárneho kľúča */
   ,ITEM_ID      VARCHAR(32)      NOT NULL                     /* Identifikácia itemu vrámci objektu - časť primárneho kľúča */
   ,S_KEY        VARCHAR(32)      NOT NULL                     /* Kľúč resource hodnoty (LANG/TYPE/CLASS/...)- časť primárneho kľúča */
@@ -126,13 +126,13 @@ CREATE TABLE IF NOT EXISTS PM_OBJ_RESOURCE (
   ,D_CHANGED    TIMESTAMP            NULL                     /* Dátum ostatnej zmeny resource */
   ,WHO          VARCHAR(32)      DEFAULT 'SIQO'               /* User ktorý vykonal ostatnú zmenu objektu */
 
-  ,PRIMARY KEY (PAGE_ID, OBJ_ID, ITEM_ID, S_KEY)
-  ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES PM_OBJECT (PAGE_ID, OBJ_ID)
+  ,PRIMARY KEY (CLASS_ID, OBJ_ID, ITEM_ID, S_KEY)
+  ,FOREIGN KEY (CLASS_ID, OBJ_ID) REFERENCES PM_OBJECT (CLASS_ID, OBJ_ID)
 )
 /* Staticka cache literalov a vyhodnotitelnych vyrazov pre kombinaciu PAGE/LANGUAGE/OBJECT */
 ;
 
-CREATE INDEX FKI_RES_OBJ  ON PM_OBJ_RESOURCE(PAGE_ID, OBJ_ID);
+CREATE INDEX FKI_RES_OBJ  ON PM_OBJ_RESOURCE(CLASS_ID, OBJ_ID);
 
 /*------------------------------------------------------*/
 /* Table PM_OBJ_USER_ROLE */

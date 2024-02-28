@@ -106,7 +106,7 @@ if __name__ == '__main__':
     ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
     )
 
-    page = Page(journal, 'Homepage', env, 700)
+    page = Page(journal, env, 'Homepage', 700)
     
 
 #==============================================================================

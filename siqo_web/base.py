@@ -46,10 +46,10 @@ class Base(Object):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, page, env, height, template="base.html"):
+    def __init__(self, journal, env, classId, height, template="base.html"):
         "Call constructor of Base and initialise it"
         
-        journal.I(f"Base({page}).init:")
+        journal.I(f"Base({classId}).init:")
         
         user = current_user
         
@@ -67,7 +67,7 @@ class Base(Object):
         #----------------------------------------------------------------------
         # Konstruktor Database
         #----------------------------------------------------------------------
-        super().__init__(journal, page, userId, objPar='__ROOT__', rMode= 'STRICT', crForm='Y', lvl=5)
+        super().__init__(journal, userId, classId, objPar='__ROOT__', rMode= 'STRICT', crForm='Y', lvl=5)
 
         #----------------------------------------------------------------------
         # Definicia stranky
@@ -85,8 +85,8 @@ class Base(Object):
         #----------------------------------------------------------------------
         # Aktualny user a jazyk
         #----------------------------------------------------------------------
-        journal.M(f"Base({self.page}).init: user = '{userName}'")
-        journal.M(f"Base({self.page}).init: lang = '{self.lang}'")
+        journal.M(f"Base({self.classId}).init: user = '{userName}'")
+        journal.M(f"Base({self.classId}).init: lang = '{self.lang}'")
 
         #----------------------------------------------------------------------
         # Inicializacia statickeho contextu
@@ -96,8 +96,8 @@ class Base(Object):
         #----------------------------------------------------------------------
         # Doplnenie dynamickeho contextu
         #----------------------------------------------------------------------
-        self.pageRes   = self.loadPageResource()
-        self.addContext(self.pageRes)
+        self.classIdRes   = self.loadPageResource()
+        self.addContext(self.classIdRes)
 
         self.cont   = self.loadContent()
         self.addContext(self.cont)
@@ -115,7 +115,7 @@ class Base(Object):
     #--------------------------------------------------------------------------
     def loadExtra(self):
         
-        self.journal.I(f"{self.page}.initExtra:")
+        self.journal.I(f"{self.classId}.initExtra:")
         
         self.journal.O()
         return {}
@@ -123,7 +123,7 @@ class Base(Object):
     #--------------------------------------------------------------------------
     def loadContent(self):
         
-        self.journal.I(f"{self.page}.loadContent:")
+        self.journal.I(f"{self.classId}.loadContent:")
         
         self.journal.O()
         return {'__CONT__':{}}
@@ -131,9 +131,13 @@ class Base(Object):
     #--------------------------------------------------------------------------
     def loadPageResource(self):
         
-        self.journal.I(f"{self.page}.loadPageResource:")
+        self.journal.I(f"{self.classId}.loadPageResource:")
         
-        res   = self.objectGet(self.user)
+        #----------------------------------------------------------------------
+        # Nacitanie objektov PAGE
+        #----------------------------------------------------------------------
+        res   = self.objectGet(self.user, objPar='__PAGE__')
+        
         toRet = {'__HEAD__':{}, '__NAVB__':{}, '__STAG__':{}}
         
         #----------------------------------------------------------------------
@@ -258,7 +262,7 @@ class Base(Object):
     #--------------------------------------------------------------------------
     def respPost(self):
      
-        self.journal.I(f"{self.page}.respPost: Default None post response")
+        self.journal.I(f"{self.classId}.respPost: Default None post response")
         
         self.journal.O()
         return None
@@ -266,7 +270,7 @@ class Base(Object):
     #--------------------------------------------------------------------------
     def respGet(self):
      
-        self.journal.I(f"{self.page}.respGet: Default html get response from template='{self.template}'")
+        self.journal.I(f"{self.classId}.respGet: Default html get response from template='{self.template}'")
         
         template = self.env.get_template(self.template)
         self.journal.M(f"{self.name}.resp: template loaded")
@@ -283,7 +287,7 @@ class Base(Object):
     #--------------------------------------------------------------------------
     def resp(self):
      
-        self.journal.I(f"{self.page}.resp:")
+        self.journal.I(f"{self.classId}.resp:")
         
         #----------------------------------------------------------------------
         # Skontrolujem stav stranky, vyskocim ak nie je pripravena
@@ -320,7 +324,7 @@ class Base(Object):
     def initContext(self):
         "Creates context"
     
-        self.journal.I(f"{self.page}.initContext:")
+        self.journal.I(f"{self.classId}.initContext:")
         self.context = {}
 
         #----------------------------------------------------------------------
@@ -352,21 +356,21 @@ class Base(Object):
     def addContext(self, cont):
         "Add optional context"
         
-        self.journal.I(f"{self.page}.addContext: {cont.keys()}")
+        self.journal.I(f"{self.classId}.addContext: {cont.keys()}")
         self.context.update(cont)
         self.journal.O()
 
     #--------------------------------------------------------------------------
     def addFlash(self, mess):
 
-        self.journal.I(f"{self.page}.addFlash: {mess}")
+        self.journal.I(f"{self.classId}.addFlash: {mess}")
         flash(mess)
         self.journal.O()
 
     #--------------------------------------------------------------------------
     def setInitId(self, initId):
 
-        self.journal.I(f"{self.page}.initId: {initId}")
+        self.journal.I(f"{self.classId}.initId: {initId}")
         self.addContext({"initId":initId})
         self.journal.O()
 
@@ -384,7 +388,7 @@ if __name__ == '__main__':
     ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
     )
 
-    page = Base(journal, 'Homepage', env, 700)
+    page = Base(journal, env, 'Homepage', 700)
     rec = page.context
     
 #==============================================================================
