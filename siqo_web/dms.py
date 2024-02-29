@@ -3,7 +3,10 @@
 #------------------------------------------------------------------------------
 import os
 
+from   flask                    import Flask, url_for, render_template, make_response
+
 import siqo_lib.general   as gen
+from   siqo_web.config          import Config
 
 #==============================================================================
 # package's constants
@@ -26,14 +29,6 @@ else                        : _IS_TEST = False
 #==============================================================================
 # 
 #------------------------------------------------------------------------------
-def loadJson(fName):
-    
-    journal.I(f"loadJson: {fName}")
-    
-    toRet = gen.loadJson(journal, fileName = f"{_PATH}{fName}")
-    
-    journal.O()
-    return toRet
 
 #==============================================================================
 # Class DMS
@@ -74,13 +69,21 @@ class DMS:
         return toRet
 
     #==========================================================================
+    # Tools
+    #--------------------------------------------------------------------------
+    def uri(self, fName):
+        
+        return f"{Config.dmsPath}{fName}"
+
+    #==========================================================================
     # Praca s jednym dokumentom
     #--------------------------------------------------------------------------
     def docById(self, who, idx):
         
         self.journal.I(f"{self.name}.docById: ID = '{id}'")
         
-        doc = self.docRead(who, where = f"DOC_ID = {idx}")
+        doc = self.docRead(who, where = f"DOC_ID = {idx}")[0]
+        doc['URI'] = url_for('static', filename=f"dms/{doc['FILENAME']}")
         
         self.journal.O()
         return doc
@@ -122,7 +125,7 @@ if __name__ == '__main__':
     dms = DMS(journal, db)
     
     docs = dms.docRead('ja')
-    doc  = dms.docById('ja', 57)
+#    doc  = dms.docById('ja', 57)
 
 #==============================================================================
 # Test cases

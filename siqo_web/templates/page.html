@@ -29,7 +29,7 @@
 
                     {% if objId.startswith('SName') %}
 					
-    		            {{ itemListRender(obj['items'], lang)|safe }}
+    		            {{ html.itemListRender(obj['items'], lang)|safe }}
                     
 					{% endif %}
                 {% endfor %}
@@ -43,7 +43,7 @@
 
                 {% if objId.startswith('SCont') %}
 					
-   		            {{ itemListRender(obj['items'], lang)|safe }}
+   		            {{ html.itemListRender(obj['items'], lang)|safe }}
                     
 				{% endif %}
             {% endfor %}

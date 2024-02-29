@@ -14,10 +14,9 @@ from   jinja2                   import Environment, PackageLoader, select_autoes
 
 import siqo_lib.general         as gen
 
-import siqo_web.dms             as dms
-import siqo_web.html            as html
-
 from   siqo_web.config          import Config
+from   siqo_web.dms             import DMS
+from   siqo_web.html            import HTML
 from   siqo_web.user            import User
 from   siqo_web.object          import Object
 from   siqo_web.forms           import FormLogin
@@ -87,6 +86,16 @@ class Base(Object):
         #----------------------------------------------------------------------
         journal.M(f"Base({self.classId}).init: user = '{userName}'")
         journal.M(f"Base({self.classId}).init: lang = '{self.lang}'")
+
+        #----------------------------------------------------------------------
+        # DMS
+        #----------------------------------------------------------------------
+        self.dms = DMS(self.journal, self)
+
+        #----------------------------------------------------------------------
+        # HTML
+        #----------------------------------------------------------------------
+        self.html = HTML(self.journal, who=self.name, dms=self.dms)
 
         #----------------------------------------------------------------------
         # Inicializacia statickeho contextu
@@ -333,7 +342,7 @@ class Base(Object):
         self.context["len"                 ] = len
         self.context["url_for"             ] = url_for
         self.context["get_flashed_messages"] = get_flashed_messages
-        self.context["itemListRender"      ] = html.itemListRender
+        self.context["html"                ] = self.html
         
         #----------------------------------------------------------------------
         # Definicia stranky

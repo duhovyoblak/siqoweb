@@ -22,8 +22,10 @@ class Config:
     
     cwd      = os.getcwd()
     
-    dtbsPath = f"{cwd}/database/"
-    dtbsName = "pagman"
+    dmsPath     = f"{cwd}/dms/"
+
+    dtbsPath    = f"{cwd}/database/"
+    dtbsName    = "pagman"
     
     tabParam    = "PM_PARAM"
     

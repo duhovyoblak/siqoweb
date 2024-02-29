@@ -153,7 +153,10 @@ class HTML:
     # Link <a href="url"?args>txt</a>
     #--------------------------------------------------------------------------
     def a(self, item, lang):
-    
+
+        print('a')
+        print(item)
+
         (item, url) = self.itemDrop(item, 'URL')
         (item, arg) = self.itemDrop(item, 'ARG')
         (item, txt) = self.itemDrop(item, lang )
@@ -162,6 +165,8 @@ class HTML:
         if arg != '': link += f'?{arg}'
         
         item["href"] = link
+        
+        print(item)
     
         return f'<a {self.html_atts(item)}>{txt}</a>'
     
@@ -218,11 +223,13 @@ class HTML:
             else           : args['width' ] = ''
     
             if len(parts)>4: args['float' ] = parts[4].strip()
-        else           : args['float' ] = 'left'
+            else           : args['float' ] = 'left'
 
-        imageHtml = self.imageThumb(args, lang)
+            imageHtml = self.imageThumb(args, lang)
+            
+            print('imageHtml ', imageHtml)
 
-        toRet = re.sub(image, imageHtml, toRet)
+            toRet = re.sub(image, imageHtml, toRet)
     
         #----------------------------------------------------------------------
         return toRet
@@ -350,12 +357,11 @@ class HTML:
         #----------------------------------------------------------------------
         # Informacie ziskane z SDM podla sdmId
         #----------------------------------------------------------------------
-        doc  = self.dms.docById('ja', 57)
-    
-    
-        (item, uri   ) = self.itemDrop(item, 'uri'   )
-        (item, title ) = self.itemDrop(item, 'title' )
+        doc  = self.dms.docById(self.who, sdmId)
         
+        uri   = doc['URI'  ]
+        title = doc['TITLE']
+
         #----------------------------------------------------------------------
         # Div
         #----------------------------------------------------------------------
@@ -370,13 +376,13 @@ class HTML:
         # Link
         #----------------------------------------------------------------------
         args = {"src"    :uri
-               ,"style"  :"width:100% max-height:90%"
+               ,"style"  :"width:100%; max-height:90%"
                ,"alt"    :"SIQO DMS is loading image..."
                }
     
         linkTxt = self.image(args, lang)
         
-        args = {"URL":uri, "target":"_blank", "lang":linkTxt}
+        args = {"URL":uri, "target":"_blank", lang:linkTxt}
         toRet += self.a(args, lang)
         
         #----------------------------------------------------------------------

@@ -211,6 +211,7 @@ with app.test_request_context():
     print(url_for('index'))
     print(url_for('profile', username='John Doe'))
     print(url_for('static', filename='css/base_page.css'))
+    print(url_for('static', filename='dms/SF0000056.jpg'))
     
 #==============================================================================
 print(f"routes {_VER}")
