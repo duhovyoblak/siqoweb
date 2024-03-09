@@ -87,6 +87,17 @@ def homepage():
     journal.O()
     return resp
 
+#------------------------------------------------------------------------------
+def oralhistory(idx):
+    
+    journal.I(f'views.oralhistory({idx})')
+
+    page = Page(journal, env, 'OralHistory', height=670, template="forum.html")
+    resp = page.resp()
+
+    journal.O()
+    return resp
+
 #==============================================================================
 # Test cases
 #------------------------------------------------------------------------------

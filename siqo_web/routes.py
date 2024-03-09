@@ -178,6 +178,20 @@ def homepage():
     
 
 #------------------------------------------------------------------------------
+@app.route('/oralhistory')
+def oralhistoryHome():
+
+    journal.M("oralhistory: Home")
+    return views.oralhistory(0)
+
+#------------------------------------------------------------------------------
+@app.route('/oralhistory/<int:idx>', methods=['GET', 'POST'])
+def oralhistory(idx):
+
+    journal.M(f"oralhistory: id='{idx}'")
+    return views.oralhistory(idx)
+
+#------------------------------------------------------------------------------
 @app.get('/user/<username>')
 def profile(username):
 

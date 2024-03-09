@@ -147,8 +147,6 @@ class Base(Object):
         #----------------------------------------------------------------------
         res   = self.objectGet(self.user, objPar='__PAGE__')
         
-        toRet = {'__HEAD__':{}, '__NAVB__':{}, '__STAG__':{}}
-        
         #----------------------------------------------------------------------
         # Heads items
         #----------------------------------------------------------------------
@@ -166,23 +164,24 @@ class Base(Object):
         #----------------------------------------------------------------------
         # NavBar items
         #----------------------------------------------------------------------
-        if '__NAVB__' in res.keys() and 'items' in res['__NAVB__'].keys():
+        if '__NAVB__' not in res.keys()            : res['__NAVB__'] = {}
+        if 'items'    not in res['__NAVB__'].keys(): res['__NAVB__']['items'] = []
 
-            #------------------------------------------------------------------
-            # 0-ta polozka v NavBar je UserItem - ak nie je, potom ho tam vlozim
-            #------------------------------------------------------------------
-            if len(res['__NAVB__']['items'])==0 or 'User' not in res['__NAVB__']['items'][0].keys():
+        #----------------------------------------------------------------------
+        # 0-ta polozka v NavBar je UserItem - ak nie je, potom ho tam vlozim
+        #----------------------------------------------------------------------
+        if len(res['__NAVB__']['items'])==0 or 'User' not in res['__NAVB__']['items'][0].keys():
 
-                userItem = {"User":{"SK":self.userName, "URL":"login"}}
-                res['__NAVB__']['items'].insert(0, userItem)
+            userItem = {"User":{"SK":self.userName, "URL":"login"}}
+            res['__NAVB__']['items'].insert(0, userItem)
             
-            #------------------------------------------------------------------
-            # Vsetkym polozkam v NavBar nastavim type=BARMENUITEM
-            #------------------------------------------------------------------
-            for item in res['__NAVB__']['items']:
+        #----------------------------------------------------------------------
+        # Vsetkym polozkam v NavBar nastavim type=BARMENUITEM
+        #----------------------------------------------------------------------
+        for item in res['__NAVB__']['items']:
                 
-                for itemId, args in item.items():
-                    args["TYPE"] = "BARMENUITEM"
+            for itemId, args in item.items():
+                args["TYPE"] = "BARMENUITEM"
 
         #----------------------------------------------------------------------
         # Stage items
