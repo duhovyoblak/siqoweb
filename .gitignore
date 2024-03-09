@@ -7,7 +7,7 @@ instance/
 
 backup/
 
-siqo_web/dms
+siqo_web/static/dms
 
 .pytest_cache/
 .spyproject/

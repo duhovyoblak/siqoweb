@@ -24,31 +24,11 @@
         <!----------------------------------------------------STAGE-SELECTOR-->
         <div class="StageSelector">
 		
-    	    {% for stageId, stage in __STAG__['objs'].items() %}
-        	    {% for objId, obj in stage['objs'].items() %}
-
-                    {% if objId.startswith('SName') %}
-					
-    		            {{ html.itemListRender(obj['items'], lang)|safe }}
-                    
-					{% endif %}
-                {% endfor %}
-            {% endfor %}
 
         </div>
 
         <!-----------------------------------------------------STAGE-CONTENT-->
-   	    {% for stageId, stage in __STAG__['objs'].items() %}
-       	    {% for objId, obj in stage['objs'].items() %}
-
-                {% if objId.startswith('SCont') %}
-					
-   		            {{ html.itemListRender(obj['items'], lang)|safe }}
                     
-				{% endif %}
-            {% endfor %}
-        {% endfor %}
-
     {% endblock %}
 
 <!---------------------------------------------------------------------------->

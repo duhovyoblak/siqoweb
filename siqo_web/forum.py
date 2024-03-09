@@ -36,9 +36,9 @@ else                        : _IS_TEST = False
 #------------------------------------------------------------------------------
 
 #==============================================================================
-# Page
+# Forum
 #------------------------------------------------------------------------------
-class Page(Base):
+class Forum(Base):
     
     #==========================================================================
     # Content methods
@@ -82,7 +82,7 @@ class Page(Base):
             
             self.journal.M(f"{self.name}.resp: User logged in")
             self.journal.O()
-            return redirect(url_for('homepage'))
+#            return redirect(url_for('orum'))
  
         #----------------------------------------------------------------------
         # Nie je POST
@@ -106,11 +106,11 @@ if __name__ == '__main__':
     ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
     )
 
-    page = Page(journal, env, 'Homepage', 700)
+    forum = Forum(journal, env, 'OralHistory', 700)
     
 
 #==============================================================================
-print(f"Page {_VER}")
+print(f"Forum {_VER}")
 
 #==============================================================================
 #                              END OF FILE
