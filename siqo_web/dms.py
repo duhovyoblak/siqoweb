@@ -5,15 +5,13 @@ import os
 
 from   flask                    import Flask, url_for, render_template, make_response
 
-import siqo_lib.general   as gen
+import siqo_lib.general         as gen
 from   siqo_web.config          import Config
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
 _VER       = 1.00
-_PATH      = '../DMS/'
-_DMS_TABLE = 'PM_DMS'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -96,7 +94,7 @@ class DMS:
 
         self.journal.I(f"{self.name}.docRead: where '{where}'")
         
-        self.docs = self.db.readTable(who, _DMS_TABLE, where)
+        self.docs = self.db.readTable(who, Config.tabDms, where)
 
         # DOC_ID,C_FUNC,USER_ID,D_CREATED,C_TYPE,FILENAME,ORIGNAME,THUMBNAME,
         # N_SIZE,C_PUB,TITLE,NOTES,D_VALID,D_EXPIRY,MD5
@@ -118,7 +116,6 @@ if __name__ == '__main__':
     from   siqo_lib                 import SiqoJournal
     journal = SiqoJournal('test-DMS', debug=4)
     
-    from   siqo_web.config          import Config
     from   siqo_web.database        import Database
     db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=False)
     

@@ -42,26 +42,17 @@ class Login(Base):
     #==========================================================================
     # Content methods
     #--------------------------------------------------------------------------
-    def loadExtra(self):
+    def loadContent(self):
         
-        self.journal.I(f"{self.name}.loadExtra:")
-        
+        self.journal.I(f"{self.name}.loadContent:")
+
         #----------------------------------------------------------------------
         # Doplnenie formLogin
         #----------------------------------------------------------------------
         self.formLogin = FormLogin()
 
-        #----------------------------------------------------------------------
         self.journal.O()
         return {"formLogin":self.formLogin}
- 
-    #--------------------------------------------------------------------------
-    def loadContent(self):
-        
-        self.journal.I(f"{self.name}.loadContent:")
-
-        self.journal.O()
-        return {'content':[{'key':'val'}]}
 
     #==========================================================================
     # Response generators

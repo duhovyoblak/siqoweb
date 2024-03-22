@@ -35,7 +35,15 @@ class Config:
     tabObjRole  = "PM_OBJ_USER_ROLE"
     tabObjCache = "PM_OBJ_CACHE"
 
-    tabCdm      = "PM_CDM"
+    #--------------------------------------------------------------------------
+    # DMS
+    #--------------------------------------------------------------------------
+    tabDms      = "PM_DMS"
+
+
+    #--------------------------------------------------------------------------
+    # Forum
+    #--------------------------------------------------------------------------
     tabForum    = "PM_FORUM"
 
     if 'wsiqo-secret-key' in os.environ: SECRET_KEY = os.environ.get('wsiqo-secret-key')

@@ -105,30 +105,17 @@ class Base(Object):
         #----------------------------------------------------------------------
         # Doplnenie dynamickeho contextu
         #----------------------------------------------------------------------
-        self.classIdRes   = self.loadPageResource()
+        self.classIdRes = self.loadPageResource()
         self.addContext(self.classIdRes)
 
         self.cont   = self.loadContent()
         self.addContext(self.cont)
 
         #----------------------------------------------------------------------
-        # Extra class members
-        #----------------------------------------------------------------------
-        self.extra  = self.loadExtra()
-        self.addContext(self.extra)
-        
         self.journal.O(f"Base({self.name}).init")
         
     #==========================================================================
     # Content methods
-    #--------------------------------------------------------------------------
-    def loadExtra(self):
-        
-        self.journal.I(f"{self.classId}.initExtra:")
-        
-        self.journal.O()
-        return {}
- 
     #--------------------------------------------------------------------------
     def loadContent(self):
         

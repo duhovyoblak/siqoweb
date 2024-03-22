@@ -14,6 +14,7 @@ import siqo_lib.general   as gen
 from   siqo_web.base      import Base
 from   siqo_web.login     import Login
 from   siqo_web.page      import Page
+from   siqo_web.forum     import Forum
 
 #==============================================================================
 # package's constants
@@ -92,7 +93,7 @@ def oralhistory(idx):
     
     journal.I(f'views.oralhistory({idx})')
 
-    page = Page(journal, env, 'OralHistory', height=670, template="forum.html")
+    page = Forum(journal, env, 'OHISTORY', height=670, template="forum.html")
     resp = page.resp()
 
     journal.O()

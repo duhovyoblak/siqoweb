@@ -41,32 +41,43 @@ else                        : _IS_TEST = False
 class Forum(Base):
     
     #==========================================================================
-    # Content methods
+    # Constructor & Tools
     #--------------------------------------------------------------------------
-    def loadExtra(self):
+    def __init__(self, journal, env, idx=0, height=700):
+        "Call constructor of Forum and initialise it"
         
-        self.journal.I(f"{self.name}.loadExtra:")
+        journal.I("Forum.init:")
         
         #----------------------------------------------------------------------
-        # Nastavenie aktivneho elementu
+        # Forum premenne
         #----------------------------------------------------------------------
-#        self.setInitId("Login")
+        self.idx = idx
 
         #----------------------------------------------------------------------
-        # Doplnenie formLogin
+        # Konstruktor Base
         #----------------------------------------------------------------------
+        super().__init__(journal, env, classId='OHISTORY', height=height, template="forum.html")
 
-        #----------------------------------------------------------------------
-        self.journal.O()
-        return {}
- 
+    #==========================================================================
+    # Content methods
     #--------------------------------------------------------------------------
     def loadContent(self):
         
         self.journal.I(f"{self.name}.loadContent:")
+        
+        #----------------------------------------------------------------------
+        # Nacitanie items
+        #----------------------------------------------------------------------
+        items = self.loadItems(self.idx)
 
+        #----------------------------------------------------------------------
+        # Nacitanie cache
+        #----------------------------------------------------------------------
+        cache = {}
+
+        #----------------------------------------------------------------------
         self.journal.O()
-        return {'content':[{'key':'val'}]}
+        return {'items':items, 'cache':cache}
 
     #==========================================================================
     # Response generators
@@ -90,6 +101,53 @@ class Forum(Base):
         self.journal.O()
         return None
 
+    #==========================================================================
+    # Private methods
+    #--------------------------------------------------------------------------
+    def loadItem(self, idx):
+    
+        self.journal.I(f"{self.name}.loadItem: {idx}")
+
+        where = f" FORUM_ID = '{self.classId}' and ITEM_ID = {self.idx}"
+        self.journal.M(f"{self.name}.loadItem: {where}")
+        
+        item = self.readTable(who=self.user, table=Config.tabForum, where=where)
+        
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return item
+
+    #--------------------------------------------------------------------------
+    def loadItems(self, idx):
+    
+        self.journal.I(f"{self.name}.loadItem: {idx}")
+        toRet = []
+
+        data = self.loadItem(idx)
+        
+        #----------------------------------------------------------------------
+        # Kontrola existencie itemu a konverzia na object
+        #----------------------------------------------------------------------
+        if (type(data) == list) and (len(data)>0): 
+            
+            # Titul
+            title = data[0]['TITLE']
+            if data[0]['C_FUNC'] == 'K': title = f"KONCEPT: {title}"
+            
+            toRet.append( {'TITLE':{'SK': title,               'TYPE':'H2'}} )
+            toRet.append( {'NARR' :{'SK': data[0]['NARRATOR'], 'TYPE':'H3'}} )
+            
+            
+            
+        else: 
+            toRet.append( {'TITLE':{'SK': f"Forum item id '{idx}' does not exists", 'TYPE':'H2'}} )
+            toRet.append( {'NARR' :{'SK': "Unknown",                                'TYPE':'H3'}} )
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        print(toRet)
+        return toRet
+
     #--------------------------------------------------------------------------
 
 #==============================================================================
@@ -106,7 +164,7 @@ if __name__ == '__main__':
     ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
     )
 
-    forum = Forum(journal, env, 'OralHistory', 700)
+    forum = Forum(journal, env, 57)
     
 
 #==============================================================================
