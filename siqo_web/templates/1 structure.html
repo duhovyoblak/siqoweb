@@ -24,16 +24,16 @@
 <body>
     <!------------------------------------------------------JAVASCRIPT INTIT-->
     <script>InitElement("{{initId}}")</script>
-    {% block js %}{% endblock %}
+    {% block jsInit %}{% endblock %}
 
     <!----------------------------------------------------------------HEADER-->
     <div class="Header" id="Header" onclick="ShowElement('Content')">
-		{{ html.itemListRender(__HEAD__['items'], lang)|safe }}
+    {% block header %}{% endblock %}
     </div>
 
     <!----------------------------------------------------------------NAVBAR-->
     <div class="BarMenu" id="BarMenu">
-   		{{ html.itemListRender(__NAVB__['items'], lang)|safe }}
+    {% block navbar %}{% endblock %}
     </div>
 
     <!------------------------------------------------------FLASHED-MESSAGES-->
@@ -53,7 +53,7 @@
     </div>
 
     <!---------------------------------------------------------------CONTENT-->
-    <div class="Content" id="Content" style="height:{{height}}px; display:none">
+    <div class="Content" id="Content" style="height:{{height}}px; display:block">
         {% block content %}{% endblock %}
     </div>
 
@@ -77,6 +77,7 @@
     
 <!------------------------------------------------------------INITIALISATION-->
 <script>ShowInitElement()</script> 
+{% block jsEnd %}{% endblock %}
 
 <!---------------------------------------------------------------------------->
 </body>

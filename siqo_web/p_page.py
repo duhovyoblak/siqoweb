@@ -19,7 +19,7 @@ import siqo_web.dms             as dms
 from   siqo_web.database        import Database
 from   siqo_web.config          import Config
 from   siqo_web.user            import User
-from   siqo_web.base            import Base
+from   siqo_web.p_structure     import Structure
 from   siqo_web.forms           import FormLogin
 
 
@@ -38,7 +38,7 @@ else                        : _IS_TEST = False
 #==============================================================================
 # Page
 #------------------------------------------------------------------------------
-class Page(Base):
+class Page(Structure):
     
     #==========================================================================
     # Content methods

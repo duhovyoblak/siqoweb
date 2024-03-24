@@ -38,17 +38,17 @@ else                        : _IS_TEST = False
 #==============================================================================
 # package's methods
 #==============================================================================
-# Base
+# Structure
 #------------------------------------------------------------------------------
-class Base(Object):
+class Structure(Object):
     
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, classId, height, template="base.html"):
-        "Call constructor of Base and initialise it"
+    def __init__(self, journal, env, classId, height, template="1 structure.html"):
+        "Call constructor of Structure and initialise it"
         
-        journal.I(f"Base({classId}).init:")
+        journal.I(f"Structure({classId}).init:")
         
         user = current_user
         
@@ -64,7 +64,7 @@ class Base(Object):
             lang     = 'SK'
 
         #----------------------------------------------------------------------
-        # Konstruktor Database
+        # Konstruktor DataStructure
         #----------------------------------------------------------------------
         super().__init__(journal, userId, classId, objPar='__ROOT__', rMode= 'STRICT', crForm='Y', lvl=5)
 
@@ -84,8 +84,8 @@ class Base(Object):
         #----------------------------------------------------------------------
         # Aktualny user a jazyk
         #----------------------------------------------------------------------
-        journal.M(f"Base({self.classId}).init: user = '{userName}'")
-        journal.M(f"Base({self.classId}).init: lang = '{self.lang}'")
+        journal.M(f"Structure({self.classId}).init: user = '{userName}'")
+        journal.M(f"Structure({self.classId}).init: lang = '{self.lang}'")
 
         #----------------------------------------------------------------------
         # DMS
@@ -112,7 +112,7 @@ class Base(Object):
         self.addContext(self.cont)
 
         #----------------------------------------------------------------------
-        self.journal.O(f"Base({self.name}).init")
+        self.journal.O(f"Structure({self.name}).init")
         
     #==========================================================================
     # Content methods
@@ -375,7 +375,7 @@ class Base(Object):
 if __name__ == '__main__':
     
     from   siqo_lib                 import SiqoJournal
-    journal = SiqoJournal('test-base', debug=5)
+    journal = SiqoJournal('test-Structure', debug=5)
     
     env = Environment(
     
@@ -383,11 +383,11 @@ if __name__ == '__main__':
     ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
     )
 
-    page = Base(journal, env, 'Homepage', 700)
+    page = Structure(journal, env, 'Homepage', 700)
     rec = page.context
     
 #==============================================================================
-print(f"Base {_VER}")
+print(f"Structure {_VER}")
 
 """
 for stageId, stage in page.context['__STAG__']['objs'].items():

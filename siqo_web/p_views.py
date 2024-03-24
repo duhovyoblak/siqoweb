@@ -11,10 +11,11 @@ import jinja2 as j2
 from   jinja2             import Environment, FileSystemLoader, PackageLoader, select_autoescape
 
 import siqo_lib.general   as gen
-from   siqo_web.base      import Base
-from   siqo_web.login     import Login
-from   siqo_web.page      import Page
-from   siqo_web.forum     import Forum
+
+from   siqo_web.p_structure      import Structure
+from   siqo_web.p_login          import Login
+from   siqo_web.p_page           import Page
+from   siqo_web.p_forum          import Forum
 
 #==============================================================================
 # package's constants
@@ -56,11 +57,11 @@ def index():
     return resp
 
 #------------------------------------------------------------------------------
-def base():
+def structure():
     
-    journal.I('views.base()')
+    journal.I('views.structure()')
 
-    page = Base(journal, env, 'Login', height=670)
+    page = Structure(journal, env, 'Login', height=670)
     resp = page.resp()
 
     journal.O()
@@ -71,7 +72,7 @@ def login():
     
     journal.I('views.login()')
 
-    page = Login(journal, env, 'Login', height=670, template="login.html")
+    page = Login(journal, env, 'Login', height=670, template="3 login.html")
     resp = page.resp()
 
     journal.O()
@@ -82,7 +83,7 @@ def homepage():
     
     journal.I('views.homepage()')
 
-    page = Page(journal, env, 'Homepage', height=670, template="page.html")
+    page = Page(journal, env, 'Homepage', height=670, template="3 page.html")
     resp = page.resp()
 
     journal.O()
@@ -93,7 +94,7 @@ def oralhistory(idx):
     
     journal.I(f'views.oralhistory({idx})')
 
-    page = Forum(journal, env, 'OHISTORY', height=670, template="forum.html")
+    page = Forum(journal, env, 'OHISTORY', idx=idx, height=670)
     resp = page.resp()
 
     journal.O()

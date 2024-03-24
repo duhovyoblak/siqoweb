@@ -16,7 +16,7 @@ from   siqo_web.config          import Config
 from   siqo_web.user            import User
 
 from   siqo_web.forms           import FormLogin
-import siqo_web.views           as views
+import siqo_web.p_views             as views
 
 #==============================================================================
 # package's constants
@@ -145,6 +145,13 @@ def index():
     journal.M("index():")
     return views.index()
 
+#------------------------------------------------------------------------------
+@app.route('/structure', methods=['GET'])
+def structure():
+
+    journal.M("structure():")
+    return views.structure()
+    
 #------------------------------------------------------------------------------
 @app.route('/base', methods=['GET'])
 def base():

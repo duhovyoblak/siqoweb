@@ -11,10 +11,10 @@ os.environ['siqo-test'] = '1'
 
 #==============================================================================
 from   siqo_lib                 import SiqoJournal
-import siqo_web.views           as vie
-import siqo_web.dms             as dms
+import siqo_web.p_views             as vie
+import siqo_web.dms                 as dms
 
-import siqo_web.routes          as rou
+import siqo_web.routes              as rou
 
 #==============================================================================
 # package's constants & private vars

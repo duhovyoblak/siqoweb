@@ -19,7 +19,7 @@ import siqo_web.dms             as dms
 from   siqo_web.database        import Database
 from   siqo_web.config          import Config
 from   siqo_web.user            import User
-from   siqo_web.base            import Base
+from   siqo_web.p_structure     import Structure
 from   siqo_web.forms           import FormLogin
 
 
@@ -38,12 +38,12 @@ else                        : _IS_TEST = False
 #==============================================================================
 # Forum
 #------------------------------------------------------------------------------
-class Forum(Base):
+class Forum(Structure):
     
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, idx=0, height=700):
+    def __init__(self, journal, env, classId, idx=0, height=700):
         "Call constructor of Forum and initialise it"
         
         journal.I("Forum.init:")
@@ -56,7 +56,7 @@ class Forum(Base):
         #----------------------------------------------------------------------
         # Konstruktor Base
         #----------------------------------------------------------------------
-        super().__init__(journal, env, classId='OHISTORY', height=height, template="forum.html")
+        super().__init__(journal, env, classId='OHISTORY', height=height, template="3 forum.html")
 
     #==========================================================================
     # Content methods
