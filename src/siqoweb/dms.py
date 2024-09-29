@@ -5,8 +5,8 @@ import os
 
 from   flask                    import Flask, url_for, render_template, make_response
 
-import siqo_lib.general         as gen
-from   siqo_web.config          import Config
+import siqolib.general         as gen
+from   config          import Config
 
 #==============================================================================
 # package's constants

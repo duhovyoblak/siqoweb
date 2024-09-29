@@ -5,7 +5,7 @@ import os
 
 os.environ['siqo-test-mode'] = '1'
 
-from siqo_journal    import SiqoJournal
+from siqolib.journal    import SiqoJournal
 from siqo_api        import app
 
 #==============================================================================

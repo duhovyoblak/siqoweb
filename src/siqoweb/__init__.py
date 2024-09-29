@@ -10,11 +10,11 @@ os.environ['siqo-test'] = '1'
 #os.environ['wsiqo-secret-key'] = 'asklurgw8374yhcbfQ2R7GYFQPIUBR'
 
 #==============================================================================
-from   siqo_lib                 import SiqoJournal
-import siqo_web.p_views             as vie
-import siqo_web.dms                 as dms
+from   siqolib.journal              import SiqoJournal
+import p_views                      as vie
+import dms                          as dms
 
-import siqo_web.routes              as rou
+import routes                       as rou
 
 #==============================================================================
 # package's constants & private vars

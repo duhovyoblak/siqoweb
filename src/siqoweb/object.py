@@ -6,10 +6,10 @@ import os
 from   werkzeug.security        import generate_password_hash, check_password_hash
 from   flask_login              import UserMixin
 
-import siqo_lib.general         as gen
-from   siqo_web.config          import Config
-from   siqo_web.database        import Database
-from   siqo_web.dms             import DMS
+import siqolib.general         as gen
+from   config          import Config
+from   database        import Database
+from   dms             import DMS
 
 #==============================================================================
 # package's constants

@@ -6,9 +6,9 @@ import os
 from   werkzeug.security        import generate_password_hash, check_password_hash
 from   flask_login              import UserMixin
 
-import siqo_lib.general         as gen
-from   siqo_web.database        import Database
-from   siqo_web.config          import Config
+import siqolib.general         as gen
+from   database        import Database
+from   config          import Config
 
 #==============================================================================
 # package's constants

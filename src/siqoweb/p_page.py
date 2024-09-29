@@ -12,15 +12,15 @@ from   markupsafe               import escape
 import jinja2                   as j2
 from   jinja2                   import Environment, PackageLoader, select_autoescape
 
-import siqo_lib.general         as gen
+import siqolib.general         as gen
 
-import siqo_web.dms             as dms
+import dms             as dms
 
-from   siqo_web.database        import Database
-from   siqo_web.config          import Config
-from   siqo_web.user            import User
-from   siqo_web.p_structure     import Structure
-from   siqo_web.forms           import FormLogin
+from   database        import Database
+from   config          import Config
+from   user            import User
+from   p_structure     import Structure
+from   forms           import FormLogin
 
 
 #==============================================================================

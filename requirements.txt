@@ -9,6 +9,7 @@ decorator         >= 5.1.1
 executing         >= 2.0.1
 Flask             >= 3.0.0
 Flask-WTF         >= 1.2.1
+flask_login
 ipykernel         >= 6.26.0
 ipython           >= 8.18.0
 itsdangerous      >= 2.1.2

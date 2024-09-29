@@ -6,7 +6,7 @@ import re
 from   datetime                 import datetime, timedelta
 
 import sqlite3
-import siqo_lib.general         as gen
+import siqolib.general         as gen
 
 #==============================================================================
 # package's constants

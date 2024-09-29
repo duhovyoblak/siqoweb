@@ -12,14 +12,14 @@ from   markupsafe               import escape
 import jinja2                   as j2
 from   jinja2                   import Environment, PackageLoader, select_autoescape
 
-import siqo_lib.general         as gen
+import siqolib.general         as gen
 
-from   siqo_web.config          import Config
-from   siqo_web.dms             import DMS
-from   siqo_web.html            import HTML
-from   siqo_web.user            import User
-from   siqo_web.object          import Object
-from   siqo_web.forms           import FormLogin
+from   config          import Config
+from   dms             import DMS
+from   s_html            import HTML
+from   user            import User
+from   object          import Object
+from   forms           import FormLogin
 
 
 #==============================================================================

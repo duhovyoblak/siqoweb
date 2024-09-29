@@ -11,12 +11,12 @@ from   flask                    import get_flashed_messages, flash
 from   flask_login              import LoginManager, login_required, login_user, current_user
 from   markupsafe               import escape
 
-from   siqo_lib                 import SiqoJournal
-from   siqo_web.config          import Config
-from   siqo_web.user            import User
+from   siqolib.journal          import SiqoJournal
+from   siqoweb.config           import Config
+from   siqoweb.user             import User
 
-from   siqo_web.forms           import FormLogin
-import siqo_web.p_views             as views
+from   siqoweb.forms            import FormLogin
+import siqoweb.p_views          as views
 
 #==============================================================================
 # package's constants

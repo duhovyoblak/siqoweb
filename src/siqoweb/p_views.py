@@ -10,12 +10,12 @@ from   markupsafe         import escape
 import jinja2 as j2
 from   jinja2             import Environment, FileSystemLoader, PackageLoader, select_autoescape
 
-import siqo_lib.general   as gen
+import siqolib.general   as gen
 
-from   siqo_web.p_structure      import Structure
-from   siqo_web.p_login          import Login
-from   siqo_web.p_page           import Page
-from   siqo_web.p_forum          import Forum
+from   p_structure      import Structure
+from   p_login          import Login
+from   p_page           import Page
+from   p_forum          import Forum
 
 #==============================================================================
 # package's constants
@@ -33,7 +33,7 @@ journal = None
 env = Environment(
     
      autoescape = select_autoescape()
-    ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
+    ,loader     = PackageLoader(package_name="siqoweb", package_path="templates")
 )
 
 #==============================================================================
