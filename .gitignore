@@ -1,21 +1,19 @@
-venv/
-
-*.pyc
-__pycache__/
-
-instance/
-
-backup/
-
-siqo_web/static/dms
 
 .pytest_cache/
 .spyproject/
 .coverage
-htmlcov/
 
+__pycache__/
+instance/
+backup/
+htmlcov/
+venv/
+
+siqo_web/static/dms
 dist/
 build/
-*.egg-info/
 
+
+*.egg-info/
+*.pyc
 *.journal
