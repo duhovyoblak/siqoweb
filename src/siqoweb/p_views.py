@@ -33,7 +33,8 @@ journal = None
 env = Environment(
     
      autoescape = select_autoescape()
-    ,loader     = PackageLoader(package_name="siqoweb", package_path="templates")
+#    ,loader     = PackageLoader(package_name="siqoweb", package_path="templates")
+    ,loader     = FileSystemLoader(['templates'])
 )
 
 #==============================================================================
