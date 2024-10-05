@@ -1,0 +1,31 @@
+{'__HEAD__': { 'items': [ {'1_Title': {'SK': 'SIQO Homepage'}},
+                          {'2_Comment': {'SK': 'Development environment'}},
+                          {'3_SubTitle': {'SK': 'Hlavná stránka projektu SIQO'}}
+                        ],
+               'objs': {}
+              },
+ '__NAVB__': {'items':  [{'PagManAdmin': {'SK': 'Admin', 'URL': 'pgadmin'}},
+                         {'PagManDoc': {'SK': 'Documents', 'URL': 'pgdocument'}},
+                         {'PagManRes': {'SK': 'Resource', 'URL': 'pgresource'}},
+                         {'PagManSess': {'SK': 'Sessions', 'URL': 'pgsession'}}
+                        ],
+              'objs': {}
+             },
+ '__STAG__': {'items': [],
+              'objs': {'Stage_1': {'items': [{'StagePos': {'POS': '1'}}
+                                            ],
+                                    'objs': {'SCont_1': {'items': [ {'SItem_11': {'SK': 'S.I.Q.O. - to je spoločnosť s IQ obmedzeným', 'TYPE': 'H2'}},
+                                                                    {'SItem_12': {'SK': 'Projekt SIQO je experimentálna základňa pre projekty, spojené vývojom asociatívne adresovaných pamäťových priestorov. Naozaj, aj keď sa to možno podľa aplikácií nezdá.',         'TYPE': 'P'}},
+                                                                    {'SItem_13': {'SK': 'Asociatívne pamäte sa testujú na viacerých demonštračných projektoch, opísaných v príslušných záložkách',          'TYPE': 'P'}},
+                                                                    {'SItem_14': {'SK': 'Zároveň s vývojom a testovaním pamätí prebieha vývoj frameworku, optimalizovaného pre takéto aplikácie',          'TYPE': 'P'}}
+                                                                  ],
+                                                         'objs': {}
+													    },
+                                             'SName_1': {'items': [{'SSB_1': {'SK': 'O stránkach SIQO'}}],
+													     'objs': {}
+														}
+								            }
+								  }
+					  }
+			  }
+}

@@ -105,9 +105,8 @@ class Object(Database):
     # Praca s objektom (page-obj)
     #--------------------------------------------------------------------------
     def objectGet(self, who, objPar='__PAGE__'):
-
+#!!!! znacka
         self.journal.I(f"{self.name}.objectGet: For parent '{objPar}'")
-
 
         # objs = { objId = {'items':[ {itemId:{attributes}} ], 'objs':{objs} } }
 
@@ -117,18 +116,26 @@ class Object(Database):
         toRet = {}
         
         #----------------------------------------------------------------------
-        # Ziskanie stromu objektov
+        # Priprava podmienky pre citanie db
         #----------------------------------------------------------------------
-        pag = gen.quoted(self.classId)
-        par = gen.quoted(objPar   )
-
+        pagStr = gen.quoted(self.classId)
+        parStr = gen.quoted(objPar)
+        
+        # Ak je parent najvyssej urovne upravim podmienku
+        if objPar[0:2] == '__' and objPar[-1] == '_': parCond =  "SUBSTR(OBJ_PAR, 1, 2) = '__'"
+        else                                        : parCond = f"OBJ_PAR = {parStr}"
+ 
         #              0         1          2         3        4            5            6      7
         cols = ('CLASS_ID', 'OBJ_ID', 'OBJ_PAR', 'C_FUNC', 'NOTES', 'D_CREATED', 'D_CHANGED', 'WHO')
         
+        #----------------------------------------------------------------------
+        # Ziskanie stromu objektov
+        #----------------------------------------------------------------------
         sql = f"""select {','.join(cols)} from {Config.tabObj} 
-                  where CLASS_ID = {pag} and OBJ_PAR = {par}
+                  where CLASS_ID = {pagStr} and {parCond}
                   order by OBJ_ID"""
         
+        self.journal.M(f"{self.name}.objectGet: {sql}")
         rows = self.readDb(who, sql)
         
         #----------------------------------------------------------------------
@@ -140,10 +147,12 @@ class Object(Database):
             self.journal.O()
             return toRet
 
+        self.journal.M(f"{self.name}.objectGet: Rows for analysis {rows}")
+
         #----------------------------------------------------------------------
         # Vlozenie dat do stromu
         #----------------------------------------------------------------------
-        prevObjId = ''
+        prevParId = ''
         obj = {}
 
         for row in rows:
@@ -154,28 +163,12 @@ class Object(Database):
             if row[3] == 'A':
                 
                 #--------------------------------------------------------------
-                # Ziskam nazov objektu
+                # Ziskam nazov a parenta objektu
                 #--------------------------------------------------------------
                 objId = row[1]
-                
-                #--------------------------------------------------------------
-                # Ziskam parenta objektu
-                #--------------------------------------------------------------
                 parId = row[2]
-                if parId[0:2] == '__' and parId[-1] == '_': parId = '__PAGE__'
-                    
-                self.journal.M(f"{self.name}.objectGet:'{objId}' owned by '{parId}' found")
+                self.journal.M(f"{self.name}.objectGet:'{objId}' in parent '{parId}' found")
                 
-                #--------------------------------------------------------------
-                # Ak je to novy objId, vlozim predchadzajuci do zoznamu a resetnem object
-                #--------------------------------------------------------------
-                if prevObjId != objId:
-                    
-                    if prevObjId != '': toRet[prevObjId] = obj
-                    
-                    prevObjId = objId
-                    obj = { "items":[], "objs":{} }
-                    
                 #--------------------------------------------------------------
                 # Ziskam resource k tomuto objektu
                 #--------------------------------------------------------------
@@ -190,12 +183,28 @@ class Object(Database):
                 # Ak existuju vnorene objekty, tak ich vlozim
                 if len(inObjs) > 0: obj["objs"] = inObjs
 
-            #------------------------------------------------------------------
-
+                #--------------------------------------------------------------
+                # Ak je to novy parId, vlozim objekt do zoznamu a resetnem analyzu
+                #--------------------------------------------------------------
+                if prevParId != parId:
+                    
+                    self.journal.M(f"{self.name}.objectGet: Analyse of parent '{parId}' ended")
+                    
+                    #----------------------------------------------------------
+                    # Ulozim objekt pod klucom parenta
+                    #----------------------------------------------------------
+                    toRet[parId] = obj
+                    
+                    #----------------------------------------------------------
+                    # Resetnem analyzu pre nasledujuci objekt
+                    #----------------------------------------------------------
+                    prevParId = parId
+                    obj = { "items":[], "objs":{} }
+                    
         #----------------------------------------------------------------------
         # Dokoncim vlozenie posledneho objektu
         #----------------------------------------------------------------------
-        if prevObjId != '': toRet[prevObjId] = obj
+        if prevParId != '': toRet[prevParId] = obj
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -502,7 +511,7 @@ class Object(Database):
         cnt = self.sSQL(who, sql)
 
         self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleSet()', 'OK', 
-                       21, "Role roi was set for usi and page pai" )
+                       21, f"Role roi was set for usi and page pai {cnt}" )
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -655,7 +664,7 @@ class Object(Database):
 if __name__ == '__main__':
     
     from   siqolib.journal                 import SiqoJournal
-    journal = SiqoJournal('test-object', debug=4)
+    journal = SiqoJournal('test-object', debug=3)
     
     obj = Object(journal, 'palo4', 'Homepage')
     
