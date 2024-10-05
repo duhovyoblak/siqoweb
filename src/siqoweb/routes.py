@@ -21,7 +21,7 @@ import views            as views
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.00'
+_VER      = '1.01'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -136,7 +136,7 @@ def logout():
     return redirect(url_for('index'))
 
 #==============================================================================
-# PATHs operation
+# Sytem PATHs operation
 #------------------------------------------------------------------------------
 @app.get("/")
 @app.get("/index")
@@ -175,22 +175,25 @@ def homepage():
 
     journal.M("homepage():")
     return views.homepage()
-    
 
 #------------------------------------------------------------------------------
-@app.route('/oralhistory')
-def oralhistoryHome():
+@app.route('/pgdocument', methods=['GET', 'POST'])
+@login_required
+def pgdocument():
 
-    journal.M("oralhistory: Home")
-    return views.oralhistory(0)
+    journal.M("pgdocument():")
+    return views.pgdocument()
 
 #------------------------------------------------------------------------------
-@app.route('/oralhistory/<int:idx>', methods=['GET', 'POST'])
-def oralhistory(idx):
+@app.route('/pgresource', methods=['GET', 'POST'])
+@login_required
+def pgresource():
 
-    journal.M(f"oralhistory: id='{idx}'")
-    return views.oralhistory(idx)
+    journal.M("pgresource():")
+    return views.pgresource()
 
+#------------------------------------------------------------------------------
+# PATHs Tools
 #------------------------------------------------------------------------------
 @app.get('/user/<username>')
 def profile(username):
@@ -217,6 +220,22 @@ def show_subpath(subpath):
 
     # show the subpath after /path/
     return f"Subpath {escape(subpath)}"
+
+#==============================================================================
+# Content PATHs operation
+#------------------------------------------------------------------------------
+@app.route('/oralhistory')
+def oralhistoryHome():
+
+    journal.M("oralhistory: Home")
+    return views.oralhistory(0)
+
+#------------------------------------------------------------------------------
+@app.route('/oralhistory/<int:idx>', methods=['GET', 'POST'])
+def oralhistory(idx):
+
+    journal.M(f"oralhistory: id='{idx}'")
+    return views.oralhistory(idx)
 
 #==============================================================================
 # Test cases

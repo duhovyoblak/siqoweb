@@ -43,7 +43,7 @@ env = Environment(
 
 
 #==============================================================================
-# 
+# System's views 
 #------------------------------------------------------------------------------
 def index():
     
@@ -84,12 +84,36 @@ def homepage():
     
     journal.I('views.homepage()')
 
-    page = Page(journal, env, 'Homepage', height=670, template="3 page.html")
+    page = Page(journal, env, 'Homepage', height=670, template="3 staged.html")
     resp = page.resp()
 
     journal.O()
     return resp
 
+#------------------------------------------------------------------------------
+def pgdocument():
+    
+    journal.I('views.pgdocument()')
+
+    page = Page(journal, env, 'PagManDocument', height=670, template="3 empty.html")
+    resp = page.resp()
+
+    journal.O()
+    return resp
+
+#------------------------------------------------------------------------------
+def pgresource():
+    
+    journal.I('views.pgresource()')
+
+    page = Page(journal, env, 'Resource', height=670, template="3 empty.html")
+    resp = page.resp()
+
+    journal.O()
+    return resp
+
+#==============================================================================
+# Content's views 
 #------------------------------------------------------------------------------
 def oralhistory(idx):
     
