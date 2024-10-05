@@ -10,13 +10,13 @@ from   flask_login              import login_user, logout_user, current_user
 from   markupsafe               import escape
 
 import jinja2                   as j2
-from   jinja2                   import Environment, PackageLoader, select_autoescape
+from   jinja2                   import Environment, FileSystemLoader, PackageLoader, select_autoescape
 
 import siqolib.general         as gen
 
 from   config          import Config
 from   dms             import DMS
-from   s_html            import HTML
+from   s_html          import HTML
 from   user            import User
 from   object          import Object
 from   forms           import FormLogin
@@ -25,7 +25,7 @@ from   forms           import FormLogin
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.00'
+_VER      = '1.01'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -374,16 +374,16 @@ class Structure(Object):
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    from   siqo_lib                 import SiqoJournal
+    from   siqolib.journal                 import SiqoJournal
     journal = SiqoJournal('test-Structure', debug=5)
     
     env = Environment(
     
      autoescape = select_autoescape()
-    ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
+    ,loader     = FileSystemLoader(['templates'])
     )
 
-    page = Structure(journal, env, 'Homepage', 700)
+    page = Structure(journal, env, 'Login', 700)
     rec = page.context
     
 #==============================================================================

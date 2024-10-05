@@ -11,7 +11,7 @@ os.environ['siqo-test'] = '1'
 
 #==============================================================================
 from   siqolib.journal              import SiqoJournal
-import p_views                      as vie
+import views                        as vie
 import dms                          as dms
 
 import routes                       as rou

@@ -16,7 +16,7 @@ from   config           import Config
 from   user             import User
 
 from   forms            import FormLogin
-import p_views          as views
+import views            as views
 
 #==============================================================================
 # package's constants
@@ -151,13 +151,6 @@ def structure():
 
     journal.M("structure():")
     return views.structure()
-    
-#------------------------------------------------------------------------------
-@app.route('/base', methods=['GET'])
-def base():
-
-    journal.M("base():")
-    return views.base()
     
 #------------------------------------------------------------------------------
 @app.get('/shutdown')

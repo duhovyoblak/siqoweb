@@ -6,12 +6,12 @@ import re
 from   datetime                 import datetime, timedelta
 
 import sqlite3
-import siqolib.general         as gen
+import siqolib.general          as gen
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER       = '1.01'
+_VER       = '1.02'
 _CWD       = os.getcwd()
 
 _PING_LAG  =    2    # Number of hours after which ping is recomended
@@ -58,7 +58,7 @@ class Database:
         self.openDb()
 
         #----------------------------------------------------------------------
-        # Ak je prazdna, pokusim sa ju vytvorit a inicializovat
+        # Ak je vyzadovana inicializacia
         #----------------------------------------------------------------------
         if autoInit:
             
@@ -735,10 +735,10 @@ values( NULL,       DATE('now'),{sess},     {user},   {page},  {obj},   {src},  
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    from   siqo_lib                 import SiqoJournal
+    from   siqolib.journal          import SiqoJournal
     journal = SiqoJournal('test-db', debug=5)
 
-    from   siqo_web.config          import Config
+    from   config                   import Config
     db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=True)
  
     tables     = db.tables()
@@ -749,9 +749,7 @@ if __name__ == '__main__':
     users      = db.readTable('who', Config.tabUser)
     palo4      = db.readTable('who', Config.tabUser, "user_id = 'palo4'")
     
-    #db.sSqlScript('ja', 'pagman.ini')
-    
-    db.sJournal('palo4')
+    db.sJournal('SIQO')
     
 #==============================================================================
 print(f"Database {_VER}")
