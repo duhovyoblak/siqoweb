@@ -147,13 +147,24 @@ class Object(Database):
         obj = {}
 
         for row in rows:
+
             #------------------------------------------------------------------
-            # Ak je objekt funkcny, vlozim ho do stromu
+            # Ak je objekt funkcny
             #------------------------------------------------------------------
             if row[3] == 'A':
                 
+                #--------------------------------------------------------------
+                # Ziskam nazov objektu
+                #--------------------------------------------------------------
                 objId = row[1]
-                self.journal.M(f"{self.name}.objectGet:'{objId}' found")
+                
+                #--------------------------------------------------------------
+                # Ziskam parenta objektu
+                #--------------------------------------------------------------
+                parId = row[2]
+                if parId[0:2] == '__' and parId[-1] == '_': parId = '__PAGE__'
+                    
+                self.journal.M(f"{self.name}.objectGet:'{objId}' owned by '{parId}' found")
                 
                 #--------------------------------------------------------------
                 # Ak je to novy objId, vlozim predchadzajuci do zoznamu a resetnem object
@@ -607,7 +618,7 @@ class Object(Database):
         cnt = self.sSQL(who, sql)
 
         self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'cacheClear()', 'OK', 
-                       38, "Cleared row rows for usi-pai-obi"       )  
+                       38, f"Cleared {cnt} row(s)"       )  
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -643,7 +654,7 @@ class Object(Database):
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    from   siqo_lib                 import SiqoJournal
+    from   siqolib.journal                 import SiqoJournal
     journal = SiqoJournal('test-object', debug=4)
     
     obj = Object(journal, 'palo4', 'Homepage')
