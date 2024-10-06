@@ -76,6 +76,8 @@ class Object(Database):
   
         self.items   = []        # zoznam zobrazitelnych poloziek 
         self.btns    = []        # zoznam buttonov
+        
+        self.ssbPos  = 1         # Pozicia polozky Stage Selectora
 
         self.lvl     = lvl       # journal level
 
@@ -104,7 +106,8 @@ class Object(Database):
     #==========================================================================
     # Praca s objektom (page-obj)
     #--------------------------------------------------------------------------
-    def objectGet(self, who, objPar='__PAGE__'):
+    def objectGet(self, who, objPar):
+        "Returns dict of obects {objId:{'items':[{}], 'objs':{}}}"
 #!!!! znacka
         self.journal.I(f"{self.name}.objectGet: For parent '{objPar}'")
 
@@ -133,9 +136,9 @@ class Object(Database):
         #----------------------------------------------------------------------
         sql = f"""select {','.join(cols)} from {Config.tabObj} 
                   where CLASS_ID = {pagStr} and {parCond}
-                  order by OBJ_ID"""
+                  order by OBJ_PAR, OBJ_ID"""
         
-        self.journal.M(f"{self.name}.objectGet: {sql}")
+        #self.journal.M(f"{self.name}.objectGet: {sql}")
         rows = self.readDb(who, sql)
         
         #----------------------------------------------------------------------
@@ -147,13 +150,13 @@ class Object(Database):
             self.journal.O()
             return toRet
 
-        self.journal.M(f"{self.name}.objectGet: Rows for analysis {rows}")
+        #self.journal.M(f"{self.name}.objectGet: Rows for analysis {rows}")
 
         #----------------------------------------------------------------------
         # Vlozenie dat do stromu
         #----------------------------------------------------------------------
         prevParId = ''
-        obj = {}
+        obj = {"items":[], "objs":{}}
 
         for row in rows:
 
@@ -170,18 +173,19 @@ class Object(Database):
                 self.journal.M(f"{self.name}.objectGet:'{objId}' in parent '{parId}' found")
                 
                 #--------------------------------------------------------------
-                # Ziskam resource k tomuto objektu
+                # Ziskam resource k parent objektu
                 #--------------------------------------------------------------
-                items = self.resourceGet(who, objId=objId, )
-                obj["items"] = items
+                items = self.resourceGet(who, objId=objId)
+                obj["items"].extend(items)
+                self.journal.M(f"{self.name}.objectGet: resource for '{objPar}' are '{items}'")
 
                 #--------------------------------------------------------------
                 # Rekurzivnym volanim zistim, ci tento objekt obsahuje vnorene objekty
                 #--------------------------------------------------------------
-                inObjs = self.objectGet(who, objPar=objId)
+#                inObjs = self.objectGet(who, objPar=objId)
                 
                 # Ak existuju vnorene objekty, tak ich vlozim
-                if len(inObjs) > 0: obj["objs"] = inObjs
+#                if len(inObjs) > 0: obj["objs"] = inObjs
 
                 #--------------------------------------------------------------
                 # Ak je to novy parId, vlozim objekt do zoznamu a resetnem analyzu
@@ -254,7 +258,8 @@ class Object(Database):
     # Praca s Resources (page-obj-resource-key)
     #--------------------------------------------------------------------------
     def resourceGet(self, who, objId):
-        "Ziskam list resources pre kombinaciu page-obj"
+        "Returns list of items for keys page-obj"
+#!!!! znacka
 
         self.journal.I(f"{self.name}.resourceGet: obj='{objId}' for '{who}'")
         toRet = []
@@ -289,7 +294,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         prevItemId = ''
         itemId     = ''
-        item = {}
+        item       = {}
 
         for row in rows:
             #------------------------------------------------------------------
@@ -300,6 +305,15 @@ class Object(Database):
                 itemId = row[0]
                 key    = row[1]
                 val    = row[3]
+
+                #--------------------------------------------------------------
+                # Ak je key = SBB potom vygenerujem polozku Stage selectora
+                #--------------------------------------------------------------
+                if key == 'SSB' and False:
+                    
+                    key     = 'SK'
+                    itemId  = f'SSB_{self.ssbPos}'
+                    self.ssbPos += 1
 
                 #--------------------------------------------------------------
                 # Ak je to novy itemId, vlozim predchadzajuci do zoznamu a resetnem item
