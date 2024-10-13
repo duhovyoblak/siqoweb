@@ -11,7 +11,7 @@ import siqolib.general          as gen
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER       = '1.02'
+_VER       = '1.03'
 _CWD       = os.getcwd()
 
 _PING_LAG  =    2    # Number of hours after which ping is recomended

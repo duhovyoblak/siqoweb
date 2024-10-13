@@ -14,7 +14,7 @@ from   dms             import DMS
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.01'
+_VER      = '1.02'
 
 _LANG_DEF = 'SK'       # Default language
 _SYSUSER  = 'SIQO'     # System superuser
@@ -87,6 +87,7 @@ class Object(Database):
 #        self.objectRegister(_SYSUSER)
 
         #----------------------------------------------------------------------
+        self.journal.M(f"{self.name}.init: Done")
         self.journal.O()
         
     #--------------------------------------------------------------------------
@@ -106,7 +107,7 @@ class Object(Database):
     #==========================================================================
     # Praca s objektom (page-obj)
     #--------------------------------------------------------------------------
-    def objectGet(self, who, objPar):
+    def objectGet(self, who, objPar='__PAGE__'):
         "Returns dict of obects {objId:{'items':[{}], 'objs':{}}}"
 #!!!! znacka
         self.journal.I(f"{self.name}.objectGet: For parent '{objPar}'")
@@ -124,15 +125,17 @@ class Object(Database):
         pagStr = gen.quoted(self.classId)
         parStr = gen.quoted(objPar)
         
-        # Ak je parent najvyssej urovne upravim podmienku
-        if objPar[0:2] == '__' and objPar[-1] == '_': parCond =  "SUBSTR(OBJ_PAR, 1, 2) = '__'"
-        else                                        : parCond = f"OBJ_PAR = {parStr}"
+        #----------------------------------------------------------------------
+        # Ak je parent "__PAGE__" upravim podmienku parent obj na "__%"
+        #----------------------------------------------------------------------
+        if objPar == '__PAGE__': parCond =  "SUBSTR(OBJ_PAR, 1, 2) = '__'"
+        else                   : parCond = f"OBJ_PAR = {parStr}"
  
         #              0         1          2         3        4            5            6      7
         cols = ('CLASS_ID', 'OBJ_ID', 'OBJ_PAR', 'C_FUNC', 'NOTES', 'D_CREATED', 'D_CHANGED', 'WHO')
         
         #----------------------------------------------------------------------
-        # Ziskanie stromu objektov
+        # Ziskanie zoznamu objektov pre dany class a parent objekt
         #----------------------------------------------------------------------
         sql = f"""select {','.join(cols)} from {Config.tabObj} 
                   where CLASS_ID = {pagStr} and {parCond}
@@ -153,11 +156,8 @@ class Object(Database):
         #self.journal.M(f"{self.name}.objectGet: Rows for analysis {rows}")
 
         #----------------------------------------------------------------------
-        # Vlozenie dat do stromu
+        # Prehladanie objektov pre parenta parId
         #----------------------------------------------------------------------
-        prevParId = ''
-        obj = {"items":[], "objs":{}}
-
         for row in rows:
 
             #------------------------------------------------------------------
@@ -170,45 +170,31 @@ class Object(Database):
                 #--------------------------------------------------------------
                 objId = row[1]
                 parId = row[2]
-                self.journal.M(f"{self.name}.objectGet:'{objId}' in parent '{parId}' found")
+                self.journal.M(f"{self.name}.objectGet: '{parId}.{objId}' is being analysed...")
                 
+                if parId not in toRet.keys(): toRet[parId] = {}
+
                 #--------------------------------------------------------------
-                # Ziskam resource k parent objektu
+                # Pokusim sa ziskat resource k objektu objId
                 #--------------------------------------------------------------
                 items = self.resourceGet(who, objId=objId)
-                obj["items"].extend(items)
-                self.journal.M(f"{self.name}.objectGet: resource for '{objPar}' are '{items}'")
+                toRet[parId][objId] = items
+                self.journal.M(f"{self.name}.objectGet: '{parId}.{objId}' has resource '{items}'")
 
                 #--------------------------------------------------------------
-                # Rekurzivnym volanim zistim, ci tento objekt obsahuje vnorene objekty
+                # Ak nie som sam sebe parentom
                 #--------------------------------------------------------------
-#                inObjs = self.objectGet(who, objPar=objId)
+                if objId != parId:
+                    
+                    #----------------------------------------------------------
+                    # Pokusim sa ziskat objekty vnorene do objektu objId rekurziou
+                    #----------------------------------------------------------
+                    inObjs = self.objectGet(who, objPar=objId)
                 
-                # Ak existuju vnorene objekty, tak ich vlozim
-#                if len(inObjs) > 0: obj["objs"] = inObjs
-
-                #--------------------------------------------------------------
-                # Ak je to novy parId, vlozim objekt do zoznamu a resetnem analyzu
-                #--------------------------------------------------------------
-                if prevParId != parId:
-                    
-                    self.journal.M(f"{self.name}.objectGet: Analyse of parent '{parId}' ended")
-                    
                     #----------------------------------------------------------
-                    # Ulozim objekt pod klucom parenta
+                    # Ak existuju vnorene objekty, tak ich vlozim
                     #----------------------------------------------------------
-                    toRet[parId] = obj
-                    
-                    #----------------------------------------------------------
-                    # Resetnem analyzu pre nasledujuci objekt
-                    #----------------------------------------------------------
-                    prevParId = parId
-                    obj = { "items":[], "objs":{} }
-                    
-        #----------------------------------------------------------------------
-        # Dokoncim vlozenie posledneho objektu
-        #----------------------------------------------------------------------
-        if prevParId != '': toRet[prevParId] = obj
+                    if len(inObjs) > 0: toRet[parId][objId] = inObjs
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -261,7 +247,7 @@ class Object(Database):
         "Returns list of items for keys page-obj"
 #!!!! znacka
 
-        self.journal.I(f"{self.name}.resourceGet: obj='{objId}' for '{who}'")
+        self.journal.I(f"{self.name}.resourceGet: '{self.classId}.{objId}'")
         toRet = []
 
         #----------------------------------------------------------------------
@@ -278,14 +264,14 @@ class Object(Database):
                   order by ITEM_ID"""
   
         rows = self.readDb(who, sql)
-        self.journal.M(f"{self.name}.resourceGet: '{rows}'")
+        # self.journal.M(f"{self.name}.resourceGet: '{rows}'")
         
         #----------------------------------------------------------------------
         # Kontrola existencie resource
         #----------------------------------------------------------------------
         if type(rows)==int or len(rows)==0:
             
-            self.journal.M(f"{self.name}.resourceGet: No resource for object '{objId}'")
+            self.journal.M(f"{self.name}.resourceGet: '{self.classId}.{objId}' no resource was found ERROR", True)
             self.journal.O()
             return toRet
     

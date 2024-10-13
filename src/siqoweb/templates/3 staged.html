@@ -1,3 +1,9 @@
+<!---------------------------------------------------------------------------->
+<!-- Template for project SIQO web                                          -->
+<!--                                                                        -->
+<!-- ver. 1.02                                                              -->
+<!--                                                                        -->
+<!---------------------------------------------------------------------------->
 {% extends "2 navBar.html" %}
 
 <!---------------------------------------------------------------------------->
@@ -24,29 +30,24 @@
         <!----------------------------------------------------STAGE-SELECTOR-->
         <div class="StageSelector">
 		
-    	    {% for stageId, stage in __STAG__['objs'].items() %}
-        	    {% for objId, obj in stage['objs'].items() %}
-
-                    {% if objId.startswith('SName') %}
-					
-    		            {{ html.itemListRender(obj['items'], lang)|safe }}
+            <!--Prejdem vsetky stage-->
+    	    {% for stageId, stageLst in __STAG__.items() %}
+    	    
+                <!--Stage selector je v 0-tej polozke zoznamu s klucom '0_StageName'-->
+    		    {{ html.itemRender( stageLst[0]['0_StageName'], lang)|safe }}
                     
-					{% endif %}
-                {% endfor %}
             {% endfor %}
 
         </div>
 
         <!-----------------------------------------------------STAGE-CONTENT-->
-   	    {% for stageId, stage in __STAG__['objs'].items() %}
-       	    {% for objId, obj in stage['objs'].items() %}
 
-                {% if objId.startswith('SCont') %}
-					
-   		            {{ html.itemListRender(obj['items'], lang)|safe }}
+        <!--Prejdem vsetky stage-->
+   	    {% for stageId, stageLst in __STAG__.items() %}
+   	    
+            <!--Zobrazitelne iemty su polozky 1..n v zozname-->
+   	        {{ html.itemListRender(stageLst[1:], lang)|safe }}
                     
-				{% endif %}
-            {% endfor %}
         {% endfor %}
 
     {% endblock %}

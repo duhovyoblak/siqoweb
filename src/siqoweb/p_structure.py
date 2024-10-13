@@ -25,7 +25,7 @@ from   forms           import FormLogin
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.01'
+_VER      = '1.02'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -74,12 +74,16 @@ class Structure(Object):
         self.journal       = journal
         self.loaded        = False
         self.env           = env
+        
         self.userName      = userName
         self.lang          = lang
         self.template      = template
         self.height        = height
+        
         self.initId        = "Content"
         self.context       = {}
+        
+        self.stagePos      = 1  # Actual stage position if used
         
         #----------------------------------------------------------------------
         # Aktualny user a jazyk
@@ -132,17 +136,17 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Nacitanie objektov PAGE
         #----------------------------------------------------------------------
-        res   = self.objectGet(self.user, objPar='__PAGE__')
+        res = self.objectGet(self.user, objPar='__PAGE__')
         
         #----------------------------------------------------------------------
         # Heads items
         #----------------------------------------------------------------------
-        if '__HEAD__' in res.keys() and 'items' in res['__HEAD__'].keys():
+        if '__HEAD__' in res.keys() and 'HeadItems' in res['__HEAD__'].keys():
             
             #------------------------------------------------------------------
             # Vsetkym polozkam v Head nastavim prislusny type
             #------------------------------------------------------------------
-            for item in res['__HEAD__']['items']:
+            for item in res['__HEAD__']['HeadItems']:
                 
                 if   '1_Title'    in item.keys(): item['1_Title'   ]['TYPE'] = 'HEADTITLE'
                 elif '2_SubTitle' in item.keys(): item['2_SubTitle']['TYPE'] = 'HEADSUBTIT'
@@ -152,20 +156,20 @@ class Structure(Object):
         # NavBar items
         #----------------------------------------------------------------------
         if '__NAVB__' not in res.keys()            : res['__NAVB__'] = {}
-        if 'items'    not in res['__NAVB__'].keys(): res['__NAVB__']['items'] = []
+        if 'NavLinks' not in res['__NAVB__'].keys(): res['__NAVB__']['NavLinks'] = []
 
         #----------------------------------------------------------------------
         # 0-ta polozka v NavBar je UserItem - ak nie je, potom ho tam vlozim
         #----------------------------------------------------------------------
-        if len(res['__NAVB__']['items'])==0 or 'User' not in res['__NAVB__']['items'][0].keys():
+        if len(res['__NAVB__']['NavLinks'])==0 or 'User' not in res['__NAVB__']['NavLinks'][0].keys():
 
             userItem = {"User":{"SK":self.userName, "URL":"login"}}
-            res['__NAVB__']['items'].insert(0, userItem)
+            res['__NAVB__']['NavLinks'].insert(0, userItem)
             
         #----------------------------------------------------------------------
         # Vsetkym polozkam v NavBar nastavim type=BARMENUITEM
         #----------------------------------------------------------------------
-        for item in res['__NAVB__']['items']:
+        for item in res['__NAVB__']['NavLinks']:
                 
             for itemId, args in item.items():
                 args["TYPE"] = "BARMENUITEM"
@@ -173,76 +177,80 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Stage items
         #----------------------------------------------------------------------
-        if '__STAG__' in res.keys() and 'objs' in res['__STAG__'].keys():
+        if '__STAG__' in res.keys():
             
             #------------------------------------------------------------------
             # Prejdem vsetky stage
             #------------------------------------------------------------------
-            for stageId, stage in res['__STAG__']['objs'].items():
-    
-                # Pozicia stage je definovana v 0-tom items v argumente POS
-                pos = stage['items'][0]['StagePos']['POS']
+            for stageId, stageLst in res['__STAG__'].items():
     
                 #--------------------------------------------------------------
-                # V stage su dva objekty: SName a SCont
+                # Vyriesim selector v polozke '0_StageName'
                 #--------------------------------------------------------------
-                for objId, obj in stage['objs'].items():
-        
-                    if objId.startswith('SName'):
-            
-                        #------------------------------------------------------
-                        # Vsetkym itemom v Selectore doplnim typ a poziciu
-                        #------------------------------------------------------
-                        for item in obj['items']:
+                if '0_StageName' not in stageLst[0].keys():
+                    
+                    #----------------------------------------------------------
+                    # Ak nie je kluc '0_StageName' v 0-tej polozke listu je to chyba
+                    #----------------------------------------------------------
+                    self.journal.M(f"{self.name}.loadPageResource: Stage without 'StageName' will be skipped", True)
+                    continue
+
+                else:
+                    #----------------------------------------------------------
+                    # Ak polozka '0_StageName' existuje, doplnim vlastnosti StageSelectora
+                    #----------------------------------------------------------
+                    stageLst[0]['0_StageName']['TYPE'] = 'STAGESELECTOR'
+                    stageLst[0]['0_StageName']['pos' ] = self.stagePos
+                    
+                    
+                #--------------------------------------------------------------
+                # Ak stage conntent obsahuje len 1 item (okrem 0_StageName)
+                #--------------------------------------------------------------
+                if len(stageLst)-1 == 1:
                             
-                            for itemId, args in item.items():
-                                args['TYPE'] = 'STAGESELECTOR'
-                                args['pos' ] = pos
+                    itemId = list(stageLst[1].keys())[0]
                             
-                    else:
-                        print(obj['items'])
-                        #------------------------------------------------------
-                        # Ak stage conntent obsahuje len 1 item
-                        #------------------------------------------------------
-                        if len(obj['items']) == 1:
+                    if 'TYPE' not in  stageLst[1][itemId].keys(): typeStash = 'P'
+                    else: typeStash = stageLst[1][itemId]['TYPE']
                             
-                            itemId = list(obj['items'][0].keys())[0]
-                            
-                            if 'TYPE' not in  obj['items'][0][itemId].keys(): typeStash = 'P'
-                            else: typeStash = obj['items'][0][itemId]['TYPE']
-                            
-                            obj['items'][0][itemId]['TYPE'     ] = 'STAGEBOTH'
-                            obj['items'][0][itemId]['typeStash'] = typeStash
-                            obj['items'][0][itemId]['pos'      ] = pos
+                    stageLst[1][itemId]['TYPE'     ] = 'STAGEBOTH'
+                    stageLst[1][itemId]['typeStash'] = typeStash
+                    stageLst[1][itemId]['pos'      ] = self.stagePos
                         
-                        else:
-                        #------------------------------------------------------
-                        # Prvy item zmenim na 'STAGESTART'
-                        #------------------------------------------------------
+                #--------------------------------------------------------------
+                # Ak stage conntent obsahuje viac items
+                #--------------------------------------------------------------
+                else:
+                    #----------------------------------------------------------
+                    # Prvy item zmenim na 'STAGESTART'
+                    #----------------------------------------------------------
+                    itemId = list(stageLst[1].keys())[0]
 
-                            itemId = list(obj['items'][0].keys())[0]
-
-                            if 'TYPE' not in  obj['items'][0][itemId].keys(): typeStash = 'P'
-                            else: typeStash = obj['items'][0][itemId]['TYPE']
+                    if 'TYPE' not in  stageLst[1][itemId].keys(): typeStash = 'P'
+                    else: typeStash = stageLst[1][itemId]['TYPE']
                             
-                            obj['items'][0][itemId]['TYPE'     ] = 'STAGESTART'
-                            obj['items'][0][itemId]['typeStash'] = typeStash
-                            obj['items'][0][itemId]['pos'      ] = pos
+                    stageLst[1][itemId]['TYPE'     ] = 'STAGESTART'
+                    stageLst[1][itemId]['typeStash'] = typeStash
+                    stageLst[1][itemId]['pos'      ] = self.stagePos
                         
-                        #------------------------------------------------------
-                        # Posledny item zmenim na 'STAGESTOP'
-                        #------------------------------------------------------
+                    #----------------------------------------------------------
+                    # Posledny item zmenim na 'STAGESTOP'
+                    #----------------------------------------------------------
+                    itemId = list(stageLst[-1].keys())[0]
 
-                            itemId = list(obj['items'][-1].keys())[0]
-
-                            if 'TYPE' not in  obj['items'][-1][itemId].keys(): typeStash = 'P'
-                            else: typeStash = obj['items'][-1][itemId]['TYPE']
+                    if 'TYPE' not in  stageLst[-1][itemId].keys(): typeStash = 'P'
+                    else: typeStash = stageLst[-1][itemId]['TYPE']
                             
-                            obj['items'][-1][itemId]['TYPE'     ] = 'STAGESTOP'
-                            obj['items'][-1][itemId]['typeStash'] = typeStash
-                            obj['items'][-1][itemId]['pos'      ] = pos
+                    stageLst[-1][itemId]['TYPE'     ] = 'STAGESTOP'
+                    stageLst[-1][itemId]['typeStash'] = typeStash
+                    stageLst[-1][itemId]['pos'      ] = self.stagePos
+
 
                 #--------------------------------------------------------------
+                # Posuniem sa na nasledujucu Stage polozku
+                #--------------------------------------------------------------
+                self.stagePos += 1
+                
             #------------------------------------------------------------------
         #----------------------------------------------------------------------
         self.loaded = True
@@ -383,7 +391,7 @@ if __name__ == '__main__':
     ,loader     = FileSystemLoader(['templates'])
     )
 
-    page = Structure(journal, env, 'Login', 700)
+    page = Structure(journal, env, 'Homepage', 700)
     rec = page.context
     
 #==============================================================================
