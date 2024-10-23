@@ -13,7 +13,6 @@
 {% block head %}
 
     <link   href="{{url_for('static', filename='css/page.css' )}}" rel="stylesheet" type="text/css">
-    <script src= "{{url_for('static', filename='js/page.js'   )}}" type="text/javascript"></script>
 
 {% endblock %}
 
@@ -51,6 +50,13 @@
         {% endfor %}
 
     {% endblock %}
+
+<!---------------------------------------------------------------------------->
+<!-- Script -->
+<!---------------------------------------------------------------------------->
+{% block jsEnd %}
+    <script>ShowStage(1)</script>
+{% endblock %}
 
 <!---------------------------------------------------------------------------->
 <!-- End of the file -->

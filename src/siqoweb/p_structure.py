@@ -107,14 +107,22 @@ class Structure(Object):
         self.initContext()
 
         #----------------------------------------------------------------------
-        # Doplnenie dynamickeho contextu
+        # Doplnenie dynamickeho contextu z DB
         #----------------------------------------------------------------------
-        self.classIdRes = self.loadPageResource()
-        self.addContext(self.classIdRes)
+        self.dbContext = self.loadPageResource()
+        self.addContext(self.dbContext)
 
-        self.cont   = self.loadContent()
-        self.addContext(self.cont)
+        #----------------------------------------------------------------------
+        # Doplnenie specifickeho contextu z DB podla id
+        #----------------------------------------------------------------------
+        self.idContext   = self.loadContent()
+        self.addContext(self.idContext)
 
+        #----------------------------------------------------------------------
+        # Ak je template staged, tak urcim defaultne nastaveny stage
+        #----------------------------------------------------------------------
+        
+        
         #----------------------------------------------------------------------
         self.journal.O(f"Structure({self.name}).init")
         
@@ -245,7 +253,6 @@ class Structure(Object):
                     stageLst[-1][itemId]['typeStash'] = typeStash
                     stageLst[-1][itemId]['pos'      ] = self.stagePos
 
-
                 #--------------------------------------------------------------
                 # Posuniem sa na nasledujucu Stage polozku
                 #--------------------------------------------------------------
@@ -323,6 +330,7 @@ class Structure(Object):
     #==========================================================================
     # Internal methods
     #--------------------------------------------------------------------------
+    # Context methods
     #--------------------------------------------------------------------------
     def initContext(self):
         "Creates context"
@@ -374,7 +382,10 @@ class Structure(Object):
     def setInitId(self, initId):
 
         self.journal.I(f"{self.classId}.initId: {initId}")
-        self.addContext({"initId":initId})
+        
+        self.initId = initId
+        self.addContext({"initId":self.initId})
+         
         self.journal.O()
 
 #==============================================================================

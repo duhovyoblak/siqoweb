@@ -14,62 +14,6 @@ var FS;
 var SSO;
 
 //==============================================================================
-// Bar menu mgmt
-//------------------------------------------------------------------------------
-function BarMenuWinHide()
-{
-  // Zatlaci vsetky okna BarMenu
-  wins = document.getElementsByName("BarMenuItemWindow");
-    
-  for (var i = 0; i < wins.length; i++) { 
-    wins[i].style.display="none";
-  }
-}
-//------------------------------------------------------------------------------
-function BarMenuWinShow( id )
-{
-  BarMenuWinHide();
-  
-  win = document.getElementById( id + "_window" );
-  win.style.display="block";  
-}
-//==============================================================================
-// Stage Login/Content mgmt
-//------------------------------------------------------------------------------
-function ShowStageLogin()
-{
-  // Zatlaci Stage Content do pozadia
-  document.getElementById("Content").style.display = "none";
-
-  // Vystavi Stage Login do popredia
-  document.getElementById("Login").style.display = "block";
-}
-
-//------------------------------------------------------------------------------
-function ShowStageContent()
-{
-  // Zatlaci Stage Content do pozadia
-  document.getElementById("Content").style.display = "block";
-
-  // Vystavi Stage Login do popredia
-  document.getElementById("Login").style.display = "none";
-}
-//==============================================================================
-// Stage Panel mgmt
-//------------------------------------------------------------------------------
-function ShowStage( key )
-{
-  // Zatlaci vsetky panely do pozadia
-  panels = document.getElementsByName("SP");
-    
-  for (var i = 0; i < panels.length; i++) { 
-    panels[i].style.display = "none";
-  }
-
-  // Vystavi key do popredia
-  document.getElementById( "SP_" + key ).style.display = "block";
-}
-//==============================================================================
 // Object
 //------------------------------------------------------------------------------
 function ObjectContentControl( name, height )

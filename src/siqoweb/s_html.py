@@ -528,8 +528,8 @@ class HTML:
         item['value'  ] = pos
         item['onclick'] = f"ShowStage('{pos}')"
         
-        if pos == '1': item['checked'] = True
-        else         : item['checked'] = False
+        if pos == 1: item['checked'] = 'checked'
+#        else         : item['checked'] = False
     
         atts = {"class":"StageSelectorItem", "name":"StageSelectorItem", "id":"StageSelectorItem"}
             
