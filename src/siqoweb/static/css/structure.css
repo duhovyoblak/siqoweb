@@ -55,7 +55,7 @@ div.HeaderTitle
   position         :relative;
   float            :left;
   top              :0px;
-  width            :40%;
+  width            :80%;
   
 }
 /*----------------------------------------------------------------------------*/
@@ -134,6 +134,88 @@ div.BarMenuLeft
   margin           :0px 3px 0px 3px;
   padding          :5px;
   cursor           :pointer;
+}
+/*----------------------------------------------------------------------------*/
+/* Structure Input Elements                                                   */
+/*----------------------------------------------------------------------------*/
+input.LoginControlBtn {
+  color            :#061623; 
+  background       :#F1F6FA;
+  
+  margin           :8px 6px 0px 0px;
+  padding          :0px 2px 0px 2px;
+  border           :1px solid #596380;
+
+  font-family      :Calibri,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :.9em;
+
+  cursor           :pointer;
+}
+/*----------------------------------------------------------------------------*/
+input[type="radio"]
+{
+  color            :#273327; 
+  background       : none repeat scroll 0% 0% rgb(255, 255, 255);
+  position         : relative;
+  margin           :0px;
+  padding          :6px;
+  width            :13px;
+  height           :13px;
+  vertical-align   :center;
+  border           :1px solid rgb(220, 220, 220);
+  border-radius    :1px 1px 1px 1px;
+  cursor           :pointer;
+}
+/*----------------------------------------------------------------------------*/
+/* Stage Menu Elements                                                        */
+/*----------------------------------------------------------------------------*/
+div.StageMenu
+{
+  color            :#273327; 
+  background       :url("struct_0004.jpg");
+  position         :relative;
+  left             :0px;
+  top              :0px;
+}
+/*----------------------------------------------------------------------------*/
+div.StageSelector
+{
+  color            :#273327; 
+  background       :url("struct_0004.jpg");
+  float            :left;
+  height           :100%;
+  width            :20%;
+}
+/*----------------------------------------------------------------------------*/
+div.StageSelectorItem
+{
+  color            :#273327; 
+  font-size        :1.0em;
+  padding          : 6px 6px 6px 16px;
+}
+/*----------------------------------------------------------------------------*/
+div.StageSelectorItem:hover
+{
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3) inset;
+}
+/*----------------------------------------------------------------------------*/
+div.StagePanel
+{
+  color            :#273327; 
+  background       :url("struct_0004.jpg");
+
+  position         :relative;
+  height           :100%;
+  width            :80%;
+  overflow         :auto;
+}
+/*----------------------------------------------------------------------------*/
+div.StageCourtain
+{
+  color            :white; 
+  background       :#092234;
+  opacity          :0.6;
 }
 /*----------------------------------------------------------------------------*/
 /* Flah Elements                                                              */

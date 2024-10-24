@@ -14,10 +14,9 @@ from   jinja2                   import Environment, PackageLoader, select_autoes
 
 import siqolib.general         as gen
 
-import dms             as dms
 
 from   config          import Config
-from   user            import User, _ANONYM
+from   app_user            import User, _ANONYM
 from   p_structure     import Structure
 from   forms           import FormLogin
 

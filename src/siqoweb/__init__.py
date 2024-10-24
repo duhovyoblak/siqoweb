@@ -11,15 +11,15 @@ os.environ['siqo-test'] = '1'
 
 #==============================================================================
 from   siqolib.journal              import SiqoJournal
-import views                        as vie
-import dms                          as dms
+import app_views                        as app_views
+import app_dms                          as app_dms
 
-import routes                       as rou
+import app_routes                   as app_routes
 
 #==============================================================================
 # package's constants & private vars
 #------------------------------------------------------------------------------
-_VER      = '1.01'
+_VER      = '1.02'
 _CWD      = os.getcwd()
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
@@ -30,14 +30,14 @@ else                        : _IS_TEST = False
 #------------------------------------------------------------------------------
 journal = SiqoJournal('siqo-web', debug=1)
 
-vie.journal = journal
-dms.journal = journal
-rou.journal = journal
+app_views. journal = journal
+app_dms.   journal = journal
+app_routes.journal = journal
 
 #==============================================================================
 # Get an Flask Application Object
 #------------------------------------------------------------------------------
-app, login  = rou.getApp()
+app, login  = app_routes.getApp()
 
 #==============================================================================
 # Main

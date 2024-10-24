@@ -7,9 +7,9 @@ from   werkzeug.security        import generate_password_hash, check_password_ha
 from   flask_login              import UserMixin
 
 import siqolib.general         as gen
-from   config          import Config
-from   database        import Database
-from   dms             import DMS
+from   config                  import Config
+from   database                import Database
+from   app_dms                 import DMS
 
 #==============================================================================
 # package's constants

@@ -15,9 +15,9 @@ from   jinja2                   import Environment, FileSystemLoader, PackageLoa
 import siqolib.general         as gen
 
 from   config          import Config
-from   dms             import DMS
-from   s_html          import HTML
-from   user            import User
+from   app_dms         import DMS
+from   html_render     import HTML
+from   app_user        import User
 from   object          import Object
 from   forms           import FormLogin
 

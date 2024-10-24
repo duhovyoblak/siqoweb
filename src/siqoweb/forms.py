@@ -29,12 +29,12 @@ class FormLogin(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()] )
     remember = BooleanField ('Remember Me')
     
+    login  = SubmitField('Sign In')
     conti  = SubmitField('Continue as Guest User')
     logout = SubmitField('Sign Out')
-    login  = SubmitField('Sign In')
 
 #==============================================================================
-# Form
+# Forum Form
 #------------------------------------------------------------------------------
 
 #==============================================================================

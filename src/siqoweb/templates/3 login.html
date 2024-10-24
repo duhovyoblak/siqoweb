@@ -9,11 +9,7 @@
 <!---------------------------------------------------------------------------->
 <!-- Head -->
 <!---------------------------------------------------------------------------->
-{% block head %}
-
-    <link   href="{{url_for('static', filename='css/page.css')}}" rel="stylesheet" type="text/css">
-
-{% endblock %}
+{% block head %}{% endblock %}
 
 <!---------------------------------------------------------------------------->
 <!-- Body -->
@@ -26,7 +22,7 @@
             {{ formLogin.hidden_tag() }}
             <p>
                 {{ formLogin.username.label }}<br>
-                {{ formLogin.username(class_="ObjectInputString", size=32) }}<br>
+                {{ formLogin.username(class_="ObjectInputString", size=35) }}<br>
 
                 {% if len(formLogin.username.errors)>0 %}
               
@@ -39,8 +35,8 @@
                 {% endif %}
             </p>
             <p>
-                {{ formLogin.password.label }}<br>
-                {{ formLogin.password(size=32) }}<br>
+                {{ formLogin.password.label    }}<br>
+                {{ formLogin.password(size=35) }}<br>
 
                 {% if len(formLogin.password.errors)>0 %}
 
@@ -54,9 +50,10 @@
             </p>
 			
             <p>{{ formLogin.remember() }} {{ formLogin.remember.label }}</p>
-            <p>{{ formLogin.conti(class_="LoginControlBtn") }}
+            <p>{{ formLogin.login(class_ ="LoginControlBtn") }}
+               {{ formLogin.conti(class_ ="LoginControlBtn") }}
                {{ formLogin.logout(class_="LoginControlBtn") }}
-               {{ formLogin.login(class_="LoginControlBtn") }}</p>
+            </p>
         </form>
 
     {% endblock %}

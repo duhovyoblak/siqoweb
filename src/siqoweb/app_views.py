@@ -20,7 +20,7 @@ from   p_forum          import Forum
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.01'
+_VER      = '1.02'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -43,11 +43,11 @@ env = Environment(
 
 
 #==============================================================================
-# System's views 
+# System's app_views 
 #------------------------------------------------------------------------------
 def index():
     
-    journal.I('views.index()')
+    journal.I('app_views.index()')
     
     template = env.get_template("index.html")
     
@@ -60,7 +60,7 @@ def index():
 #------------------------------------------------------------------------------
 def structure():
     
-    journal.I('views.structure()')
+    journal.I('app_views.structure()')
 
     page = Structure(journal, env, 'Login', height=670)
     resp = page.resp()
@@ -71,7 +71,7 @@ def structure():
 #------------------------------------------------------------------------------
 def login():
     
-    journal.I('views.login()')
+    journal.I('app_views.login()')
 
     page = Login(journal, env, 'Login', height=670, template="3 login.html")
     resp = page.resp()
@@ -82,7 +82,7 @@ def login():
 #------------------------------------------------------------------------------
 def homepage():
     
-    journal.I('views.homepage()')
+    journal.I('app_views.homepage()')
 
     page = Page(journal, env, 'Homepage', height=670, template="3 staged.html")
     resp = page.resp()
@@ -93,7 +93,7 @@ def homepage():
 #------------------------------------------------------------------------------
 def pgdocument():
     
-    journal.I('views.pgdocument()')
+    journal.I('app_views.pgdocument()')
 
     page = Page(journal, env, 'PagManDocument', height=670, template="3 empty.html")
     resp = page.resp()
@@ -104,7 +104,7 @@ def pgdocument():
 #------------------------------------------------------------------------------
 def pgresource():
     
-    journal.I('views.pgresource()')
+    journal.I('app_views.pgresource()')
 
     page = Page(journal, env, 'Resource', height=670, template="3 empty.html")
     resp = page.resp()
@@ -113,11 +113,11 @@ def pgresource():
     return resp
 
 #==============================================================================
-# Content's views 
+# Content's app_views 
 #------------------------------------------------------------------------------
 def oralhistory(idx):
     
-    journal.I(f'views.oralhistory({idx})')
+    journal.I(f'app_views.oralhistory({idx})')
 
     page = Forum(journal, env, 'OHISTORY', idx=idx, height=670)
     resp = page.resp()
@@ -130,7 +130,7 @@ def oralhistory(idx):
 #------------------------------------------------------------------------------
 
 #==============================================================================
-print(f"pages {_VER}")
+print(f"app_views {_VER}")
 
 #==============================================================================
 #                              END OF FILE

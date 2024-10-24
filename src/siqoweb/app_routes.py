@@ -1,5 +1,5 @@
 #==============================================================================
-#  SIQO Homepage: web routes operations
+#  SIQO Homepage: app_routes methods
 #------------------------------------------------------------------------------
 import os
 import unicodedata
@@ -13,15 +13,15 @@ from   markupsafe               import escape
 
 from   siqolib.journal          import SiqoJournal
 from   config           import Config
-from   user             import User
+from   app_user             import User
 
 from   forms            import FormLogin
-import views            as views
+import app_views            as app_views
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.02'
+_VER      = '1.03'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -34,7 +34,6 @@ _login  = None
 
 journal = None
 journal = SiqoJournal('siqo-web', debug=5)
-
 
 #==============================================================================
 # package's tools
@@ -122,7 +121,7 @@ def load_user(user_id='Anonymous'):
 def login():
 
     journal.M("login():")
-    return views.login()
+    return app_views.login()
     
 #------------------------------------------------------------------------------
 @app.route('/logout')
@@ -143,14 +142,14 @@ def logout():
 def index():
 
     journal.M("index():")
-    return views.index()
+    return app_views.index()
 
 #------------------------------------------------------------------------------
 @app.route('/structure', methods=['GET'])
 def structure():
 
     journal.M("structure():")
-    return views.structure()
+    return app_views.structure()
     
 #------------------------------------------------------------------------------
 @app.get('/shutdown')
@@ -174,7 +173,7 @@ def shutdown():
 def homepage():
 
     journal.M("homepage():")
-    return views.homepage()
+    return app_views.homepage()
 
 #------------------------------------------------------------------------------
 @app.route('/pgdocument', methods=['GET', 'POST'])
@@ -182,7 +181,7 @@ def homepage():
 def pgdocument():
 
     journal.M("pgdocument():")
-    return views.pgdocument()
+    return app_views.pgdocument()
 
 #------------------------------------------------------------------------------
 @app.route('/pgresource', methods=['GET', 'POST'])
@@ -190,7 +189,7 @@ def pgdocument():
 def pgresource():
 
     journal.M("pgresource():")
-    return views.pgresource()
+    return app_views.pgresource()
 
 #------------------------------------------------------------------------------
 # PATHs Tools
@@ -228,14 +227,14 @@ def show_subpath(subpath):
 def oralhistoryHome():
 
     journal.M("oralhistory: Home")
-    return views.oralhistory(0)
+    return app_views.oralhistory(0)
 
 #------------------------------------------------------------------------------
 @app.route('/oralhistory/<int:idx>', methods=['GET', 'POST'])
 def oralhistory(idx):
 
     journal.M(f"oralhistory: id='{idx}'")
-    return views.oralhistory(idx)
+    return app_views.oralhistory(idx)
 
 #==============================================================================
 # Test cases
@@ -247,7 +246,7 @@ with app.test_request_context():
     print(url_for('static', filename='dms/SF0000056.jpg'))
     
 #==============================================================================
-print(f"routes {_VER}")
+print(f"app_routes {_VER}")
 
 #==============================================================================
 #                              END OF FILE
