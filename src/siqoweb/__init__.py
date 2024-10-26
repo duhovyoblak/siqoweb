@@ -10,11 +10,11 @@ os.environ['siqo-test'] = '1'
 #os.environ['wsiqo-secret-key'] = 'asklurgw8374yhcbfQ2R7GYFQPIUBR'
 
 #==============================================================================
-from   siqolib.journal              import SiqoJournal
-import app_views                        as app_views
-import app_dms                          as app_dms
+from   siqolib.journal     import SiqoJournal
 
-import app_routes                   as app_routes
+import app_views           as app_views
+import app_dms             as app_dms
+import app_routes          as app_routes
 
 #==============================================================================
 # package's constants & private vars

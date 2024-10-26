@@ -12,11 +12,9 @@ from   flask_login              import LoginManager, login_required, login_user,
 from   markupsafe               import escape
 
 from   siqolib.journal          import SiqoJournal
-from   config           import Config
-from   app_user             import User
-
-from   forms            import FormLogin
-import app_views            as app_views
+from   config                   import Config
+from   app_user                 import User
+import app_views                as app_views
 
 #==============================================================================
 # package's constants

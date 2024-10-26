@@ -4,23 +4,20 @@
 import os
 
 import flask
-from   flask                    import url_for, get_flashed_messages, flash, render_template, make_response
-from   flask                    import request, session, abort, redirect
-from   flask_login              import login_user, logout_user, current_user
-from   markupsafe               import escape
+from   flask             import url_for, get_flashed_messages, flash, render_template, make_response
+from   flask             import request, session, abort, redirect
+from   flask_login       import login_user, logout_user, current_user
+from   markupsafe        import escape
 
-import jinja2                   as j2
-from   jinja2                   import Environment, FileSystemLoader, PackageLoader, select_autoescape
+import jinja2            as j2
+from   jinja2            import Environment, FileSystemLoader, PackageLoader, select_autoescape
 
-import siqolib.general         as gen
+import siqolib.general   as gen
 
-from   config          import Config
-from   app_dms         import DMS
-from   html_render     import HTML
-from   app_user        import User
-from   object          import Object
-from   forms           import FormLogin
-
+from   app_dms           import DMS
+from   html_render       import HTML
+from   object            import Object
+from   form              import FormLogin
 
 #==============================================================================
 # package's constants
@@ -82,8 +79,6 @@ class Structure(Object):
         
         self.initId        = "Content"
         self.context       = {}
-        
-        self.stagePos      = 1  # Actual stage position if used
         
         #----------------------------------------------------------------------
         # Aktualny user a jazyk
@@ -187,6 +182,8 @@ class Structure(Object):
         #----------------------------------------------------------------------
         if '__STAG__' in res.keys():
             
+            stagePos = 0
+            
             #------------------------------------------------------------------
             # Prejdem vsetky stage
             #------------------------------------------------------------------
@@ -195,10 +192,10 @@ class Structure(Object):
                 #--------------------------------------------------------------
                 # Vyriesim selector v polozke '0_StageName'
                 #--------------------------------------------------------------
-                if '0_StageName' not in stageLst[0].keys():
+                if '0_Stage' not in stageLst[0].keys():
                     
                     #----------------------------------------------------------
-                    # Ak nie je kluc '0_StageName' v 0-tej polozke listu je to chyba
+                    # Ak nie je kluc '0_Stage' v 0-tej polozke listu je to chyba
                     #----------------------------------------------------------
                     self.journal.M(f"{self.name}.loadPageResource: Stage without 'StageName' will be skipped", True)
                     continue
@@ -207,9 +204,11 @@ class Structure(Object):
                     #----------------------------------------------------------
                     # Ak polozka '0_StageName' existuje, doplnim vlastnosti StageSelectora
                     #----------------------------------------------------------
-                    stageLst[0]['0_StageName']['TYPE'] = 'STAGESELECTOR'
-                    stageLst[0]['0_StageName']['pos' ] = self.stagePos
+                    stageLst[0]['0_Stage']['TYPE'] = 'STAGESELECTOR'
                     
+                    # Pozicia je v kluci POS ako string, prehodim na int
+                    stagePos = int(stageLst[0]['0_Stage']['POS'])
+                    stageLst[0]['0_Stage']['POS'] = stagePos
                     
                 #--------------------------------------------------------------
                 # Ak stage conntent obsahuje len 1 item (okrem 0_StageName)
@@ -223,7 +222,7 @@ class Structure(Object):
                             
                     stageLst[1][itemId]['TYPE'     ] = 'STAGEBOTH'
                     stageLst[1][itemId]['typeStash'] = typeStash
-                    stageLst[1][itemId]['pos'      ] = self.stagePos
+                    stageLst[1][itemId]['POS'      ] = stagePos
                         
                 #--------------------------------------------------------------
                 # Ak stage conntent obsahuje viac items
@@ -239,7 +238,7 @@ class Structure(Object):
                             
                     stageLst[1][itemId]['TYPE'     ] = 'STAGESTART'
                     stageLst[1][itemId]['typeStash'] = typeStash
-                    stageLst[1][itemId]['pos'      ] = self.stagePos
+                    stageLst[1][itemId]['POS'      ] = stagePos
                         
                     #----------------------------------------------------------
                     # Posledny item zmenim na 'STAGESTOP'
@@ -251,12 +250,44 @@ class Structure(Object):
                             
                     stageLst[-1][itemId]['TYPE'     ] = 'STAGESTOP'
                     stageLst[-1][itemId]['typeStash'] = typeStash
-                    stageLst[-1][itemId]['pos'      ] = self.stagePos
+                    stageLst[-1][itemId]['POS'      ] = stagePos
 
-                #--------------------------------------------------------------
-                # Posuniem sa na nasledujucu Stage polozku
-                #--------------------------------------------------------------
-                self.stagePos += 1
+            #------------------------------------------------------------------
+            # Prekodujem vsetky Stage do poradia urceneho POS
+            #------------------------------------------------------------------
+            posLst = []
+            
+            #------------------------------------------------------------------
+            # Ziskam list tuples [(stageId, pos)]
+            #------------------------------------------------------------------
+            for stageId, stageLst in res['__STAG__'].items():
+                                         
+                if '0_Stage' not in stageLst[0].keys():
+                    
+                    #----------------------------------------------------------
+                    # Ak nie je kluc '0_Stage' v 0-tej polozke listu je to chyba
+                    #----------------------------------------------------------
+                    self.journal.M(f"{self.name}.loadPageResource: Stage without 'StageName' will be skipped", True)
+                    continue
+
+                else:
+                    posLst.append( (stageId, stageLst[0]['0_Stage']['POS']) )
+                
+            #------------------------------------------------------------------
+            # Zosortujem list podla POS
+            #------------------------------------------------------------------
+            posLst.sort( key=lambda tupl: tupl[1] )
+            
+            #------------------------------------------------------------------
+            # Prekodujem vsetky Stage podla sorted posLst
+            #------------------------------------------------------------------
+            copySTAG = res['__STAG__']
+            
+            res['__STAG__'] = {}
+            
+            for stageTuple in posLst:
+                
+                res['__STAG__'][stageTuple[0]] = copySTAG[stageTuple[0]]
                 
             #------------------------------------------------------------------
         #----------------------------------------------------------------------

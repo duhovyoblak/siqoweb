@@ -9,7 +9,7 @@ import re
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.01'
+_VER      = '1.02'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -521,7 +521,7 @@ class HTML:
         #----------------------------------------------------------------------
         # Pripravim atributy do itemu
         #----------------------------------------------------------------------
-        (item, pos) = self.itemDrop(item, 'pos')
+        (item, pos) = self.itemDrop(item, 'POS')
         
         item['name'   ] = 'SSB'
         item['id'     ] = f"SSB_{pos}"
@@ -529,7 +529,6 @@ class HTML:
         item['onclick'] = f"ShowStage('{pos}')"
         
         if pos == 1: item['checked'] = 'checked'
-#        else         : item['checked'] = False
     
         atts = {"class":"StageSelectorItem", "name":"StageSelectorItem", "id":"StageSelectorItem"}
             
@@ -548,7 +547,7 @@ class HTML:
         #----------------------------------------------------------------------
         # Pripravim atributy do itemu
         #----------------------------------------------------------------------
-        (item, pos      ) = self.itemDrop(item, 'pos')
+        (item, pos      ) = self.itemDrop(item, 'POS')
         (item, typeStash) = self.itemDrop(item, 'typeStash')
         
         item['TYPE'   ] = typeStash
@@ -574,7 +573,7 @@ class HTML:
         #----------------------------------------------------------------------
         # Pripravim atributy do itemu
         #----------------------------------------------------------------------
-        (item, pos      ) = self.itemDrop(item, 'pos')
+        (item, pos      ) = self.itemDrop(item, 'POS')
         (item, typeStash) = self.itemDrop(item, 'typeStash')
         
         item['TYPE'   ] = typeStash
@@ -599,7 +598,7 @@ class HTML:
         #----------------------------------------------------------------------
         # Pripravim atributy do itemu
         #----------------------------------------------------------------------
-        (item, pos      ) = self.itemDrop(item, 'pos')
+        (item, pos      ) = self.itemDrop(item, 'POS')
         (item, typeStash) = self.itemDrop(item, 'typeStash')
         
         item['TYPE'   ] = typeStash

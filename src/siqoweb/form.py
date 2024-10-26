@@ -1,16 +1,16 @@
 #==============================================================================
-#  SIQO Homepage: Formulars
+#  SIQO Homepage: Basic root Formulars
 #------------------------------------------------------------------------------
 import os
 
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from flask_wtf          import FlaskForm
+from wtforms            import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = 1.00
+_VER      = '1.01'
 _CWD      = os.getcwd()
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
@@ -18,6 +18,10 @@ else                        : _IS_TEST = False
 
 #==============================================================================
 # package's variables
+#------------------------------------------------------------------------------
+
+#==============================================================================
+# Form
 #------------------------------------------------------------------------------
 
 #==============================================================================
@@ -32,10 +36,6 @@ class FormLogin(FlaskForm):
     login  = SubmitField('Sign In')
     conti  = SubmitField('Continue as Guest User')
     logout = SubmitField('Sign Out')
-
-#==============================================================================
-# Forum Form
-#------------------------------------------------------------------------------
 
 #==============================================================================
 print(f"forms {_VER}")

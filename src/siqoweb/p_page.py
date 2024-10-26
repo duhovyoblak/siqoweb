@@ -4,21 +4,20 @@
 import os
 
 import flask
-from   flask                    import url_for, get_flashed_messages, flash, render_template, make_response
-from   flask                    import request, session, abort, redirect
-from   flask_login              import login_user, logout_user, current_user
-from   markupsafe               import escape
+from   flask              import url_for, get_flashed_messages, flash, render_template, make_response
+from   flask              import request, session, abort, redirect
+from   flask_login        import login_user, logout_user, current_user
+from   markupsafe         import escape
 
-import jinja2                   as j2
-from   jinja2                   import Environment, PackageLoader, select_autoescape
+import jinja2             as j2
+from   jinja2             import Environment, FileSystemLoader, PackageLoader, select_autoescape
 
-import siqolib.general         as gen
+import siqolib.general    as gen
 
-from   database        import Database
-from   config          import Config
-from   app_user            import User
-from   p_structure     import Structure
-from   forms           import FormLogin
+from   database           import Database
+from   config             import Config
+from   app_user           import User
+from   p_structure        import Structure
 
 
 #==============================================================================
@@ -77,13 +76,13 @@ class Page(Structure):
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    from   siqo_lib                 import SiqoJournal
+    from   siqolib.journal              import SiqoJournal
     journal = SiqoJournal('test-base', debug=5)
     
     env = Environment(
     
      autoescape = select_autoescape()
-    ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
+    ,loader     = FileSystemLoader(['templates'])
     )
 
     page = Page(journal, env, 'Homepage', 700)
