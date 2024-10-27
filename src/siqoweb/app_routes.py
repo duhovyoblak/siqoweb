@@ -116,21 +116,37 @@ def load_user(user_id='Anonymous'):
 
 #------------------------------------------------------------------------------
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def pgLogin():
 
-    journal.M("login():")
-    return app_views.login()
+    journal.M("pgLogin():")
+    return app_views.pgLogin()
     
 #------------------------------------------------------------------------------
 @app.route('/logout')
-def logout():
+def pgLogout():
     
-    journal.M("logout():")
+    journal.M("pgLogout():")
     
     # remove the username from the session if it's there
     session.pop('username', None)
 
     return redirect(url_for('index'))
+
+#------------------------------------------------------------------------------
+@app.route('/contact', methods=['GET'])
+@login_required
+def pgContact():
+
+    journal.M("pgContact():")
+    return None
+
+#------------------------------------------------------------------------------
+@app.route('/faq', methods=['GET'])
+@login_required
+def pgFaq():
+
+    journal.M("pgFaq():")
+    return app_views.pgFaq()
 
 #==============================================================================
 # Sytem PATHs operation
@@ -142,13 +158,6 @@ def index():
     journal.M("index():")
     return app_views.index()
 
-#------------------------------------------------------------------------------
-@app.route('/structure', methods=['GET'])
-def structure():
-
-    journal.M("structure():")
-    return app_views.structure()
-    
 #------------------------------------------------------------------------------
 @app.get('/shutdown')
 def shutdown():
@@ -165,37 +174,56 @@ def shutdown():
     journal.O()
     return 'Server was shut down...'
 
+#==============================================================================
+# PagMan PATHs operation
+#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 @app.route('/homepage', methods=['GET', 'POST'])
 @login_required
-def homepage():
+def pgHomepage():
 
-    journal.M("homepage():")
-    return app_views.homepage()
-
-#------------------------------------------------------------------------------
-@app.route('/pgdocument', methods=['GET', 'POST'])
-@login_required
-def pgdocument():
-
-    journal.M("pgdocument():")
-    return app_views.pgdocument()
+    journal.M("pgHomepage():")
+    return app_views.pgHomepage()
 
 #------------------------------------------------------------------------------
-@app.route('/pgresource', methods=['GET', 'POST'])
+@app.route('/admin', methods=['GET', 'POST'])
 @login_required
-def pgresource():
+def pgAdmin():
 
-    journal.M("pgresource():")
-    return app_views.pgresource()
+    journal.M("pgAdmin():")
+    return None
+
+#------------------------------------------------------------------------------
+@app.route('/resource', methods=['GET', 'POST'])
+@login_required
+def pgResource():
+
+    journal.M("pgResource():")
+    return app_views.pgResource()
+
+#------------------------------------------------------------------------------
+@app.route('/dms', methods=['GET', 'POST'])
+@login_required
+def pgDms():
+
+    journal.M("pgDms():")
+    return app_views.pgDms()
+
+#------------------------------------------------------------------------------
+@app.route('/session', methods=['GET', 'POST'])
+@login_required
+def pgSession():
+
+    journal.M("pgSession():")
+    return None
 
 #------------------------------------------------------------------------------
 # PATHs Tools
 #------------------------------------------------------------------------------
 @app.get('/user/<username>')
-def profile(username):
+def pgUser(username):
 
-    journal.M(f"profile(): username='{username}'")
+    journal.M(f"pgUser(): username='{username}'")
 
     # show the user profile for that user
     return f"User {escape(username)}"
@@ -229,7 +257,7 @@ def oralhistoryHome():
 
 #------------------------------------------------------------------------------
 @app.route('/oralhistory/<int:idx>', methods=['GET', 'POST'])
-def oralhistory(idx):
+def oralhistory(idx=0):
 
     journal.M(f"oralhistory: id='{idx}'")
     return app_views.oralhistory(idx)
@@ -239,7 +267,7 @@ def oralhistory(idx):
 #------------------------------------------------------------------------------
 with app.test_request_context():
     print(url_for('index'))
-    print(url_for('profile', username='John Doe'))
+    print(url_for('pgUser', username='John Doe'))
     print(url_for('static', filename='css/base_page.css'))
     print(url_for('static', filename='dms/SF0000056.jpg'))
     

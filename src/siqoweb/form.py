@@ -23,6 +23,11 @@ else                        : _IS_TEST = False
 #==============================================================================
 # Form
 #------------------------------------------------------------------------------
+class FormLogin(FlaskForm):
+    
+    UserActType  = SubmitField('Sign In')
+    UserObj  = SubmitField('Continue as Guest User')
+    UserAct = SubmitField('Sign Out')
 
 #==============================================================================
 # FormLogin
@@ -33,9 +38,9 @@ class FormLogin(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()] )
     remember = BooleanField ('Remember Me')
     
-    login  = SubmitField('Sign In')
-    conti  = SubmitField('Continue as Guest User')
-    logout = SubmitField('Sign Out')
+    login   = SubmitField('Sign In')
+    asGuest = SubmitField('Continue as Guest User')
+    logout  = SubmitField('Sign Out')
 
 #==============================================================================
 print(f"forms {_VER}")

@@ -13,7 +13,7 @@ from   config          import Config
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.01'
+_VER      = '1.02'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -165,7 +165,7 @@ class User(UserMixin, Database):
         """This property should return True if this is an anonymous user. 
         (Actual users should return False instead.)"""
         
-        return self.user_id == "Anonym"
+        return self.user_id == _ANONYM
 
     #--------------------------------------------------------------------------
     def get_id(self):
@@ -199,7 +199,7 @@ class User(UserMixin, Database):
         
         self.journal.I(f"{self.user_id}.load: user_id = '{user_id}'")
         
-        userData = self.readTable(user_id, Config.tabUser, f" user_id = '{user_id}'")
+        userData = self.readTable(user_id, table=Config.tabUser, where=f" user_id = '{user_id}'", header='detail')
         
         #----------------------------------------------------------------------
         # Skontrolujem existenciu usera
@@ -273,39 +273,41 @@ where user_id = {self.user_id}"""
         #----------------------------------------------------------------------
         self.journal.O()
 
+    #==========================================================================
+    # Tools
     #--------------------------------------------------------------------------
-    def users(self):
+    def users(self, header=None):
+        "Returns list of users. If failed returns None"
         
-        self.journal.I(f"{self.user_id}.users:")
+        self.journal.I(f"{self.user_id}.users: header={header}")
         
-        userData = self.readTable(self.user_id, Config.tabUser)
+        userLst = self.readTable(who=self.user_id, table=Config.tabUser, header=header)
         
         #----------------------------------------------------------------------
         # Skontrolujem existenciu udajov
         #----------------------------------------------------------------------
-        if type(userData)==int:
+        if type(userLst)==int: 
             
-            self.loaded   = False
-            self.verified = False
-
-            self.journal.M(f"{self.user_id}.users: Method failed")
-            self.journal.O()
-            return None
+            self.journal.M(f"{self.user_id}.users: Method failed, {userLst}", True)
+            userLst = None
+            
+        else:
+            self.journal.M(f"{self.user_id}.users: {userLst}")
         
         #----------------------------------------------------------------------
         self.journal.O()
-        return userData
+        return userLst
 
 #==============================================================================
 # Test cases
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    from   siqo_lib                 import SiqoJournal
+    from   siqolib.journal       import SiqoJournal
     journal = SiqoJournal('test-user', debug=5)
 
     user = User(journal)
-    users = user.users()
+    users = user.users(header='detail')
     
     u = user.load('palo4')
     print(type(u), ', ', u)

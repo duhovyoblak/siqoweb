@@ -5,6 +5,7 @@
 #------------------------------------------------------------------------------
 import os
 import re
+from   flask                    import url_for
 
 #==============================================================================
 # package's constants
@@ -161,7 +162,7 @@ class HTML:
         (item, arg) = self.itemDrop(item, 'ARG')
         (item, txt) = self.itemDrop(item, lang )
     
-        link = url
+        link = url_for(url)
         if arg != '': link += f'?{arg}'
         
         item["href"] = link

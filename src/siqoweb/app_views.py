@@ -69,9 +69,9 @@ def structure():
     return resp
 
 #------------------------------------------------------------------------------
-def login():
+def pgLogin():
     
-    journal.I('app_views.login()')
+    journal.I('app_views.pgLogin()')
 
     page = Login(journal, env, 'Login', height=670, template="3 login.html")
     resp = page.resp()
@@ -80,9 +80,20 @@ def login():
     return resp
 
 #------------------------------------------------------------------------------
-def homepage():
+def pgFaq():
     
-    journal.I('app_views.homepage()')
+    journal.I('app_views.pgFaq()')
+
+    page = Login(journal, env, 'PagManFAQ', height=670, template="3 forum.html")
+    resp = page.resp()
+
+    journal.O()
+    return resp
+
+#------------------------------------------------------------------------------
+def pgHomepage():
+    
+    journal.I('app_views.pgHomepage()')
 
     page = Page(journal, env, 'Homepage', height=670, template="3 staged.html")
     resp = page.resp()
@@ -91,20 +102,20 @@ def homepage():
     return resp
 
 #------------------------------------------------------------------------------
-def pgdocument():
+def pgDms():
     
-    journal.I('app_views.pgdocument()')
+    journal.I('app_views.pgDms()')
 
-    page = Page(journal, env, 'PagManDocument', height=670, template="3 empty.html")
+    page = Page(journal, env, 'PagManDMS', height=670, template="3 staged.html")
     resp = page.resp()
 
     journal.O()
     return resp
 
 #------------------------------------------------------------------------------
-def pgresource():
+def pgResource():
     
-    journal.I('app_views.pgresource()')
+    journal.I('app_views.pgResource()')
 
     page = Page(journal, env, 'Resource', height=670, template="3 empty.html")
     resp = page.resp()
@@ -118,9 +129,15 @@ def pgresource():
 def oralhistory(idx):
     
     journal.I(f'app_views.oralhistory({idx})')
+    
+    if idx==0:
 
-    page = Forum(journal, env, 'OHISTORY', idx=idx, height=670)
-    resp = page.resp()
+        page = Forum(journal, env, 'OHISTORY', idx=idx, height=670)
+        resp = page.resp()
+
+    else:
+        page = Forum(journal, env, 'OHISTORY', idx=idx, height=670)
+        resp = page.resp()
 
     journal.O()
     return resp

@@ -22,7 +22,7 @@ from   form               import FormLogin
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.00'
+_VER      = '1.01'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -40,6 +40,7 @@ class Login(Structure):
     # Content methods
     #--------------------------------------------------------------------------
     def loadContent(self):
+        "This method should return page specific content like forms, objects etc."
         
         self.journal.I(f"{self.name}.loadContent:")
 
@@ -61,7 +62,7 @@ class Login(Structure):
         #----------------------------------------------------------------------
         # Continue as Guest User
         #----------------------------------------------------------------------
-        if self.formLogin.conti.data:
+        if self.formLogin.asGuest.data:
                 
                 user_id = _ANONYM
                 pasw    = '?'
@@ -73,7 +74,7 @@ class Login(Structure):
 
                 self.journal.M(f"{self.name}.resp: Continue as Guest User")
                 self.journal.O()
-                return redirect(url_for('homepage'))
+                return redirect(url_for('pgHomepage'))
 
         #----------------------------------------------------------------------
         # Logout
@@ -84,7 +85,7 @@ class Login(Structure):
             
                 self.journal.M(f"{self.name}.resp: Logout")
                 self.journal.O()
-                return redirect(url_for('homepage'))
+                return redirect(url_for('pgLogin'))
 
         #----------------------------------------------------------------------
         # User uz je autentifikovany
@@ -93,7 +94,7 @@ class Login(Structure):
                
             self.journal.M(f"{self.name}.respPost: '{self.user.user_id}' is autheticated already")
             self.journal.O()
-            return redirect(url_for('homepage'))
+            return redirect(url_for('pgHomepage'))
 
         #----------------------------------------------------------------------
         # Vyhodnotim formular formLogin
@@ -115,7 +116,7 @@ class Login(Structure):
                 flash('Invalid username or password')
                 self.journal.M(f"{self.name}.respPost: Authentication failed")
                 self.journal.O()
-                return redirect(url_for('login'))
+                return redirect(url_for('pgLogin'))
 
             #------------------------------------------------------------------
             # User je autentifikovany, zapisem do session
@@ -124,7 +125,7 @@ class Login(Structure):
 
             self.journal.M(f"{self.name}.resp: User logged in")
             self.journal.O()
-            return redirect(url_for('homepage'))
+            return redirect(url_for('pgHomepage'))
  
         #----------------------------------------------------------------------
         # Default redirect

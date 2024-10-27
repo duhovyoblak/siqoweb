@@ -111,9 +111,9 @@ class Database:
         "Rollbacks open transaction"
 
         if self.con is not None: self.con.rollback()
-        self.journal.M(f'{self.dtbs}.rollback: Rollback {self.prevCmd}')
 
         self.prevCmd = ''
+        self.journal.M(f'{self.dtbs}.rollback: Rollback {self.prevCmd}')
 
     #--------------------------------------------------------------------------
     def tables(self):
@@ -340,20 +340,23 @@ class Database:
         self.journal.O()
 
     #--------------------------------------------------------------------------
-    def readTable(self, who, table, where='1=1'):
+    def readTable(self, who, table, where='1=1', header=None):
+        "Reads table from DB and returns with header [None, 'global', 'detail']"
 
         self.journal.I(f'{who}@{self.dtbs}.readTable: table = {table}')
         toRet =[]
 
         #----------------------------------------------------------------------
-        # Ziskam hlavicku
+        # Ziskam hlavicku ak je vyzadovany header
         #----------------------------------------------------------------------
-        atts = self.attributes(table)
+        if header is not None:
             
-        if type(atts) != list:
-            self.journal.I(f'{who}@{self.dtbs}.readTable: failed', True)
-            self.journal.O()
-            return -1
+            atts = self.attributes(table)
+            
+            if type(atts) != list:
+                self.journal.I(f'{who}@{self.dtbs}.readTable: failed', True)
+                self.journal.O()
+                return -1
 
         #----------------------------------------------------------------------
         # Ziskam riadky udajov
@@ -368,21 +371,55 @@ class Database:
             return -2
 
         #----------------------------------------------------------------------
-        # Prejdem vsetky riadky a skonertujem do listu dict
+        # Ak je vyzadovane, skonvertujem rows 
         #----------------------------------------------------------------------
-        for row in rows:
+        if header is not None:
             
-            drow = {}
-            i = 0
+            #------------------------------------------------------------------
+            # Ak je zelany jeden globalny header
+            #------------------------------------------------------------------
+            if header == 'global':
+                
+                #--------------------------------------------------------------
+                # Vlozim ako prvy riadok listu nazvy atributov
+                #--------------------------------------------------------------
+                toRet.append(atts)
+                
+                #--------------------------------------------------------------
+                # Prejdem cez vsetky riadky a vlozim ich do listu
+                #--------------------------------------------------------------
+                for row in rows: toRet.append(row)
             
-            #----------------------------------------------------------------------
-            # Skonstruujem dict {atribut:hodnota} pre dany row
-            #----------------------------------------------------------------------
-            for att in atts:
-                drow[att] = row[i]
-                i += 1
+            #------------------------------------------------------------------
+            # Ak je zelany jeden detailny header
+            #------------------------------------------------------------------
+            elif  header == 'detail':
+                
+                #--------------------------------------------------------------
+                # Prejdem cez vsetky riadky
+                #--------------------------------------------------------------
+                for row in rows:
             
-            toRet.append(drow)
+                    drow = {}
+                    i    = 0
+            
+                    #----------------------------------------------------------
+                    # Skonstruujem dict {atribut:hodnota} pre dany row
+                    #----------------------------------------------------------
+                    for att in atts: 
+                        
+                        drow[att] = row[i]
+                        i += 1
+            
+                    #----------------------------------------------------------
+                    # Pridam dict do listu
+                    #----------------------------------------------------------
+                    toRet.append(drow)
+            
+        #----------------------------------------------------------------------
+        # Konverzia sa neocakava 
+        #----------------------------------------------------------------------
+        else: toRet = rows
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -501,7 +538,7 @@ class Database:
             else          : self.cur.execute(sql)
             
             cnt = self.cur.rowcount
-            self.commit()  # Tu sa resetuje self.prevCmd
+            self.commit()                      # Tu sa resetuje self.prevCmd
 
             #------------------------------------------------------------------
             # Kontrola dlzky trvania prikazu
@@ -519,7 +556,7 @@ class Database:
         #----------------------------------------------------------------------
         except Exception as err:
             
-            self.rollback()
+            self.rollback()                    # Tu sa resetuje self.prevCmd
             
             self.journal.M(f'{who}@{self.dtbs}.sSql {_VER}: ERROR :{str(err)}', True)
             self.journal.M(f'{who}@{self.dtbs}.sSql {_VER}: SQL   :{sql}',      True)
@@ -580,14 +617,14 @@ class Database:
                 self.prevCmd = sql
                 self.cur.executemany(sql, data[a:b])
                 cnt += self.cur.rowcount
-                self.commit()                     # Tu sa resetuje self.prevCmd
+                self.commit()                    # Tu sa resetuje self.prevCmd
 
                 self.journal.M(f'{self.dtbs}.sSqlMany: batch from {a} till {b} done')
                 a = b
 
         except Exception as err:
             
-            self.rollback()
+            self.rollback()                      # Tu sa resetuje self.prevCmd
             
             self.journal.M(f'{who}@{self.dtbs}.sSqlMany: ERROR  :{str(err)}', True)
             self.journal.M(f'{who}@{self.dtbs}.sSqlMany: SQL    :{sql}',      True)
@@ -748,6 +785,8 @@ if __name__ == '__main__':
     indexes    = db.indexes(Config.tabUser)
     users      = db.readTable('who', Config.tabUser)
     palo4      = db.readTable('who', Config.tabUser, "user_id = 'palo4'")
+    
+#    db.sSqlScript(who='test', fName='ohistory.ini')
     
     db.sJournal('SIQO')
     

@@ -110,7 +110,7 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Doplnenie specifickeho contextu z DB podla id
         #----------------------------------------------------------------------
-        self.idContext   = self.loadContent()
+        self.idContext = self.loadContent()
         self.addContext(self.idContext)
 
         #----------------------------------------------------------------------
@@ -125,6 +125,7 @@ class Structure(Object):
     # Content methods
     #--------------------------------------------------------------------------
     def loadContent(self):
+        "This method should return page specific content like forms, objects etc."
         
         self.journal.I(f"{self.classId}.loadContent:")
         
@@ -133,6 +134,7 @@ class Structure(Object):
 
     #--------------------------------------------------------------------------
     def loadPageResource(self):
+        "This method returns resources for this page saved in the Database"
         
         self.journal.I(f"{self.classId}.loadPageResource:")
         
@@ -166,7 +168,7 @@ class Structure(Object):
         #----------------------------------------------------------------------
         if len(res['__NAVB__']['NavLinks'])==0 or 'User' not in res['__NAVB__']['NavLinks'][0].keys():
 
-            userItem = {"User":{"SK":self.userName, "URL":"login"}}
+            userItem = {"User":{"SK":self.userName, "URL":"pgLogin"}}
             res['__NAVB__']['NavLinks'].insert(0, userItem)
             
         #----------------------------------------------------------------------
