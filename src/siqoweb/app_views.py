@@ -58,86 +58,45 @@ def index():
     return resp
 
 #------------------------------------------------------------------------------
-def structure():
-    
-    journal.I('app_views.structure()')
-
-    page = Structure(journal, env, 'Login', height=670)
-    resp = page.resp()
-
-    journal.O()
-    return resp
-
-#------------------------------------------------------------------------------
 def pgLogin():
     
     journal.I('app_views.pgLogin()')
 
-    page = Login(journal, env, 'Login', height=670, template="3 login.html")
+    page = Login(journal, env, 'PagManLogin', height=670, template="3 login.html")
     resp = page.resp()
 
     journal.O()
     return resp
 
 #------------------------------------------------------------------------------
-def pgFaq():
+def pgEmpty(classId, height=670):
     
-    journal.I('app_views.pgFaq()')
+    journal.I('app_views.pgEmpty()')
 
-    page = Login(journal, env, 'PagManFAQ', height=670, template="3 forum.html")
+    page = Page(journal, env, classId=classId, height=height, template="3 empty.html")
     resp = page.resp()
 
     journal.O()
     return resp
 
 #------------------------------------------------------------------------------
-def pgHomepage():
+def pgStaged(classId, height=670):
     
     journal.I('app_views.pgHomepage()')
 
-    page = Page(journal, env, 'Homepage', height=670, template="3 staged.html")
+    page = Page(journal, env, classId=classId, height=height, template="3 staged.html")
     resp = page.resp()
 
     journal.O()
     return resp
 
 #------------------------------------------------------------------------------
-def pgDms():
+def pgForum(classId, idx=0, height=670):
     
-    journal.I('app_views.pgDms()')
+    journal.I('app_views.pgForum()')
 
-    page = Page(journal, env, 'PagManDMS', height=670, template="3 staged.html")
+    page = Forum(journal, env, classId=classId, idx=idx, height=height, template="3 forum.html")
     resp = page.resp()
-
-    journal.O()
-    return resp
-
-#------------------------------------------------------------------------------
-def pgResource():
-    
-    journal.I('app_views.pgResource()')
-
-    page = Page(journal, env, 'Resource', height=670, template="3 empty.html")
-    resp = page.resp()
-
-    journal.O()
-    return resp
-
-#==============================================================================
-# Content's app_views 
-#------------------------------------------------------------------------------
-def oralhistory(idx):
-    
-    journal.I(f'app_views.oralhistory({idx})')
-    
-    if idx==0:
-
-        page = Forum(journal, env, 'OHISTORY', idx=idx, height=670)
-        resp = page.resp()
-
-    else:
-        page = Forum(journal, env, 'OHISTORY', idx=idx, height=670)
-        resp = page.resp()
 
     journal.O()
     return resp

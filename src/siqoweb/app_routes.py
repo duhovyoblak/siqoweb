@@ -19,7 +19,7 @@ import app_views                as app_views
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.03'
+_VER      = '1.04'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -95,6 +95,32 @@ def shutdownServer():
 
 
 #==============================================================================
+# Sytem PATHs operation
+#------------------------------------------------------------------------------
+@app.get("/")
+@app.get("/index")
+def index():
+
+    journal.M("index():")
+    return app_views.index()
+
+#------------------------------------------------------------------------------
+@app.get('/shutdown')
+def shutdown():
+    
+    journal.I("shutdown():")
+
+    if _IS_TEST: 
+        shutdownServer()
+        
+    else: 
+        journal.O()
+        abort(404)
+
+    journal.O()
+    return 'Server was shut down...'
+
+#==============================================================================
 # LOGIN operation
 #------------------------------------------------------------------------------
 @loginManager.user_loader
@@ -132,48 +158,6 @@ def pgLogout():
 
     return redirect(url_for('index'))
 
-#------------------------------------------------------------------------------
-@app.route('/contact', methods=['GET'])
-@login_required
-def pgContact():
-
-    journal.M("pgContact():")
-    return None
-
-#------------------------------------------------------------------------------
-@app.route('/faq', methods=['GET'])
-@login_required
-def pgFaq():
-
-    journal.M("pgFaq():")
-    return app_views.pgFaq()
-
-#==============================================================================
-# Sytem PATHs operation
-#------------------------------------------------------------------------------
-@app.get("/")
-@app.get("/index")
-def index():
-
-    journal.M("index():")
-    return app_views.index()
-
-#------------------------------------------------------------------------------
-@app.get('/shutdown')
-def shutdown():
-    
-    journal.I("shutdown():")
-
-    if _IS_TEST: 
-        shutdownServer()
-        
-    else: 
-        journal.O()
-        abort(404)
-
-    journal.O()
-    return 'Server was shut down...'
-
 #==============================================================================
 # PagMan PATHs operation
 #------------------------------------------------------------------------------
@@ -183,7 +167,7 @@ def shutdown():
 def pgHomepage():
 
     journal.M("pgHomepage():")
-    return app_views.pgHomepage()
+    return app_views.pgStaged(classId='PagManHomepage')
 
 #------------------------------------------------------------------------------
 @app.route('/admin', methods=['GET', 'POST'])
@@ -191,7 +175,7 @@ def pgHomepage():
 def pgAdmin():
 
     journal.M("pgAdmin():")
-    return None
+    return app_views.pgStaged(classId='PagManAdmin')
 
 #------------------------------------------------------------------------------
 @app.route('/resource', methods=['GET', 'POST'])
@@ -199,7 +183,7 @@ def pgAdmin():
 def pgResource():
 
     journal.M("pgResource():")
-    return app_views.pgResource()
+    return app_views.pgStaged(classId='PagManResource')
 
 #------------------------------------------------------------------------------
 @app.route('/dms', methods=['GET', 'POST'])
@@ -207,7 +191,7 @@ def pgResource():
 def pgDms():
 
     journal.M("pgDms():")
-    return app_views.pgDms()
+    return app_views.pgStaged(classId='PagManDMS')
 
 #------------------------------------------------------------------------------
 @app.route('/session', methods=['GET', 'POST'])
@@ -215,7 +199,23 @@ def pgDms():
 def pgSession():
 
     journal.M("pgSession():")
-    return None
+    return app_views.pgStaged(classId='PagManSession')
+
+#------------------------------------------------------------------------------
+@app.route('/contact', methods=['GET'])
+@login_required
+def pgContact():
+
+    journal.M("PagManContact():")
+    return app_views.pgEmpty(classId='PagManSession')
+
+#------------------------------------------------------------------------------
+@app.route('/faq', methods=['GET'])
+@login_required
+def pgFaq():
+
+    journal.M("pgFaq():")
+    return app_views.pgForum(classId='PagManFAQ')
 
 #------------------------------------------------------------------------------
 # PATHs Tools
@@ -253,7 +253,7 @@ def show_subpath(subpath):
 def oralhistoryHome():
 
     journal.M("oralhistory: Home")
-    return app_views.oralhistory(0)
+    return app_views.pgForum(classId='OHISTORY')
 
 #------------------------------------------------------------------------------
 @app.route('/oralhistory/<int:idx>', methods=['GET', 'POST'])

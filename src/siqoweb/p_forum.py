@@ -39,20 +39,22 @@ class Forum(Structure):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, classId, idx=0, height=700):
+    def __init__(self, journal, env, classId, idx=0, height=700, template="3 forum.html"):
         "Call constructor of Forum and initialise it"
         
         journal.I("Forum.init:")
+        
+        #----------------------------------------------------------------------
+        # Konstruktor Structure
+        #----------------------------------------------------------------------
+        super().__init__(journal, env, classId=classId, height=height, template=template)
         
         #----------------------------------------------------------------------
         # Forum premenne
         #----------------------------------------------------------------------
         self.idx = idx
 
-        #----------------------------------------------------------------------
-        # Konstruktor Base
-        #----------------------------------------------------------------------
-        super().__init__(journal, env, classId='OHISTORY', height=height, template="3 forum.html")
+        self.journal.O()
 
     #==========================================================================
     # Content methods
@@ -64,7 +66,7 @@ class Forum(Structure):
         #----------------------------------------------------------------------
         # Nacitanie items
         #----------------------------------------------------------------------
-        items = self.loadItems(self.idx)
+        #items = self.loadItems(self.idx)
 
         #----------------------------------------------------------------------
         # Nacitanie cache
@@ -73,7 +75,7 @@ class Forum(Structure):
 
         #----------------------------------------------------------------------
         self.journal.O()
-        return {'items':items, 'cache':cache}
+        return {'items':'items', 'cache':cache}
 
     #==========================================================================
     # Response generators
