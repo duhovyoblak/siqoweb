@@ -16,16 +16,13 @@ import siqolib.general    as gen
 from   config             import Config
 from   app_user           import User, _ANONYM
 from   p_structure        import Structure
-from   form               import FormLogin
+from   f_formLogin        import FormLogin
 
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = '1.01'
-
-if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
-else                        : _IS_TEST = False
 
 #==============================================================================
 # package's variables
@@ -34,7 +31,7 @@ else                        : _IS_TEST = False
 #==============================================================================
 # Login
 #------------------------------------------------------------------------------
-class Login(Structure):
+class PageLogin(Structure):
     
     #==========================================================================
     # Content methods
@@ -130,8 +127,9 @@ class Login(Structure):
         #----------------------------------------------------------------------
         # Default redirect
         #----------------------------------------------------------------------
+        self.journal.M(f"{self.name}.resp: Default response")
         self.journal.O()
-        return None
+        return redirect(url_for('pgLogin'))
 
     #--------------------------------------------------------------------------
 

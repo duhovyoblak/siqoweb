@@ -13,14 +13,14 @@ from   jinja2             import Environment, FileSystemLoader, PackageLoader, s
 import siqolib.general   as gen
 
 from   p_structure      import Structure
-from   p_login          import Login
+from   p_login          import PageLogin
 from   p_page           import Page
-from   p_forum          import Forum
+from   p_forum          import PageForum
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.02'
+_VER      = '1.03'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -33,7 +33,6 @@ journal = None
 env = Environment(
     
      autoescape = select_autoescape()
-#    ,loader     = PackageLoader(package_name="siqoweb", package_path="templates")
     ,loader     = FileSystemLoader(['templates'])
 )
 
@@ -62,7 +61,7 @@ def pgLogin():
     
     journal.I('app_views.pgLogin()')
 
-    page = Login(journal, env, 'PagManLogin', height=670, template="3 login.html")
+    page = PageLogin(journal, env, 'PagManLogin', height=670, template="3 login.html")
     resp = page.resp()
 
     journal.O()
@@ -95,7 +94,7 @@ def pgForum(classId, idx=0, height=670):
     
     journal.I('app_views.pgForum()')
 
-    page = Forum(journal, env, classId=classId, idx=idx, height=height, template="3 forum.html")
+    page = PageForum(journal, env, classId=classId, idx=idx, height=height, template="3 forum.html")
     resp = page.resp()
 
     journal.O()

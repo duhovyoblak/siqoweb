@@ -24,9 +24,6 @@ from   p_structure         import Structure
 #------------------------------------------------------------------------------
 _VER      = '1.00'
 
-if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
-else                        : _IS_TEST = False
-
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
@@ -34,7 +31,7 @@ else                        : _IS_TEST = False
 #==============================================================================
 # Forum
 #------------------------------------------------------------------------------
-class Forum(Structure):
+class PageForum(Structure):
     
     #==========================================================================
     # Constructor & Tools
@@ -162,7 +159,7 @@ if __name__ == '__main__':
     ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
     )
 
-    forum = Forum(journal, env, 57)
+    forum = PageForum(journal, env, 57)
     
 
 #==============================================================================

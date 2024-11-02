@@ -19,7 +19,8 @@ import app_views                as app_views
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.04'
+_VER        = '1.05'
+_LOGIN_VIEW = 'pgLogin'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -29,9 +30,7 @@ else                        : _IS_TEST = False
 #------------------------------------------------------------------------------
 _app    = None
 _login  = None
-
 journal = None
-journal = SiqoJournal('siqo-web', debug=5)
 
 #==============================================================================
 # package's tools
@@ -57,7 +56,7 @@ def getApp():
         print(f"getApp(): Flask app {_app} was created at {id(_app)} in {__name__}")
         
         _login = LoginManager(_app)
-        _login.login_view = 'login'
+        _login.login_view = _LOGIN_VIEW
         print(f"getApp(): LoginManager was created at {id(_login)}")
 
     #--------------------------------------------------------------------------
@@ -156,7 +155,7 @@ def pgLogout():
     # remove the username from the session if it's there
     session.pop('username', None)
 
-    return redirect(url_for('index'))
+    return redirect(url_for('pgLogin'))
 
 #==============================================================================
 # PagMan PATHs operation

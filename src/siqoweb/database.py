@@ -20,9 +20,6 @@ _SQL_WATCH =   10    # Max duration of SQL in seconds without forced journal
 _SQL_BATCH = 1000    # Default data batch for 
 _SQL_SMPL  =  100    # Max first chars from SQL statement for print into journal
 
-if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
-else                        : _IS_TEST = False
-
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------

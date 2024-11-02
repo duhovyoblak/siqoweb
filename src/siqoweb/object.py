@@ -19,9 +19,6 @@ _VER      = '1.02'
 _LANG_DEF = 'SK'       # Default language
 _SYSUSER  = 'SIQO'     # System superuser
 
-if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
-else                        : _IS_TEST = False
-
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------

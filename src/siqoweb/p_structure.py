@@ -17,15 +17,11 @@ import siqolib.general   as gen
 from   app_dms           import DMS
 from   html_render       import HTML
 from   object            import Object
-from   form              import FormLogin
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = '1.02'
-
-if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
-else                        : _IS_TEST = False
 
 #==============================================================================
 # package's variables

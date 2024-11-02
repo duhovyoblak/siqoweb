@@ -13,9 +13,6 @@ from wtforms.validators import DataRequired
 _VER      = '1.01'
 _CWD      = os.getcwd()
 
-if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
-else                        : _IS_TEST = False
-
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
@@ -23,24 +20,12 @@ else                        : _IS_TEST = False
 #==============================================================================
 # Form
 #------------------------------------------------------------------------------
-class FormLogin(FlaskForm):
+class PgForm(FlaskForm):
     
     UserActType  = SubmitField('Sign In')
     UserObj  = SubmitField('Continue as Guest User')
     UserAct = SubmitField('Sign Out')
 
-#==============================================================================
-# FormLogin
-#------------------------------------------------------------------------------
-class FormLogin(FlaskForm):
-    
-    username = StringField  ('Username', validators=[DataRequired()] )
-    password = PasswordField('Password', validators=[DataRequired()] )
-    remember = BooleanField ('Remember Me')
-    
-    login   = SubmitField('Sign In')
-    asGuest = SubmitField('Continue as Guest User')
-    logout  = SubmitField('Sign Out')
 
 #==============================================================================
 print(f"forms {_VER}")

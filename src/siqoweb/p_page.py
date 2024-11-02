@@ -25,9 +25,6 @@ from   p_structure        import Structure
 #------------------------------------------------------------------------------
 _VER      = '1.01'
 
-if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
-else                        : _IS_TEST = False
-
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
@@ -61,7 +58,7 @@ class Page(Structure):
             
             self.journal.M(f"{self.name}.resp: User logged in")
             self.journal.O()
-            return redirect(url_for('homepage'))
+            return redirect(url_for('pgHomepage'))
  
         #----------------------------------------------------------------------
         # Nie je POST

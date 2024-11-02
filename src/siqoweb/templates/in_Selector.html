@@ -1,0 +1,70 @@
+<!---------------------------------------------------------------------------->
+<!-- Template for project SIQO web                                          -->
+<!--                                                                        -->
+<!-- ver. 1.02                                                              -->
+<!--                                                                        -->
+<!---------------------------------------------------------------------------->
+<!-- Body -->
+<!---------------------------------------------------------------------------->
+
+    //--------------------------------------------------------------------------
+    // Vykreslenie surodencov
+    //--------------------------------------------------------------------------
+    $this->AddDivStart( 'F', 'DivSiblingStart', '99%', '20%' );
+
+    //--------------------------------------------------------------------------
+    // Posledne zmeny pre root item
+    if ( array_item( $this->item, 'N_LVL' ) == 0 ) {
+    
+      $name  = $this->forum.'_changelabel';
+      $this->AddLabel( 'F', $name, 'Naposledy zmenené kapitoly' );
+      $name  = $this->forum.'_changesplit';
+      $this->AddSplit( 'F', $name );
+
+      $changes = $this->ReadChanges( $this->se, $this->URole, $this->forum );
+    
+      if ( is_array( $changes ) ) {
+     
+        foreach( $changes as $line=>$row ) {
+        
+          $name  = $this->ObjFromID( $this->forum, $row['ITEM_ID'] ).'_lnk';
+
+          if ( $row['C_FUNC'] == 'K' ) $value = strShort( 'C '.$row['TITLE'],  36 );
+          else                         $value = strShort( '   '.$row['TITLE'],  36 );
+          $title = strShort( $row['TITLE' ], 100 );
+
+          $this->AddLink( 'F', $name, $value, $title, True, True );
+        }
+      }
+
+    } else {
+    //--------------------------------------------------------------------------
+    // Surodenci pre vnorene kapitoly
+
+      $name  = $this->forum.'_contentlabel';
+      $this->AddLabel( 'F', $name, 'Obsah tejto kapitoly' );
+      $name  = $this->forum.'_changesplit';
+      $this->AddSplit( 'F', $name );
+
+      if ( is_array( $this->sibli ) ) {
+     
+        foreach( $this->sibli as $line=>$row ) {
+        
+          $name  =  $this->ObjFromID( $this->forum, $row['ITEM_ID'] ).'_lnk';
+
+          if ( $row['C_FUNC'] == 'K' ) $tit = 'C '.$row['TITLE'];
+          else                         $tit = '   '.$row['TITLE'];
+        
+          if ( $this->ID == $row['ITEM_ID'] ) $value = strShort( '» '.$tit,  36 );
+          else                                $value = strShort( '  '.$tit,  36 );
+        
+          $title = strShort( $row['TITLE' ], 100 );
+
+          $this->AddLink( 'F', $name, $value, $title, True, True );
+        }
+      }
+    }
+    $this->AddDivStop ( 'F', 'DivSiblingStop' );
+<!---------------------------------------------------------------------------->
+<!-- End of the file -->
+<!---------------------------------------------------------------------------->
