@@ -10,7 +10,7 @@ from   flask_login         import login_user, logout_user, current_user
 from   markupsafe          import escape
 
 import jinja2              as j2
-from   jinja2              import Environment, PackageLoader, select_autoescape
+from   jinja2            import Environment, FileSystemLoader, select_autoescape
 
 import siqolib.general     as gen
 from   config              import Config
@@ -22,7 +22,7 @@ from   p_structure         import Structure
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.00'
+_VER      = '1.01'
 
 #==============================================================================
 # package's variables
@@ -39,18 +39,18 @@ class PageForum(Structure):
     def __init__(self, journal, env, classId, idx=0, height=700, template="3 forum.html"):
         "Call constructor of Forum and initialise it"
         
-        journal.I("Forum.init:")
-        
-        #----------------------------------------------------------------------
-        # Konstruktor Structure
-        #----------------------------------------------------------------------
-        super().__init__(journal, env, classId=classId, height=height, template=template)
+        journal.I("PageForum.init:")
         
         #----------------------------------------------------------------------
         # Forum premenne
         #----------------------------------------------------------------------
         self.idx = idx
 
+        #----------------------------------------------------------------------
+        # Konstruktor Structure
+        #----------------------------------------------------------------------
+        super().__init__(journal, env, classId=classId, height=height, template=template)
+        
         self.journal.O()
 
     #==========================================================================
@@ -63,7 +63,7 @@ class PageForum(Structure):
         #----------------------------------------------------------------------
         # Nacitanie items
         #----------------------------------------------------------------------
-        #items = self.loadItems(self.idx)
+        items = self.loadItem()
 
         #----------------------------------------------------------------------
         # Nacitanie cache
@@ -72,7 +72,7 @@ class PageForum(Structure):
 
         #----------------------------------------------------------------------
         self.journal.O()
-        return {'items':'items', 'cache':cache}
+        return {'__FORUM_ITEM__': {'items':items}}
 
     #==========================================================================
     # Response generators
@@ -99,13 +99,21 @@ class PageForum(Structure):
     #==========================================================================
     # Private methods
     #--------------------------------------------------------------------------
-    def loadItem(self, idx):
+    def readDbItem(self):
     
-        self.journal.I(f"{self.name}.loadItem: {idx}")
+        self.journal.I(f"{self.name}.readDbItem: {self.idx}")
 
-        where = f" FORUM_ID = '{self.classId}' and ITEM_ID = {self.idx}"
-        self.journal.M(f"{self.name}.loadItem: {where}")
+        #----------------------------------------------------------------------
+        # Ak NIE je zname idx nacitam root item fora, inak nacitam nacitam item
+        #----------------------------------------------------------------------
+        if self.idx > 0: where = f" FORUM_ID = '{self.classId}' and ITEM_ID   = {self.idx}"
+        else           : where = f" FORUM_ID = '{self.classId}' and PARENT_ID = 0"
+
+        self.journal.M(f"{self.name}.readDbItem: {where}")
         
+        #----------------------------------------------------------------------
+        # Nacitanie polozky z DB
+        #----------------------------------------------------------------------
         item = self.readTable(who=self.user, table=Config.tabForum, where=where)
         
         #----------------------------------------------------------------------
@@ -113,12 +121,12 @@ class PageForum(Structure):
         return item
 
     #--------------------------------------------------------------------------
-    def loadItems(self, idx):
+    def loadItem(self):
     
-        self.journal.I(f"{self.name}.loadItem: {idx}")
+        self.journal.I(f"{self.name}.loadItem: {self.idx}")
         toRet = []
 
-        data = self.loadItem(idx)
+        data = self.readDbItem()
         
         #----------------------------------------------------------------------
         # Kontrola existencie itemu a konverzia na object
@@ -135,12 +143,11 @@ class PageForum(Structure):
             
             
         else: 
-            toRet.append( {'TITLE':{'SK': f"Forum item id '{idx}' does not exists", 'TYPE':'H2'}} )
+            toRet.append( {'TITLE':{'SK': f"Forum item id '{self.idx}' does not exists", 'TYPE':'H2'}} )
             toRet.append( {'NARR' :{'SK': "Unknown",                                'TYPE':'H3'}} )
 
         #----------------------------------------------------------------------
         self.journal.O()
-        print(toRet)
         return toRet
 
     #--------------------------------------------------------------------------
@@ -150,17 +157,16 @@ class PageForum(Structure):
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    from   siqo_lib                 import SiqoJournal
-    journal = SiqoJournal('test-base', debug=5)
+    from   siqolib.journal                 import SiqoJournal
+    journal = SiqoJournal('test-base', debug=7)
     
     env = Environment(
-    
      autoescape = select_autoescape()
-    ,loader     = PackageLoader(package_name="siqo_web", package_path="templates")
+    ,loader     = FileSystemLoader(['templates'])
     )
 
-    forum = PageForum(journal, env, 57)
-    
+    page = PageForum(journal, env, classId='FAQ', idx=0, height=700)
+    rec  = page.context
 
 #==============================================================================
 print(f"Forum {_VER}")

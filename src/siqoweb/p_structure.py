@@ -10,7 +10,7 @@ from   flask_login       import login_user, logout_user, current_user
 from   markupsafe        import escape
 
 import jinja2            as j2
-from   jinja2            import Environment, FileSystemLoader, PackageLoader, select_autoescape
+from   jinja2            import Environment, FileSystemLoader, select_autoescape
 
 import siqolib.general   as gen
 
@@ -426,7 +426,6 @@ if __name__ == '__main__':
     journal = SiqoJournal('test-Structure', debug=5)
     
     env = Environment(
-    
      autoescape = select_autoescape()
     ,loader     = FileSystemLoader(['templates'])
     )

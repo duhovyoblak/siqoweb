@@ -1,31 +1,31 @@
 <!---------------------------------------------------------------------------->
 <!-- Template for project SIQO web                                          -->
 <!--                                                                        -->
+<!-- Object ForumItem                                                       -->
+<!--                                                                        -->
 <!-- ver. 1.02                                                              -->
 <!--                                                                        -->
 <!---------------------------------------------------------------------------->
+
+<!---------------------------------------------------------------------------->
+<div class="DivItemStart", style="height:$h; width:$w">
 <!---------------------------------------------------------------------------->
 
-    //--------------------------------------------------------------------------
-    // Vykreslenie textu
-    //--------------------------------------------------------------------------
-    $this->AddDivStart( 'F', 'DivItemStart', '99%', '58%' );
+    <!--Prejdni vsetky Itemy vo ForumIteme-->
+    {% for itemId, itemLst in __FORUM_ITEM__.items() %}
+        
+        <!--Zobraz vsetky polozky pre dany item -->
+        {{ html.itemListRender(itemLst, lang)|safe }}
+        
+    {% endfor %}
 
-    // Odoberaj postupne vety z Itemu
-    $str = array_item( $this->item, 'ITEM'  );
-    $i   = 0;
 
-    while ( ($para = NextStatement( $str, "\n" ) ) != '' ) {
-  
-      $this->AddPStart( 'F', 'item_'.$i.'_pStart' );
-      $this->ShowPara ( $para, $i );
-      $this->AddPStop ( 'F', 'item_'.$i.'_pStop' );
-      
-      $i = $i + 1;
-    }
 
-    $this->AddDivStop ( 'F', 'DivItemStop' );
-    
+
+<!---------------------------------------------------------------------------->
+</div>
+<!---------------------------------------------------------------------------->
+
 
 <!---------------------------------------------------------------------------->
 <!-- End of the file -->
