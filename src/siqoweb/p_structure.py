@@ -142,6 +142,9 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Heads items
         #----------------------------------------------------------------------
+        if '__HEAD__'  not in res.keys()            : res['__HEAD__'] = {}
+        if 'HeadItems' not in res['__HEAD__'].keys(): res['__HEAD__']['HeadItems'] = []
+
         if '__HEAD__' in res.keys() and 'HeadItems' in res['__HEAD__'].keys():
             
             #------------------------------------------------------------------
@@ -152,7 +155,7 @@ class Structure(Object):
                 if   '1_Title'    in item.keys(): item['1_Title'   ]['TYPE'] = 'HEADTITLE'
                 elif '2_SubTitle' in item.keys(): item['2_SubTitle']['TYPE'] = 'HEADSUBTIT'
                 elif '3_Comment'  in item.keys(): item['3_Comment' ]['TYPE'] = 'HEADCOMMENT'
-
+                
         #----------------------------------------------------------------------
         # NavBar items
         #----------------------------------------------------------------------
@@ -430,7 +433,7 @@ if __name__ == '__main__':
     ,loader     = FileSystemLoader(['templates'])
     )
 
-    page = Structure(journal, env, 'Homepage', 700)
+    page = Structure(journal, env, 'PagManHomepage', 700)
     rec = page.context
     
 #==============================================================================

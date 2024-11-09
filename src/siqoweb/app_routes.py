@@ -209,12 +209,13 @@ def pgContact():
     return app_views.pgEmpty(classId='PagManSession')
 
 #------------------------------------------------------------------------------
-@app.route('/faq', methods=['GET'])
+@app.route('/faq',           methods=['GET'])
+@app.route('/faq/<int:idx>', methods=['GET', 'POST'])
 @login_required
-def pgFaq():
+def pgFaq(idx=0):
 
     journal.M("pgFaq():")
-    return app_views.pgForum(classId='PagManFAQ')
+    return app_views.pgForum(classId='FAQ', link='pgFaq', idx=idx)
 
 #------------------------------------------------------------------------------
 # PATHs Tools
@@ -269,6 +270,7 @@ with app.test_request_context():
     print(url_for('pgUser', username='John Doe'))
     print(url_for('static', filename='css/base_page.css'))
     print(url_for('static', filename='dms/SF0000056.jpg'))
+    print(url_for('pgFaq'))
     
 #==============================================================================
 print(f"app_routes {_VER}")

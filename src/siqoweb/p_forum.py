@@ -10,7 +10,7 @@ from   flask_login         import login_user, logout_user, current_user
 from   markupsafe          import escape
 
 import jinja2              as j2
-from   jinja2            import Environment, FileSystemLoader, select_autoescape
+from   jinja2              import Environment, FileSystemLoader, select_autoescape
 
 import siqolib.general     as gen
 from   config              import Config
@@ -36,7 +36,7 @@ class PageForum(Structure):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, classId, idx=0, height=700, template="3 forum.html"):
+    def __init__(self, journal, env, classId, link, idx=0, height=700, template="3 forum.html"):
         "Call constructor of Forum and initialise it"
         
         journal.I("PageForum.init:")
@@ -44,7 +44,8 @@ class PageForum(Structure):
         #----------------------------------------------------------------------
         # Forum premenne
         #----------------------------------------------------------------------
-        self.idx = idx
+        self.link = link
+        self.idx  = idx
 
         #----------------------------------------------------------------------
         # Konstruktor Structure
@@ -68,7 +69,6 @@ class PageForum(Structure):
         #----------------------------------------------------------------------
         # Nacitanie cache
         #----------------------------------------------------------------------
-        cache = {}
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -112,9 +112,9 @@ class PageForum(Structure):
         self.journal.M(f"{self.name}.readDbItem: {where}")
         
         #----------------------------------------------------------------------
-        # Nacitanie polozky z DB
+        # Nacitanie polozky z DB ako dict
         #----------------------------------------------------------------------
-        item = self.readTable(who=self.user, table=Config.tabForum, where=where)
+        item = self.readTable(who=self.user, table=Config.tabForum, where=where, header='detail')
         
         #----------------------------------------------------------------------
         self.journal.O()
@@ -127,24 +127,31 @@ class PageForum(Structure):
         toRet = []
 
         data = self.readDbItem()
+        print(data)
         
         #----------------------------------------------------------------------
-        # Kontrola existencie itemu a konverzia na object
+        # Kontrola existencie itemu a konverzia hlavicky
         #----------------------------------------------------------------------
         if (type(data) == list) and (len(data)>0): 
             
-            # Titul
             title = data[0]['TITLE']
             if data[0]['C_FUNC'] == 'K': title = f"KONCEPT: {title}"
             
-            toRet.append( {'TITLE':{'SK': title,               'TYPE':'H2'}} )
-            toRet.append( {'NARR' :{'SK': data[0]['NARRATOR'], 'TYPE':'H3'}} )
+            toRet.append( {'TITLE':{'SK': title,                'TYPE':'H2'                  }} )
+            toRet.append( {'NARR' :{'SK': data[0]['NARRATOR' ], 'TYPE':'H3'                  }} )
+            toRet.append( {'D_CRT':{'SK': data[0]['D_CREATED'], 'TYPE':'DATE'                }} )
+            toRet.append( {'D_CHG':{'SK': data[0]['D_CHANGED'], 'TYPE':'DATE'                }} )
+            toRet.append( {'TEXT' :{'SK': data[0]['ITEM'     ], 'TYPE':'P', 'link':self.link }} )
             
-            
-            
+
         else: 
-            toRet.append( {'TITLE':{'SK': f"Forum item id '{self.idx}' does not exists", 'TYPE':'H2'}} )
-            toRet.append( {'NARR' :{'SK': "Unknown",                                'TYPE':'H3'}} )
+            apology = f"Oops, it seems forum item {self.idx} doesn't exist in forum {self.link}"
+            
+            toRet.append( {'TITLE':{'SK': apology,      'TYPE':'H2'  }} )
+            toRet.append( {'NARR' :{'SK': "Unknown",    'TYPE':'H3'  }} )
+            toRet.append( {'D_CRT':{'SK': 'now',        'TYPE':'DATE'}} )
+            toRet.append( {'D_CHG':{'SK': 'now',        'TYPE':'DATE'}} )
+            toRet.append( {'TEXT' :{'SK': '',           'TYPE':'P'   }} )
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -165,7 +172,7 @@ if __name__ == '__main__':
     ,loader     = FileSystemLoader(['templates'])
     )
 
-    page = PageForum(journal, env, classId='FAQ', idx=0, height=700)
+    page = PageForum(journal, env, classId='FAQ', idx=275, height=700)
     rec  = page.context
 
 #==============================================================================

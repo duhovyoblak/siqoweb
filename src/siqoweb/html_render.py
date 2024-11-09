@@ -91,6 +91,7 @@ class HTML:
         elif typ == 'P_STOP'        : toRet = self.pStop(item, lang)
         elif typ == 'A'             : toRet = self.a(item, lang)
         elif typ == 'IMAGE'         : toRet = self.image(item, lang)
+        elif typ == 'DATE'          : toRet = self.date(item, lang)
     
         elif typ == 'HEADTITLE'     : toRet = self.headTtile(item, lang)
         elif typ == 'HEADSUBTIT'    : toRet = self.headSubTitle(item, lang)
@@ -148,30 +149,38 @@ class HTML:
         return f'<h{deg} {self.html_atts(item)}>{txt}</h1> \n'
     
     #--------------------------------------------------------------------------
-    # Link <a href="url"?args>txt</a>
+    # Link <a href="url"/idx=idx?args>txt</a>
     #--------------------------------------------------------------------------
     def a(self, item, lang):
 
-        print('a')
         print(item)
-
         (item, url) = self.itemDrop(item, 'URL')
+        (item, idx) = self.itemDrop(item, 'IDX')
         (item, arg) = self.itemDrop(item, 'ARG')
         (item, txt) = self.itemDrop(item, lang )
     
         link = url_for(url)
+        
+        #----------------------------------------------------------------------
+        # Doplnenie idx
+        #----------------------------------------------------------------------
+        if idx != '': link += f'/{idx.strip()}'
+        
+        #----------------------------------------------------------------------
+        # Doplnenie argumentov
+        #----------------------------------------------------------------------
         if arg != '': link += f'?{arg}'
         
+        #----------------------------------------------------------------------
         item["href"] = link
-        
+
         print(item)
-    
         return f'<a {self.html_atts(item)}>{txt}</a>'
     
     #--------------------------------------------------------------------------
     # Paragraph
     #--------------------------------------------------------------------------
-    def pDecode(self, txt, lang):
+    def pDecode(self, txt, pgLink, lang):
         
         toRet = txt
         
@@ -193,7 +202,11 @@ class HTML:
         for link in links:
             
             parts = link[1:-1].split(',')
-            args  = {'URL':parts[1], lang:parts[2]}
+            
+            idx  = parts[1]
+            aTxt = parts[2]
+            
+            args  = {'URL':pgLink, 'IDX':idx, lang:aTxt}
             aHtml = self.a(args, lang)
             
             toRet = re.sub(link, aHtml, toRet)
@@ -243,10 +256,11 @@ class HTML:
     #--------------------------------------------------------------------------
     def pStart(self, item, lang):
     
-        (item, hid) = self.itemDrop(item, 'hidden')
-        (item, txt) = self.itemDrop(item, lang )
+        (item, hid ) = self.itemDrop(item, 'hidden')
+        (item, link) = self.itemDrop(item, 'link'  )
+        (item, txt ) = self.itemDrop(item, lang    )
         
-        txt = self.pDecode(txt, lang)
+        txt = self.pDecode(txt, link, lang)
     
         #----------------------------------------------------------------------
         # If paragraph is/is not hidden
@@ -257,18 +271,20 @@ class HTML:
     #--------------------------------------------------------------------------
     def pCont(self, item, lang):
     
-        (item, txt) = self.itemDrop(item, lang )
+        (item, link) = self.itemDrop(item, 'link')
+        (item, txt ) = self.itemDrop(item, lang  )
     
-        txt = self.pDecode(txt, lang)
+        txt = self.pDecode(txt, link, lang)
     
         return txt
     
     #--------------------------------------------------------------------------
     def pStop(self, item = {}, lang='SK'):
     
-        (item, txt) = self.itemDrop(item, lang )
+        (item, link) = self.itemDrop(item, 'link')
+        (item, txt ) = self.itemDrop(item, lang  )
         
-        txt = self.pDecode(txt, lang)
+        txt = self.pDecode(txt, link, lang)
     
         return f'{txt}</p>\n'
     
@@ -336,6 +352,11 @@ class HTML:
         
         return toRet
     
+    #--------------------------------------------------------------------------
+    def date(self, item, lang):
+        
+        return f'<>' 
+        
     #--------------------------------------------------------------------------
     def image(self, item, lang):
         

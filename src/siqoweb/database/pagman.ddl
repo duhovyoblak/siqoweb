@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS PM_USER (
   ,WHO          VARCHAR(32)      NOT NULL                     /* User ktorý vykonal ostatnú zmenu */
 
   ,PRIMARY KEY (USER_ID)
-  ,FOREIGN KEY (LANG_ID)         REFERENCES PM_LANGUAGE(LANG_ID)
+--  ,FOREIGN KEY (LANG_ID)         REFERENCES PM_LANGUAGE(LANG_ID)
 )
 /* Zoznam userov Page managera */
 ;
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS PM_OBJ_RESOURCE (
   ,WHO          VARCHAR(32)      DEFAULT 'SIQO'               /* User ktorý vykonal ostatnú zmenu objektu */
 
   ,PRIMARY KEY (CLASS_ID, OBJ_ID, ITEM_ID, S_KEY)
-  ,FOREIGN KEY (CLASS_ID, OBJ_ID) REFERENCES PM_OBJECT (CLASS_ID, OBJ_ID)
+--  ,FOREIGN KEY (CLASS_ID, OBJ_ID) REFERENCES PM_OBJECT (CLASS_ID, OBJ_ID)
 )
 /* Staticka cache literalov a vyhodnotitelnych vyrazov pre kombinaciu PAGE/LANGUAGE/OBJECT */
 ;
@@ -151,8 +151,8 @@ CREATE TABLE IF NOT EXISTS PM_OBJ_USER_ROLE (
   ,WHO          VARCHAR(32)      DEFAULT SIQO                 /* User ktorý vykonal ostatnú zmenu objektu */
 
   ,PRIMARY KEY (PAGE_ID, OBJ_ID, USER_ID)
-  ,FOREIGN KEY (USER_ID)         REFERENCES PM_USER   (USER_ID)
-  ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES PM_OBJECT (PAGE_ID, OBJ_ID)
+--  ,FOREIGN KEY (USER_ID)         REFERENCES PM_USER   (USER_ID)
+--  ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES PM_OBJECT (PAGE_ID, OBJ_ID)
 )
 /*  Autorizacie ROLE pre kombinaciu USER/OBJECT */
 ;
@@ -174,8 +174,8 @@ CREATE TABLE IF NOT EXISTS PM_OBJ_CACHE (
   ,D_CHANGED    TIMESTAMP        NOT NULL                     /* Dátum ostatnej zmeny cache */
 
   ,PRIMARY KEY (PAGE_ID, OBJ_ID, USER_ID, S_KEY)
-  ,FOREIGN KEY (USER_ID)         REFERENCES PM_USER (USER_ID)
-  ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES PM_OBJECT (PAGE_ID, OBJ_ID)
+--  ,FOREIGN KEY (USER_ID)         REFERENCES PM_USER (USER_ID)
+--  ,FOREIGN KEY (PAGE_ID, OBJ_ID) REFERENCES PM_OBJECT (PAGE_ID, OBJ_ID)
 )
 /* Cache OBJECT/USER na perzistentné ukladanie hodnôt, vložených userom alebo získaných v priebehu práce s aplikáciou. Cache neexspiruje, ale prepisuje sa pri každom volaní */
 ;
@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS PM_SESSION (
   ,MESSAGE      VARCHAR(1024)        NULL
 
   ,PRIMARY KEY (SESSION_ID)
-  ,FOREIGN KEY (USER_ID)    REFERENCES PM_USER (USER_ID)
+--  ,FOREIGN KEY (USER_ID)    REFERENCES PM_USER (USER_ID)
 )
 ;
 
@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS PM_DMS (
   ,MD5          VARCHAR(64)          NULL                     /* Hash of the file */
 
   ,PRIMARY KEY (DOC_ID)
-  ,FOREIGN KEY (USER_ID)         REFERENCES PM_USER (USER_ID)
+--  ,FOREIGN KEY (USER_ID)         REFERENCES PM_USER (USER_ID)
 )
 /* Master tabulka Data Management Systemu */
 ;
@@ -262,7 +262,7 @@ CREATE TABLE IF NOT EXISTS PM_FORUM (
   ,WHO          VARCHAR(32)          NOT NULL                 /* User ID, ktorý vykonal poslednú zmenu */
 
   ,PRIMARY KEY (ITEM_ID)
-  ,FOREIGN KEY (USER_ID)    REFERENCES PM_USER (USER_ID)
+--  ,FOREIGN KEY (USER_ID)    REFERENCES PM_USER (USER_ID)
 )
 /* Zoznam textov usporiadanych do vlaken */
 ;
