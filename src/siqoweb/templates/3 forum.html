@@ -19,16 +19,55 @@
 <!---------------------------------------------------------------------------->
 <!-- Body -->
 <!---------------------------------------------------------------------------->
-<body>
-    <!----------------------------------------------------------------NAVBAR-->
-    {% block barMenu %}{% endblock %}
 
     <!---------------------------------------------------------------CONTENT-->
     {% block content %}
 
-        {% include 'in_Selector.html'  %}
-        {% include 'in_ForumItem.html' %}
-        {% include 'in_Selector.html'  %}
+
+    <!------------------------------------------------------------------------>
+    <!--Vykreslenie Siblings/Changes                                        -->
+    <!------------------------------------------------------------------------>
+    <div class="Selector", style="height:100%; width:20%; display:block">
+
+        <!--Prejdni vsetky Itemy vo zozname siblingov-->
+        {% for itemId, itemLst in __SIBLINGS__.items() %}
+        
+            <!--Zobraz vsetky polozky pre dany item -->
+            {{ html.itemListRender(itemLst, lang)|safe }}
+        
+        {% endfor %}
+    
+    </div>
+
+    <!------------------------------------------------------------------------>
+    <!--Vykreslenie Forum itemu                                             -->
+    <!------------------------------------------------------------------------>
+    <div class="ForumItem", style="height:100%; width:60%; display:block">
+
+        <!--Prejdni vsetky Itemy vo ForumIteme-->
+        {% for itemId, itemLst in __FORUM_ITEM__.items() %}
+        
+            <!--Zobraz vsetky polozky pre dany item -->
+            {{ html.itemListRender(itemLst, lang)|safe }}
+        
+        {% endfor %}
+
+    </div>
+
+    <!------------------------------------------------------------------------>
+    <!--Vykreslenie Siblings/Changes                                        -->
+    <!------------------------------------------------------------------------>
+    <div class="Selector", style="height:100%; width:20%; display:block">
+
+        <!--Prejdni vsetky Itemy v zozname child-->
+        {% for itemId, itemLst in __CHILDREN__.items() %}
+        
+            <!--Zobraz vsetky polozky pre dany item -->
+            {{ html.itemListRender(itemLst, lang)|safe }}
+        
+        {% endfor %}
+
+    </div>
 
     {% endblock %}
 

@@ -215,7 +215,7 @@ def pgContact():
 def pgFaq(idx=0):
 
     journal.M("pgFaq():")
-    return app_views.pgForum(classId='FAQ', link='pgFaq', idx=idx)
+    return app_views.pgForum(classId='FAQ', target='pgFaq', idx=idx)
 
 #------------------------------------------------------------------------------
 # PATHs Tools
@@ -247,20 +247,14 @@ def show_subpath(subpath):
     return f"Subpath {escape(subpath)}"
 
 #==============================================================================
-# Content PATHs operation
+# Custom PATHs operation
 #------------------------------------------------------------------------------
-@app.route('/oralhistory')
-def oralhistoryHome():
-
-    journal.M("oralhistory: Home")
-    return app_views.pgForum(classId='OHISTORY')
-
-#------------------------------------------------------------------------------
+@app.route('/oralhistory'          , methods=['GET', 'POST'])
 @app.route('/oralhistory/<int:idx>', methods=['GET', 'POST'])
-def oralhistory(idx=0):
+def pgOhistory(idx=0):
 
     journal.M(f"oralhistory: id='{idx}'")
-    return app_views.oralhistory(idx)
+    return app_views.pgForum(classId='OHISTORY', target='pgOhistory', idx=idx)
 
 #==============================================================================
 # Test cases

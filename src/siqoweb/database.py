@@ -446,6 +446,7 @@ class Database:
 
     #--------------------------------------------------------------------------
     def readDb(self, who, sql, params = None):
+        "Reads from DB SELECT statement"
 
         self.journal.I(f'{who}@{self.dtbs}.readDb: {sql}')
 
@@ -503,6 +504,7 @@ class Database:
 
     #--------------------------------------------------------------------------
     def sSql(self, who, sql, param=''):
+        "Executes SQL command"
 
         self.journal.I(f"{who}@{self.dtbs}.sSql: '{sql}' with param '{param}'")
 

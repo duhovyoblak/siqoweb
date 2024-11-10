@@ -115,6 +115,7 @@ class Structure(Object):
         
         
         #----------------------------------------------------------------------
+        gen.dictPrint(dct=self.context)
         self.journal.O(f"Structure({self.name}).init")
         
     #==========================================================================

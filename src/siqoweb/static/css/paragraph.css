@@ -156,9 +156,41 @@ option {
 /* Default Anchor Elements                                                    */
 /*----------------------------------------------------------------------------*/
 a:link {
-  color            :#002966; 
+  color            :#061623; 
   background       :transparent;
-  text-decoration  :none;
+  
+  width            :100%;
+  height           :auto; 
+
+  margin           :4px 0px 4px 8px;
+  padding          :0px 2px 0px 2px;
+  border           :none;
+
+  text-align       :left;
+
+  font-family      :Calibri,helvetica,sans-serif;
+  font-weight      :normal;
+
+  cursor           :pointer;
+}
+a.smallFont:link {
+  color            :#061623; 
+  background       :transparent;
+  
+  width            :100%;
+  height           :auto; 
+
+  margin           :4px 0px 4px 8px;
+  padding          :0px 2px 0px 2px;
+  border           :none;
+
+  text-align       :left;
+
+  font-family      :Calibri,helvetica,sans-serif;
+  font-weight      :normal;
+  font-size        :0.8em;
+
+  cursor           :pointer;
 }
 a:visited {
   color            :#002966; 
@@ -175,6 +207,7 @@ a:hover {
   background       :transparent;
   text-decoration  :underline;
 }
+/*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 /* (c) SIQO css definition                                                    */
 /*----------------------------------------------------------------------------*/

@@ -19,7 +19,7 @@ html {
 }
 /*----------------------------------------------------------------------------*/
 body {
-  width            :1000px;
+  width            :1080px;
   margin           :auto;
 
   color            :gray; 
@@ -183,6 +183,7 @@ div.StageSelector
 {
   color            :#273327; 
   background       :url("struct_0004.jpg");
+
   float            :left;
   height           :100%;
   width            :20%;
@@ -240,12 +241,34 @@ div.Content
   top              :0px;
 }
 /*----------------------------------------------------------------------------*/
+div.Selector
+{
+  color            :#273327; 
+  background       :url("struct_0004.jpg");
+  
+  float            :left;
+  height           :100%;
+  width            :20%;
+}
+/*----------------------------------------------------------------------------*/
+div.ForumItem
+{
+  color            :#273327; 
+  background       :url("struct_0004.jpg");
+
+  float            :left;
+  height           :100%;
+  width            :80%;
+  overflow         :auto;
+}
+/*----------------------------------------------------------------------------*/
 /* Tirage Elements                                                            */
 /*----------------------------------------------------------------------------*/
 div.Tirage
 {
   position         :relative;
   color            :gray; 
+  
   background       :url("struct_0004.jpg");
   box-shadow       :0px 5px 10px rgba(0, 0, 0, 0.2) inset;
   height           :1.7em;

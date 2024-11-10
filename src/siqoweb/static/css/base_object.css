@@ -85,7 +85,7 @@ input.ObjectLinkBtn {
   cursor           :pointer;
 }
 /*----------------------------------------------------------------------------*/
-input.ObjectTextLinkBtn:hover
+input.ObjectLinkBtn:hover
 {
   color            :#660033;
   text-decoration  :underline;
@@ -98,7 +98,7 @@ input.ObjectTextLinkBtn {
   cursor           :pointer;
 }
 /*----------------------------------------------------------------------------*/
-input.ObjectLinkBtn:hover
+input.ObjectTextLinkBtn:hover
 {
   color            :#660033;
   text-decoration  :underline;

@@ -90,11 +90,11 @@ def pgStaged(classId, height=670):
     return resp
 
 #------------------------------------------------------------------------------
-def pgForum(classId, link, idx=0, height=670):
+def pgForum(classId, target, idx=0, height=670):
     
     journal.I('app_views.pgForum()')
 
-    page = PageForum(journal, env, classId=classId, link=link, idx=idx, height=height, template="3 forum.html")
+    page = PageForum(journal, env, classId=classId, target=target, idx=idx, height=height, template="3 forum.html")
     resp = page.resp()
 
     journal.O()

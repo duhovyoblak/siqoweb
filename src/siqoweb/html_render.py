@@ -10,13 +10,13 @@ from   flask                    import url_for
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.02'
+_VER      = '1.04'
 
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
-journal = None
-db      = None
+#journal = None
+#db      = None
 
 #==============================================================================
 # Class HTML
@@ -43,17 +43,12 @@ class HTML:
         #----------------------------------------------------------------------
         for itemDic in itemLst:
             
-            print()
-            print('---->', itemDic)
-            
             #------------------------------------------------------------------
             # Z itemDic vytiahnem jeho definiciu
             #------------------------------------------------------------------
             item = list(itemDic.values())[0]
             toRet += self.itemRender(item, lang)
             
-        print()
-        print('<----', toRet)
         return toRet
         
     #--------------------------------------------------------------------------
@@ -62,9 +57,6 @@ class HTML:
         
         (item, typ) = self.itemDrop(item, 'TYPE')
         if typ == '': typ = 'P'
-        
-        print()
-        print(typ,'->', item)
         
         toRet = ''
     
@@ -75,43 +67,53 @@ class HTML:
         #----------------------------------------------------------------------
         # Skusim vsetky zname typy
         #----------------------------------------------------------------------
-        if   typ == 'CHECKBOX'      : toRet = self.inputCheckBox(item, lang)
-    #    elif typ == 'BUTTON'        : toRet = self.inputButton(item, lang)
-        elif typ == 'RADIO'         : toRet = self.inputRadio(item, lang)
-        elif typ == 'TEXT'          : toRet = self.inputText(item, lang)
+        try:
+            if   typ == 'CHECKBOX'      : toRet = self.inputCheckBox(item, lang)
+        #    elif typ == 'BUTTON'        : toRet = self.inputButton(item, lang)
+            elif typ == 'RADIO'         : toRet = self.inputRadio(item, lang)
+            elif typ == 'TEXT'          : toRet = self.inputText(item, lang)
     
-        elif typ == 'LABEL'         : toRet = self.label(item, lang)
-        elif typ == 'H1'            : toRet = self.h(item, lang, 1)
-        elif typ == 'H2'            : toRet = self.h(item, lang, 2)
-        elif typ == 'H3'            : toRet = self.h(item, lang, 3)
-        elif typ == 'H4'            : toRet = self.h(item, lang, 4)
-        elif typ == 'P'             : toRet = self.p(item, lang)
-        elif typ == 'P_START'       : toRet = self.pStart(item, lang)
-        elif typ == 'P_CONT'        : toRet = self.pCont(item, lang)
-        elif typ == 'P_STOP'        : toRet = self.pStop(item, lang)
-        elif typ == 'A'             : toRet = self.a(item, lang)
-        elif typ == 'IMAGE'         : toRet = self.image(item, lang)
-        elif typ == 'DATE'          : toRet = self.date(item, lang)
+            elif typ == 'LABEL'         : toRet = self.label(item, lang)
+            elif typ == 'H1'            : toRet = self.h(item, lang, 1)
+            elif typ == 'H2'            : toRet = self.h(item, lang, 2)
+            elif typ == 'H3'            : toRet = self.h(item, lang, 3)
+            elif typ == 'H4'            : toRet = self.h(item, lang, 4)
+            elif typ == 'P'             : toRet = self.p(item, lang)
+            elif typ == 'P_START'       : toRet = self.pStart(item, lang)
+            elif typ == 'P_CONT'        : toRet = self.pCont(item, lang)
+            elif typ == 'P_STOP'        : toRet = self.pStop(item, lang)
+            elif typ == 'A'             : toRet = self.a(item, lang)
+            elif typ == 'IMAGE'         : toRet = self.image(item, lang)
+            elif typ == 'DATE'          : toRet = self.date(item, lang)
+            elif typ == 'TEXT_ITEM'     : toRet = self.textItem(item, lang)
     
-        elif typ == 'HEADTITLE'     : toRet = self.headTtile(item, lang)
-        elif typ == 'HEADSUBTIT'    : toRet = self.headSubTitle(item, lang)
-        elif typ == 'HEADCOMMENT'   : toRet = self.headComment(item, lang)
+            elif typ == 'HEADTITLE'     : toRet = self.headTtile(item, lang)
+            elif typ == 'HEADSUBTIT'    : toRet = self.headSubTitle(item, lang)
+            elif typ == 'HEADCOMMENT'   : toRet = self.headComment(item, lang)
     
-        elif typ == 'BARMENUITEM'   : toRet = self.barMenuItem(item, lang)
+            elif typ == 'BARMENUITEM'   : toRet = self.barMenuItem(item, lang)
     
-        elif typ == 'STAGESELECTOR' : toRet = self.stageSelector(item, lang)
-        elif typ == 'STAGEBOTH'     : toRet = self.stageBoth(item, lang)
-        elif typ == 'STAGESTART'    : toRet = self.stageStart(item, lang)
-        elif typ == 'STAGESTOP'     : toRet = self.stageStop(item, lang)
+            elif typ == 'STAGESELECTOR' : toRet = self.stageSelector(item, lang)
+            elif typ == 'STAGEBOTH'     : toRet = self.stageBoth(item, lang)
+            elif typ == 'STAGESTART'    : toRet = self.stageStart(item, lang)
+            elif typ == 'STAGESTOP'     : toRet = self.stageStop(item, lang)
     
-        elif typ == 'NEWLINE'       : toRet = self.newLine()
-        elif typ == 'BREAK'         : toRet = self.breakLine()
-        elif typ == 'SPLIT'         : toRet = self.split()
+            elif typ == 'NEWLINE'       : toRet = self.newLine()
+            elif typ == 'BREAK'         : toRet = self.breakLine()
+            elif typ == 'SPLIT'         : toRet = self.split()
         
-        elif typ == 'FUNC'          : toRet = self.ftion(item)
-        elif typ == 'HTML'          : toRet = self.html(item)
-        elif typ == 'DIVSTART'      : toRet = self.divStart(item)
-        elif typ == 'DIVSTOP'       : toRet = self.divStop(item)
+            elif typ == 'FUNC'          : toRet = self.ftion(item)
+            elif typ == 'HTML'          : toRet = self.html(item)
+            elif typ == 'DIVSTART'      : toRet = self.divStart(item)
+            elif typ == 'DIVSTOP'       : toRet = self.divStop(item)
+            
+        #----------------------------------------------------------------------
+        # Error handling
+        #----------------------------------------------------------------------
+        except Exception as err:
+            
+            self.journal.M(f"HTML_{self.who}.itemRender: {str(err)}", True)
+            toRet = f'<p>{str(err)}</p>\n'
         
         return toRet
         
@@ -153,98 +155,29 @@ class HTML:
     #--------------------------------------------------------------------------
     def a(self, item, lang):
 
-        print(item)
-        (item, url) = self.itemDrop(item, 'URL')
-        (item, idx) = self.itemDrop(item, 'IDX')
-        (item, arg) = self.itemDrop(item, 'ARG')
-        (item, txt) = self.itemDrop(item, lang )
+        (item, url) = self.itemDrop(item, 'URL'  )
+        (item, idx) = self.itemDrop(item, 'IDX'  )
+        (item, arg) = self.itemDrop(item, 'ARG'  )
+        (item, brk) = self.itemDrop(item, 'BREAK')
+        (item, txt) = self.itemDrop(item, lang   )
     
         link = url_for(url)
         
         #----------------------------------------------------------------------
-        # Doplnenie idx
+        # Vytvorenie href
         #----------------------------------------------------------------------
         if idx != '': link += f'/{idx.strip()}'
-        
-        #----------------------------------------------------------------------
-        # Doplnenie argumentov
-        #----------------------------------------------------------------------
         if arg != '': link += f'?{arg}'
-        
-        #----------------------------------------------------------------------
         item["href"] = link
 
-        print(item)
-        return f'<a {self.html_atts(item)}>{txt}</a>'
+        #----------------------------------------------------------------------
+        toRet = f'<a {self.html_atts(item)}>{txt}</a>'
+        if brk: toRet += self.breakLine()
+        
+        return toRet
     
     #--------------------------------------------------------------------------
     # Paragraph
-    #--------------------------------------------------------------------------
-    def pDecode(self, txt, pgLink, lang):
-        
-        toRet = txt
-        
-        #----------------------------------------------------------------------
-        # Nahradenie split
-        #----------------------------------------------------------------------
-        splits = re.findall(r'{SPLIT.*?}', txt)
-        
-        for spl in splits:
-            
-            splitHtml = self.split()
-            toRet = re.sub(spl, splitHtml, toRet)
-        
-        #----------------------------------------------------------------------
-        # Nahradenie liniek
-        #----------------------------------------------------------------------
-        links = re.findall(r'{LINK.+?}', txt)
-        
-        for link in links:
-            
-            parts = link[1:-1].split(',')
-            
-            idx  = parts[1]
-            aTxt = parts[2]
-            
-            args  = {'URL':pgLink, 'IDX':idx, lang:aTxt}
-            aHtml = self.a(args, lang)
-            
-            toRet = re.sub(link, aHtml, toRet)
-        
-        #----------------------------------------------------------------------
-        # Nahradenie obrazkov
-        #----------------------------------------------------------------------
-        images = re.findall(r'{IMAGE.+?}', txt)
-        
-        for image in images:
-            
-            parts = image[1:-1].split(',')
-            # {IMAGE,   57,  , 40%, right}
-            #        dmsId, h,   w, float
-            
-            args  = {'sdmId' :parts[1].strip()
-                    ,'height':parts[2].strip()
-                    ,'width' :parts[3].strip()
-                    }
-            
-            if len(parts)>2: args['height'] = parts[2].strip()
-            else           : args['height'] = ''
-    
-            if len(parts)>3: args['width' ] = parts[3].strip()
-            else           : args['width' ] = ''
-    
-            if len(parts)>4: args['float' ] = parts[4].strip()
-            else           : args['float' ] = 'left'
-
-            imageHtml = self.imageThumb(args, lang)
-            
-            print('imageHtml ', imageHtml)
-
-            toRet = re.sub(image, imageHtml, toRet)
-    
-        #----------------------------------------------------------------------
-        return toRet
-        
     #--------------------------------------------------------------------------
     def p(self, item, lang):
         
@@ -256,12 +189,9 @@ class HTML:
     #--------------------------------------------------------------------------
     def pStart(self, item, lang):
     
-        (item, hid ) = self.itemDrop(item, 'hidden')
-        (item, link) = self.itemDrop(item, 'link'  )
-        (item, txt ) = self.itemDrop(item, lang    )
+        (item, hid   ) = self.itemDrop(item, 'hidden')
+        (item, txt   ) = self.itemDrop(item, lang    )
         
-        txt = self.pDecode(txt, link, lang)
-    
         #----------------------------------------------------------------------
         # If paragraph is/is not hidden
         #----------------------------------------------------------------------
@@ -271,21 +201,15 @@ class HTML:
     #--------------------------------------------------------------------------
     def pCont(self, item, lang):
     
-        (item, link) = self.itemDrop(item, 'link')
-        (item, txt ) = self.itemDrop(item, lang  )
-    
-        txt = self.pDecode(txt, link, lang)
+        (item, txt   ) = self.itemDrop(item, lang    )
     
         return txt
     
     #--------------------------------------------------------------------------
     def pStop(self, item = {}, lang='SK'):
     
-        (item, link) = self.itemDrop(item, 'link')
-        (item, txt ) = self.itemDrop(item, lang  )
+        (item, txt   ) = self.itemDrop(item, lang    )
         
-        txt = self.pDecode(txt, link, lang)
-    
         return f'{txt}</p>\n'
     
     #--------------------------------------------------------------------------
@@ -318,6 +242,79 @@ class HTML:
         (item, txt) = self.itemDrop(item, lang)
         return f'<label {self.html_atts(item)}>{txt}</label>\n'
     
+    #--------------------------------------------------------------------------
+    # Text item
+    #--------------------------------------------------------------------------
+    def textItem(self, item, lang):
+
+        (item, txt   ) = self.itemDrop(item, lang)
+        (item, target) = self.itemDrop(item, 'target')
+        
+        
+xx        (item, txt   ) = self.itemDrop(item, lang    )
+
+        toRet  = self.pStart(item, lang)
+        toRet += self.pStop()        toRet = txt
+
+        #----------------------------------------------------------------------
+        # Nahradenie split
+        #----------------------------------------------------------------------
+x        splits = re.findall(r'{xxxxSPLIT.*?}', txt)
+        
+        for spl in splits:
+            
+            splitHtml = self.split()
+            toRet = re.sub(spl, splitHtml, toRet)
+        
+        #----------------------------------------------------------------------
+        # Nahradenie liniek
+        #----------------------------------------------------------------------
+        links = re.findall(r'{LINK.+?}', txt)
+        
+        for link in links:
+            
+            parts = link[1:-1].split(',')
+            
+            idx  = parts[1]
+            aTxt = parts[2]
+            
+            args  = {'URL':target, 'IDX':idx, lang:aTxt}
+            aHtml = self.a(args, lang)
+            
+            toRet = re.sub(link, aHtml, toRet)
+        
+        #----------------------------------------------------------------------
+        # Nahradenie obrazkov
+        #----------------------------------------------------------------------
+        images = re.findall(r'{IMAGE.+?}', txt)
+        
+        for image in images:
+            
+            parts = image[1:-1].split(',')
+            # {IMAGE,   57,  , 40%, right}
+            #        dmsId, h,   w, float
+            
+            args  = {'sdmId' :parts[1].strip()
+                    ,'height':parts[2].strip()
+                    ,'width' :parts[3].strip()
+                    }
+            
+            if len(parts)>2: args['height'] = parts[2].strip()
+            else           : args['height'] = ''
+    
+            if len(parts)>3: args['width' ] = parts[3].strip()
+            else           : args['width' ] = ''
+    
+            if len(parts)>4: args['float' ] = parts[4].strip()
+            else           : args['float' ] = 'left'
+
+            imageHtml = self.imageThumb(args, lang)
+            
+            toRet = re.sub(image, imageHtml, toRet)
+    
+        #----------------------------------------------------------------------
+        return toRet
+        
     #==========================================================================
     # Viacriadkove HTML vyrazy
     #--------------------------------------------------------------------------
