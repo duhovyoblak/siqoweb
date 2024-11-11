@@ -55,6 +55,8 @@ class HTML:
     def itemRender(self, item, lang):
         "Returns HTML for json-encoded item"
         
+        copyItem = dict(item)
+        
         (item, typ) = self.itemDrop(item, 'TYPE')
         if typ == '': typ = 'P'
         
@@ -113,7 +115,8 @@ class HTML:
         except Exception as err:
             
             self.journal.M(f"HTML_{self.who}.itemRender: {str(err)}", True)
-            toRet = f'<p>{str(err)}</p>\n'
+            
+            toRet = f'<p>{str(err)}</p><br><p>{copyItem}</p>'
         
         return toRet
         
@@ -187,7 +190,7 @@ class HTML:
         return toRet
     
     #--------------------------------------------------------------------------
-    def pStart(self, item, lang):
+    def pStart(self, item={}, lang='SK'):
     
         (item, hid   ) = self.itemDrop(item, 'hidden')
         (item, txt   ) = self.itemDrop(item, lang    )
@@ -199,14 +202,14 @@ class HTML:
         else                         : return f'<p hidden {self.html_atts(item)}>{txt}'
     
     #--------------------------------------------------------------------------
-    def pCont(self, item, lang):
+    def pCont(self, item={}, lang='SK'):
     
         (item, txt   ) = self.itemDrop(item, lang    )
     
         return txt
     
     #--------------------------------------------------------------------------
-    def pStop(self, item = {}, lang='SK'):
+    def pStop(self, item={}, lang='SK'):
     
         (item, txt   ) = self.itemDrop(item, lang    )
         
@@ -249,27 +252,26 @@ class HTML:
 
         (item, txt   ) = self.itemDrop(item, lang)
         (item, target) = self.itemDrop(item, 'target')
-        
-        
-xx        (item, txt   ) = self.itemDrop(item, lang    )
 
-        toRet  = self.pStart(item, lang)
-        toRet += self.pStop()        toRet = txt
+        args   = {lang:txt}
+        toRet  = self.pStart(args, lang)
+        toRet += self.pStop()
 
         #----------------------------------------------------------------------
         # Nahradenie split
         #----------------------------------------------------------------------
-x        splits = re.findall(r'{xxxxSPLIT.*?}', txt)
+        splits = re.findall(r'{SPLIT.*?}', txt)
         
         for spl in splits:
             
-            splitHtml = self.split()
-            toRet = re.sub(spl, splitHtml, toRet)
+            repl  = self.pStop() + self.split() + self.pStart()
+            toRet = re.sub(spl, repl, toRet)
         
         #----------------------------------------------------------------------
         # Nahradenie liniek
         #----------------------------------------------------------------------
         links = re.findall(r'{LINK.+?}', txt)
+        print(links)
         
         for link in links:
             
@@ -287,17 +289,14 @@ x        splits = re.findall(r'{xxxxSPLIT.*?}', txt)
         # Nahradenie obrazkov
         #----------------------------------------------------------------------
         images = re.findall(r'{IMAGE.+?}', txt)
-        
+        print(images)
+
         for image in images:
             
             parts = image[1:-1].split(',')
-            # {IMAGE,   57,  , 40%, right}
-            #        dmsId, h,   w, float
+            # {IMAGE,  idx,  h, w, float}
             
-            args  = {'sdmId' :parts[1].strip()
-                    ,'height':parts[2].strip()
-                    ,'width' :parts[3].strip()
-                    }
+            args  = {'idx'   :parts[1].strip() }
             
             if len(parts)>2: args['height'] = parts[2].strip()
             else           : args['height'] = ''
@@ -309,9 +308,12 @@ x        splits = re.findall(r'{xxxxSPLIT.*?}', txt)
             else           : args['float' ] = 'left'
 
             imageHtml = self.imageThumb(args, lang)
+            print(imageHtml)
+            print()
             
-            toRet = re.sub(image, imageHtml, toRet)
+            #toRet = re.sub(image, imageHtml, toRet)
     
+        
         #----------------------------------------------------------------------
         return toRet
         

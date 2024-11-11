@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="client-nojs">
+<head>
+<meta charset="UTF-8" />
+<title>Delta-v budget - Wikipedia, the free encyclopedia</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ = window.RLQ || []).push(function () {
+mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"Delta-v_budget","wgTitle":"Delta-v budget","wgCurRevisionId":705939191,"wgRevisionId":705939191,"wgArticleId":931880,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["All articles with dead external links","Articles with dead external links from February 2016","Articles containing potentially dated statements from 2011","All articles containing potentially dated statements","Articles with dead external links from June 2015","Astrodynamics","Spacecraft propulsion"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"Delta-v_budget","wgRelevantArticleId":931880,"wgIsProbablyEditable":true,"wgRestrictionEdit":[],"wgRestrictionMove":[],"wgWikiEditorEnabledModules":{"toolbar":true,"dialogs":true,"preview":false,"publish":false},"wgBetaFeaturesFeatures":[],"wgMediaViewerOnClick":true,"wgMediaViewerEnabledByDefault":true,"wgVisualEditor":{"pageLanguageCode":"en","pageLanguageDir":"ltr","usePageImages":true,"usePageDescriptions":true},"wikilove-recipient":"","wikilove-anon":0,"wgGatherShouldShowTutorial":true,"wgGatherEnableSample":0,"wgGatherPageImageThumbnail":"//upload.wikimedia.org/wikipedia/commons/thumb/7/7a/ApolloEnergyRequirementsMSC1966.png/100px-ApolloEnergyRequirementsMSC1966.png","wgRelatedArticles":null,"wgRelatedArticlesUseCirrusSearch":true,"wgRelatedArticlesOnlyUseCirrusSearch":false,"wgULSAcceptLanguageList":["en-us"],"wgULSCurrentAutonym":"English","wgFlaggedRevsParams":{"tags":{"status":{"levels":1,"quality":2,"pristine":3}}},"wgStableRevisionId":null,"wgCategoryTreePageCategoryOptions":"{\"mode\":0,\"hideprefix\":20,\"showcount\":true,\"namespaces\":false}","wgNoticeProject":"wikipedia","wgCentralNoticeCategoriesUsingLegacy":["Fundraising","fundraising"],"wgCentralAuthMobileDomain":false,"wgWikibaseItemId":"Q5254541","wgVisualEditorToolbarScrollOffset":0}); /* @nomin */mw.loader.implement("user.options",function($,jQuery){mw.user.options.set({"variant":"en"});});mw.loader.implement("user.tokens",function ( $, jQuery ) {
+mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"}); /* @nomin */ ;
+
+});mw.loader.load(["mediawiki.page.startup","mediawiki.legacy.wikibits","ext.centralauth.centralautologin","ext.gadget.WatchlistBase","ext.gadget.WatchlistGreenIndicators","mmv.head","ext.visualEditor.desktopArticleTarget.init","ext.uls.init","ext.uls.interface","ext.quicksurveys.init","mw.MediaWikiPlayer.loader","mw.PopUpMediaTransform","ext.centralNotice.bannerController","skins.vector.js"]);
+} );</script>
+<link rel="stylesheet" href="/w/load.php?debug=false&amp;lang=en&amp;modules=ext.cite.styles%7Cext.gadget.DRN-wizard%2CReferenceTooltips%2CWatchlistBase%2CWatchlistGreenIndicators%2Ccharinsert%2Cfeatured-articles-links%2CrefToolbar%2Cswitcher%2Cteahouse%7Cext.math.styles%7Cext.tmh.thumbnail.styles%7Cext.uls.nojs%7Cext.visualEditor.desktopArticleTarget.noscript%7Cext.wikimediaBadges%7Cmediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.raggett%2CsectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles%7Cwikibase.client.init&amp;only=styles&amp;skin=vector" />
+<meta name="ResourceLoaderDynamicStyles" content="" />
+<link rel="stylesheet" href="/w/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector" />
+<script async="" src="/w/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector"></script>
+<meta name="generator" content="MediaWiki 1.27.0-wmf.13" />
+<meta name="referrer" content="origin-when-cross-origin" />
+<link rel="alternate" href="android-app://org.wikipedia/http/en.m.wikipedia.org/wiki/Delta-v_budget" />
+<link rel="alternate" type="application/x-wiki" title="Edit this page" href="/w/index.php?title=Delta-v_budget&amp;action=edit" />
+<link rel="edit" title="Edit this page" href="/w/index.php?title=Delta-v_budget&amp;action=edit" />
+<link rel="apple-touch-icon" href="/static/apple-touch/wikipedia.png" />
+<link rel="shortcut icon" href="/static/favicon/wikipedia.ico" />
+<link rel="search" type="application/opensearchdescription+xml" href="/w/opensearch_desc.php" title="Wikipedia (en)" />
+<link rel="EditURI" type="application/rsd+xml" href="//en.wikipedia.org/w/api.php?action=rsd" />
+<link rel="copyright" href="//creativecommons.org/licenses/by-sa/3.0/" />
+<link rel="canonical" href="https://en.wikipedia.org/wiki/Delta-v_budget" />
+<link rel="dns-prefetch" href="//meta.wikimedia.org" />
+<!--[if lt IE 7]><style type="text/css">body{behavior:url("/static/1.27.0-wmf.13/skins/Vector/csshover.min.htc")}</style><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-Delta-v_budget skin-vector action-view">
+		<div id="mw-page-base" class="noprint"></div>
+		<div id="mw-head-base" class="noprint"></div>
+		<div id="content" class="mw-body" role="main">
+			<a id="top"></a>
+
+							<div id="siteNotice"><!-- CentralNotice --></div>
+						<div class="mw-indicators">
+</div>
+			<h1 id="firstHeading" class="firstHeading" lang="en">Delta-<i>v</i> budget</h1>
+									<div id="bodyContent" class="mw-body-content">
+									<div id="siteSub">From Wikipedia, the free encyclopedia</div>
+								<div id="contentSub"></div>
+												<div id="jump-to-nav" class="mw-jump">
+					Jump to:					<a href="#mw-head">navigation</a>, 					<a href="#p-search">search</a>
+				</div>
+				<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="thumb tright">
+<div class="thumbinner" style="width:302px;"><a href="/wiki/File:ApolloEnergyRequirementsMSC1966.png" class="image"><img alt="" src="//upload.wikimedia.org/wikipedia/commons/thumb/7/7a/ApolloEnergyRequirementsMSC1966.png/300px-ApolloEnergyRequirementsMSC1966.png" width="300" height="233" class="thumbimage" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/7/7a/ApolloEnergyRequirementsMSC1966.png/450px-ApolloEnergyRequirementsMSC1966.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/7/7a/ApolloEnergyRequirementsMSC1966.png/600px-ApolloEnergyRequirementsMSC1966.png 2x" data-file-width="1656" data-file-height="1284" /></a>
+<div class="thumbcaption">
+<div class="magnify"><a href="/wiki/File:ApolloEnergyRequirementsMSC1966.png" class="internal" title="Enlarge"></a></div>
+Delta-<i>v</i> in feet per second, and fuel requirements for a typical <a href="/wiki/Project_Apollo" title="Project Apollo" class="mw-redirect">Apollo Lunar Landing</a> mission.</div>
+</div>
+</div>
+<p>In <a href="/wiki/Astrodynamics" title="Astrodynamics" class="mw-redirect">astrodynamics</a> and <a href="/wiki/Aerospace" title="Aerospace">aerospace</a>, a <b>delta-v budget</b> is an estimate of the total <a href="/wiki/Delta-v" title="Delta-v">delta-<i>v</i></a> required for a <a href="/wiki/Space_mission" title="Space mission" class="mw-redirect">space mission</a>. It is calculated as the sum of the delta-v required for the <a href="/wiki/Spacecraft_propulsion" title="Spacecraft propulsion">propulsive</a> <a href="/wiki/Orbital_maneuver" title="Orbital maneuver">maneuvers</a> during the mission, and as input to the <a href="/wiki/Tsiolkovsky_rocket_equation" title="Tsiolkovsky rocket equation">Tsiolkovsky rocket equation</a>, determines how much propellant is required for a vehicle of given mass and propulsion system.</p>
+<p>Delta-<i>v</i> is a <a href="/wiki/Scalar_(mathematics)" title="Scalar (mathematics)">scalar quantity</a> dependent only on the desired trajectory and not on the mass of the space vehicle. For example, although more thrust, fuel, etc. is needed to transfer a larger communication satellite from <a href="/wiki/Low_Earth_orbit" title="Low Earth orbit">low Earth orbit</a> to <a href="/wiki/Geosynchronous_orbit" title="Geosynchronous orbit">geosynchronous orbit</a>, the delta-<i>v</i> required is the same. Also delta-<i>v</i> is additive, as contrasted to rocket burn time, the latter having greater effect later in the mission when more fuel has been used up.</p>
+<p>Tables of the delta-<i>v</i> required to move between different space venues are useful in the conceptual planning of space missions. In the absence of an atmosphere, the delta-<i>v</i> is typically the same for changes in orbit in either direction; in particular, gaining and losing speed cost an equal effort. An atmosphere can be used to slow a spacecraft by aerodynamic braking.</p>
+<p>A typical delta-<i>v</i> budget might enumerate various classes of maneuvers, delta-<i>v</i> per maneuver, and number of each maneuver required over the life of the mission, and simply sum the total delta-<i>v</i>, much like a typical financial budget. Because the delta-v needed to achieve the mission usually varies with the relative position of the gravitating bodies, <a href="/wiki/Launch_window" title="Launch window">launch windows</a> are often calculated from <a href="/wiki/Porkchop_plot" title="Porkchop plot">porkchop plots</a> that show delta-<i>v</i> plotted against the launch time.</p>
+<p></p>
+<div id="toc" class="toc">
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#General_principles"><span class="tocnumber">1</span> <span class="toctext">General principles</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Budget"><span class="tocnumber">2</span> <span class="toctext">Budget</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Launch.2Flanding"><span class="tocnumber">2.1</span> <span class="toctext">Launch/landing</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Stationkeeping"><span class="tocnumber">2.2</span> <span class="toctext">Stationkeeping</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Earth.E2.80.93Moon_space.E2.80.94high_thrust"><span class="tocnumber">2.3</span> <span class="toctext">Earth–Moon space—high thrust</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Earth.E2.80.93Moon_space.E2.80.94low_thrust"><span class="tocnumber">2.4</span> <span class="toctext">Earth–Moon space—low thrust</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#Interplanetary"><span class="tocnumber">2.5</span> <span class="toctext">Interplanetary</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Delta-vs_between_Earth.2C_Moon_and_Mars"><span class="tocnumber">2.6</span> <span class="toctext">Delta-vs between Earth, Moon and Mars</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#Near-Earth_objects"><span class="tocnumber">2.7</span> <span class="toctext">Near-Earth objects</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-10"><a href="#See_also"><span class="tocnumber">3</span> <span class="toctext">See also</span></a></li>
+<li class="toclevel-1 tocsection-11"><a href="#References"><span class="tocnumber">4</span> <span class="toctext">References</span></a></li>
+<li class="toclevel-1 tocsection-12"><a href="#External_links"><span class="tocnumber">5</span> <span class="toctext">External links</span></a></li>
+</ul>
+</div>
+<p></p>
+<h2><span class="mw-headline" id="General_principles">General principles</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=1" title="Edit section: General principles">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<p>The <a href="/wiki/Tsiolkovsky_rocket_equation" title="Tsiolkovsky rocket equation">Tsiolkovsky rocket equation</a> shows that the delta-v of a rocket (stage), is proportional to the logarithm of the fuelled-to-empty <a href="/wiki/Mass_ratio" title="Mass ratio">mass ratio</a> of the vehicle, and to the <a href="/wiki/Specific_impulse" title="Specific impulse">specific impulse</a> of the rocket engine. A key goal in designing space-mission trajectories is to minimize the required delta-v to reduce the size and expense of the rocket that would be needed to successfully deliver any particular payload to its destination.</p>
+<p>The simplest delta-v budget can be calculated with <a href="/wiki/Hohmann_transfer" title="Hohmann transfer" class="mw-redirect">Hohmann transfer</a>, which moves from one circular orbit to another coplanar circular orbit via an elliptical transfer orbit. In some cases a <a href="/wiki/Bi-elliptic_transfer" title="Bi-elliptic transfer">bi-elliptic transfer</a> can give a lower delta-v.</p>
+<p>A more complex transfer occurs when the orbits are not coplanar. In that case there is an additional delta-v necessary to change the plane of the orbit. The velocity of the vehicle needs substantial burns at the intersection of the two orbital planes and the delta-v is usually extremely high. However, these plane changes can be almost free in some cases if the gravity and mass of a planetary body is used to perform the deflection. In other cases, boosting up to a relatively high altitude <a href="/wiki/Apoapsis" title="Apoapsis" class="mw-redirect">apoapsis</a> gives low speed before performing the plane change and this can give lower total delta-v.</p>
+<p>The <a href="/wiki/Slingshot_effect" title="Slingshot effect" class="mw-redirect">slingshot effect</a> can be used in some cases to give a boost of speed/energy; if a vehicle goes past a planetary or lunar body, it is possible to pick up (or lose) much of that body's orbital speed relative to the Sun or a planet.</p>
+<p>Another effect is the <a href="/wiki/Oberth_effect" title="Oberth effect">Oberth effect</a>—this can be used to greatly decrease the delta-v needed, because using propellant at low potential energy/high speed multiplies the effect of a burn. Thus for example the delta-v for a Hohmann transfer from Earth's orbital radius to Mars's orbital radius (to overcome the Sun's gravity) is many kilometres per second, but the incremental burn from LEO over and above the burn to overcome Earth's gravity is far less if the burn is done close to Earth than if the burn to reach a Mars transfer orbit is performed at Earth's orbit, but far away from Earth.</p>
+<p>A less used effect is <a href="/wiki/Low_energy_transfer" title="Low energy transfer" class="mw-redirect">low energy transfers</a>. These are highly nonlinear effects that work by orbital resonances and by choosing trajectories close to <a href="/wiki/Lagrange_point" title="Lagrange point" class="mw-redirect">Lagrange points</a>. They can be very slow, but use very little delta-v.</p>
+<p>Because delta-v depends on the position and motion of celestial bodies, particularly when using the slingshot effect and Oberth effect, the delta-v budget changes with launch time. These can be plotted on a <a href="/wiki/Porkchop_plot" title="Porkchop plot">porkchop plot</a>.</p>
+<p>Course corrections usually also require some propellant budget. Propulsion systems never provide precisely the right propulsion in precisely the right direction at all times and navigation also introduces some uncertainty. Some propellant needs to be reserved to correct variations from the optimum trajectory.</p>
+<h2><span class="mw-headline" id="Budget">Budget</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=2" title="Edit section: Budget">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<h3><span class="mw-headline" id="Launch.2Flanding">Launch/landing</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=3" title="Edit section: Launch/landing">edit</a><span class="mw-editsection-bracket">]</span></span></h3>
+<p>The delta-v requirements for <a href="/wiki/Sub-orbital_spaceflight" title="Sub-orbital spaceflight">sub-orbital spaceflight</a> are much lower than for orbital spaceflight. For the <a href="/wiki/Ansari_X_Prize" title="Ansari X Prize">Ansari X Prize</a> altitude of 100&#160;km, <a href="/wiki/Space_Ship_One" title="Space Ship One" class="mw-redirect">Space Ship One</a> required a delta-v of roughly 1.4&#160;km/s. To reach low Earth orbit of the space station of 300&#160;km, the delta-v is over six times higher about 9.4&#160;km/s. Because of the exponential nature of the <a href="/wiki/Rocket_equation" title="Rocket equation" class="mw-redirect">rocket equation</a> the orbital rocket needs to be considerably bigger.</p>
+<ul>
+<li>Launch to <a href="/wiki/Low_Earth_orbit" title="Low Earth orbit">LEO</a>—this not only requires an increase of velocity from 0 to 7.8&#160;km/s, but also typically 1.5–2&#160;km/s for <a href="/wiki/Atmospheric_drag" title="Atmospheric drag" class="mw-redirect">atmospheric drag</a> and <a href="/wiki/Gravity_drag" title="Gravity drag">gravity drag</a></li>
+<li><a href="/wiki/Re-entry" title="Re-entry" class="mw-redirect">Re-entry</a> from LEO—the delta-v required is the orbital maneuvering burn to lower perigee into the atmosphere, atmospheric drag takes care of the rest.</li>
+</ul>
+<h3><span class="mw-headline" id="Stationkeeping">Stationkeeping</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=4" title="Edit section: Stationkeeping">edit</a><span class="mw-editsection-bracket">]</span></span></h3>
+<table class="wikitable">
+<tr>
+<th>Maneuver</th>
+<th>Average delta-<i>v</i> per year [m/s]</th>
+<th>Maximum per year [m/s]</th>
+</tr>
+<tr>
+<td>Drag compensation in 400–500&#160;km LEO</td>
+<td align="center">&lt; 25</td>
+<td align="center">&lt; 100</td>
+</tr>
+<tr>
+<td>Drag compensation in 500–600&#160;km LEO</td>
+<td align="center">&lt; 5</td>
+<td align="center">&lt; 25</td>
+</tr>
+<tr>
+<td>Drag compensation in &gt; 600&#160;km LEO</td>
+<td></td>
+<td align="center">&lt; 7.5</td>
+</tr>
+<tr>
+<td><a href="/wiki/Orbital_station-keeping" title="Orbital station-keeping">Station-keeping</a> in <a href="/wiki/Geostationary_orbit" title="Geostationary orbit">geostationary orbit</a></td>
+<td align="center">50–55</td>
+<td></td>
+</tr>
+<tr>
+<td>Station-keeping in <a href="/wiki/Lagrangian_point#L1" title="Lagrangian point">L<sub>1</sub></a>/<a href="/wiki/Lagrangian_point#L2" title="Lagrangian point">L<sub>2</sub></a></td>
+<td align="center">30–100</td>
+<td></td>
+</tr>
+<tr>
+<td>Station-keeping in lunar orbit</td>
+<td align="center">0–400 <sup id="cite_ref-1" class="reference"><a href="#cite_note-1"><span>[</span>1<span>]</span></a></sup></td>
+<td></td>
+</tr>
+<tr>
+<td>Attitude control (3-axis)</td>
+<td align="center">2–6</td>
+<td></td>
+</tr>
+<tr>
+<td>Spin-up or despin</td>
+<td align="center">5–10</td>
+<td></td>
+</tr>
+<tr>
+<td>Stage booster separation</td>
+<td align="center">5–10</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="/wiki/Reaction_wheel" title="Reaction wheel">Momentum-wheel</a> unloading</td>
+<td align="center">2–6</td>
+<td></td>
+</tr>
+</table>
+<h3><span class="mw-headline" id="Earth.E2.80.93Moon_space.E2.80.94high_thrust">Earth–Moon space<span id="Earth-Moon_space_budget"></span><span id="Earth.E2.80.93Moon_space_budget"></span><span id="Earth-Moon"></span><span id="Earth.E2.80.93Moon"></span>—high thrust</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=5" title="Edit section: Earth–Moon space—high thrust">edit</a><span class="mw-editsection-bracket">]</span></span></h3>
+<p>Delta-v needed to move inside Earth–Moon system (speeds lower than <a href="/wiki/Escape_velocity" title="Escape velocity">escape velocity</a>) are given in km/s. This table assumes that the <a href="/wiki/Oberth_effect" title="Oberth effect">Oberth effect</a> is being used—this is possible with high thrust chemical propulsion but not with current (As of 2011<sup class="plainlinks noprint asof-tag update" style="display:none;"><a class="external text" href="//en.wikipedia.org/w/index.php?title=Delta-v_budget&amp;action=edit">[update]</a></sup>) electrical propulsion.</p>
+<p>The return to LEO figures assume that a <a href="/wiki/Heat_shield" title="Heat shield">heat shield</a> and <a href="/wiki/Aerobraking" title="Aerobraking">aerobraking</a>/<a href="/wiki/Aerocapture" title="Aerocapture">aerocapture</a> is used to reduce the speed by up to 3.2&#160;km/s. The heat shield increases the mass, possibly by 15%. Where a heat shield is not used the higher from LEO Delta-v figure applies, the extra propellant is likely to be heavier than a heat shield. LEO-Ken refers to a low Earth orbit with an inclination to the equator of 28 degrees, corresponding to a launch from <a href="/wiki/Kennedy_Space_Center" title="Kennedy Space Center">Kennedy Space Center</a>. LEO-Eq is an equatorial orbit.</p>
+<table style="text-align:left;" class="wikitable">
+<tr>
+<th>∆V km/s from/to</th>
+<th>LEO-Ken</th>
+<th>LEO-Eq</th>
+<th>GEO</th>
+<th>EML-1</th>
+<th>EML-2</th>
+<th>EML-4/5</th>
+<th>LLO</th>
+<th>Moon</th>
+<th>C3=0</th>
+</tr>
+<tr>
+<td><a href="/wiki/Earth" title="Earth">Earth</a></td>
+<td colspan="2">9.3–10</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="/wiki/Low_Earth_orbit" title="Low Earth orbit">Low Earth orbit</a> (LEO-Ken)</td>
+<td></td>
+<td>4.24</td>
+<td>4.33</td>
+<td>3.77</td>
+<td>3.43</td>
+<td>3.97</td>
+<td>4.04</td>
+<td>5.93</td>
+<td>3.22</td>
+</tr>
+<tr>
+<td><a href="/wiki/Low_Earth_orbit" title="Low Earth orbit">Low Earth orbit</a> (LEO-Eq)</td>
+<td>4.24</td>
+<td></td>
+<td>3.90</td>
+<td>3.77</td>
+<td>3.43</td>
+<td>3.99</td>
+<td>4.04</td>
+<td>5.93</td>
+<td>3.22</td>
+</tr>
+<tr>
+<td><a href="/wiki/Geostationary_orbit" title="Geostationary orbit">Geostationary orbit</a> (GEO)</td>
+<td>2.06</td>
+<td>1.63</td>
+<td></td>
+<td>1.38</td>
+<td>1.47</td>
+<td>1.71</td>
+<td>2.05</td>
+<td>3.92</td>
+<td>1.30</td>
+</tr>
+<tr>
+<td><a href="/wiki/Lagrangian_point" title="Lagrangian point">Lagrangian point 1</a> (EML-1)</td>
+<td>0.77</td>
+<td>0.77</td>
+<td>1.38</td>
+<td></td>
+<td>0.14</td>
+<td>0.33</td>
+<td>0.64</td>
+<td>2.52</td>
+<td>0.14</td>
+</tr>
+<tr>
+<td><a href="/wiki/Lagrangian_point" title="Lagrangian point">Lagrangian point 2</a> (EML-2)</td>
+<td>0.33</td>
+<td>0.33</td>
+<td>1.47</td>
+<td>0.14</td>
+<td></td>
+<td>0.34</td>
+<td>0.64</td>
+<td>2.52</td>
+<td>0.14</td>
+</tr>
+<tr>
+<td><a href="/wiki/Lagrangian_point" title="Lagrangian point">Lagrangian point 4/5</a> (EML-4/5)</td>
+<td>0.84</td>
+<td>0.98</td>
+<td>1.71</td>
+<td>0.33</td>
+<td>0.34</td>
+<td></td>
+<td>0.98</td>
+<td>2.58</td>
+<td>0.43</td>
+</tr>
+<tr>
+<td>Low <a href="/wiki/Lunar_orbit" title="Lunar orbit">lunar orbit</a> (LLO)</td>
+<td>1.31</td>
+<td>1.31</td>
+<td>2.05</td>
+<td>0.64</td>
+<td>0.65</td>
+<td>0.98</td>
+<td></td>
+<td>1.87</td>
+<td>1.40</td>
+</tr>
+<tr>
+<td><a href="/wiki/Moon" title="Moon">Moon</a></td>
+<td>2.74</td>
+<td>2.74</td>
+<td>3.92</td>
+<td>2.52</td>
+<td>2.53</td>
+<td>2.58</td>
+<td>1.87</td>
+<td></td>
+<td>2.80</td>
+</tr>
+<tr>
+<td><a href="/wiki/Earth" title="Earth">Earth</a> <a href="/wiki/Escape_velocity" title="Escape velocity">escape velocity</a> (<a href="/wiki/Characteristic_energy" title="Characteristic energy">C3</a>=0)</td>
+<td>0.00</td>
+<td>0.00</td>
+<td>1.30</td>
+<td>0.14</td>
+<td>0.14</td>
+<td>0.43</td>
+<td>1.40</td>
+<td>2.80</td>
+<td></td>
+</tr>
+</table>
+<p><sup id="cite_ref-2" class="reference"><a href="#cite_note-2"><span>[</span>2<span>]</span></a></sup><sup class="noprint Inline-Template"><span style="white-space: nowrap;">[<i><a href="/wiki/Wikipedia:Link_rot" title="Wikipedia:Link rot"><span title="&#160;since June 2015">dead link</span></a></i>]</span></sup> <sup id="cite_ref-3" class="reference"><a href="#cite_note-3"><span>[</span>3<span>]</span></a></sup> <sup id="cite_ref-4" class="reference"><a href="#cite_note-4"><span>[</span>4<span>]</span></a></sup></p>
+<h3><span class="mw-headline" id="Earth.E2.80.93Moon_space.E2.80.94low_thrust">Earth–Moon space—low thrust</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=6" title="Edit section: Earth–Moon space—low thrust">edit</a><span class="mw-editsection-bracket">]</span></span></h3>
+<p>Current electric <a href="/wiki/Ion_thruster" title="Ion thruster">ion thrusters</a> produce a very low thrust (milli-newtons, yielding a small fraction of a <i>g),</i> so the <a href="/wiki/Oberth_effect" title="Oberth effect">Oberth effect</a> cannot normally be used. This results in the journey requiring a higher delta-<i>v</i> and frequently a large increase in time compared to a high thrust chemical rocket. Nonetheless, the high <a href="/wiki/Specific_impulse" title="Specific impulse">specific impulse</a> of electrical thrusters may significantly reduce the cost of the flight. For missions in the Earth–Moon system, an increase in journey time from days to months could be unacceptable for human space flight, but differences in flight time for interplanetary flights are less significant and could be favorable.</p>
+<p>The table below presents delta-<i>v'</i>s in km/s, normally accurate to 2 significant figures and will be the same in both directions, unless aerobraking is used as described in the high thrust section above.<sup id="cite_ref-FISO_5-0" class="reference"><a href="#cite_note-FISO-5"><span>[</span>5<span>]</span></a></sup></p>
+<table class="wikitable">
+<tr>
+<th>From</th>
+<th>To</th>
+<th>delta-v (km/s)</th>
+</tr>
+<tr>
+<td>Low Earth orbit (LEO)</td>
+<td>Earth–Moon Lagrangian 1 (EML-1)</td>
+<td>7.0</td>
+</tr>
+<tr>
+<td>Low Earth orbit (LEO)</td>
+<td>Geostationary Earth orbit (GEO)</td>
+<td>6.0</td>
+</tr>
+<tr>
+<td>Low Earth orbit (LEO)</td>
+<td>Low Lunar orbit (LLO)</td>
+<td>8.0</td>
+</tr>
+<tr>
+<td>Low Earth orbit (LEO)</td>
+<td>Sun–Earth Lagrangian 1 (SEL-1)</td>
+<td>7.4</td>
+</tr>
+<tr>
+<td>Low Earth orbit (LEO)</td>
+<td>Sun–Earth Lagrangian 2 (SEL-2)</td>
+<td>7.4</td>
+</tr>
+<tr>
+<td>Earth–Moon Lagrangian 1 (EML-1)</td>
+<td>Low Lunar orbit (LLO)</td>
+<td>0.60–0.80</td>
+</tr>
+<tr>
+<td>Earth–Moon Lagrangian 1 (EML-1)</td>
+<td>Geostationary Earth orbit (GEO)</td>
+<td>1.4–1.75</td>
+</tr>
+<tr>
+<td>Earth–Moon Lagrangian 1 (EML-1)</td>
+<td>Sun-Earth Lagrangian 2 (SEL-2)</td>
+<td>0.30–0.40</td>
+</tr>
+</table>
+<p><sup id="cite_ref-FISO_5-1" class="reference"><a href="#cite_note-FISO-5"><span>[</span>5<span>]</span></a></sup></p>
+<h3><span class="mw-headline" id="Interplanetary">Interplanetary</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=7" title="Edit section: Interplanetary">edit</a><span class="mw-editsection-bracket">]</span></span></h3>
+<p>The spacecraft is assumed to be using chemical propulsion and the <a href="/wiki/Oberth_effect" title="Oberth effect">Oberth effect</a>.</p>
+<table style="text-align:left;" class="wikitable">
+<tr>
+<th>From</th>
+<th>To</th>
+<th>Delta-v (km/s)</th>
+</tr>
+<tr>
+<td>LEO</td>
+<td><a href="/wiki/Mars" title="Mars">Mars</a> transfer orbit</td>
+<td align="center">4.3 <sup id="cite_ref-Zegler_6-0" class="reference"><a href="#cite_note-Zegler-6"><span>[</span>6<span>]</span></a></sup></td>
+</tr>
+<tr>
+<td><a href="/wiki/Earth" title="Earth">Earth</a> <a href="/wiki/Escape_velocity" title="Escape velocity">escape velocity</a> (C3=0)</td>
+<td><a href="/wiki/Mars" title="Mars">Mars</a> <a href="/wiki/Hohmann_transfer_orbit" title="Hohmann transfer orbit">transfer orbit</a></td>
+<td align="center">0.6<sup id="cite_ref-marsdeltavs_7-0" class="reference"><a href="#cite_note-marsdeltavs-7"><span>[</span>7<span>]</span></a></sup></td>
+</tr>
+<tr>
+<td><a href="/wiki/Mars" title="Mars">Mars</a> <a href="/wiki/Hohmann_transfer_orbit" title="Hohmann transfer orbit">transfer orbit</a></td>
+<td><a href="/wiki/Mars" title="Mars">Mars</a> <a href="/wiki/Capture_orbit" title="Capture orbit" class="mw-redirect">capture orbit</a></td>
+<td align="center">0.9<sup id="cite_ref-marsdeltavs_7-1" class="reference"><a href="#cite_note-marsdeltavs-7"><span>[</span>7<span>]</span></a></sup></td>
+</tr>
+<tr>
+<td><a href="/wiki/Mars" title="Mars">Mars</a> <a href="/wiki/Capture_orbit" title="Capture orbit" class="mw-redirect">capture orbit</a></td>
+<td><a href="/wiki/Deimos_(moon)" title="Deimos (moon)">Deimos</a> <a href="/wiki/Hohmann_transfer_orbit" title="Hohmann transfer orbit">transfer orbit</a></td>
+<td align="center">0.2<sup id="cite_ref-marsdeltavs_7-2" class="reference"><a href="#cite_note-marsdeltavs-7"><span>[</span>7<span>]</span></a></sup></td>
+</tr>
+<tr>
+<td><a href="/wiki/Deimos_(moon)" title="Deimos (moon)">Deimos</a> <a href="/wiki/Hohmann_transfer_orbit" title="Hohmann transfer orbit">transfer orbit</a></td>
+<td><a href="/wiki/Deimos_(moon)" title="Deimos (moon)">Deimos</a> surface</td>
+<td align="center">0.7<sup id="cite_ref-marsdeltavs_7-3" class="reference"><a href="#cite_note-marsdeltavs-7"><span>[</span>7<span>]</span></a></sup></td>
+</tr>
+<tr>
+<td><a href="/wiki/Deimos_(moon)" title="Deimos (moon)">Deimos</a> <a href="/wiki/Hohmann_transfer_orbit" title="Hohmann transfer orbit">transfer orbit</a></td>
+<td><a href="/wiki/Phobos_(moon)" title="Phobos (moon)">Phobos</a> <a href="/wiki/Hohmann_transfer_orbit" title="Hohmann transfer orbit">transfer orbit</a></td>
+<td align="center">0.3<sup id="cite_ref-marsdeltavs_7-4" class="reference"><a href="#cite_note-marsdeltavs-7"><span>[</span>7<span>]</span></a></sup></td>
+</tr>
+<tr>
+<td><a href="/wiki/Phobos_(moon)" title="Phobos (moon)">Phobos</a> <a href="/wiki/Hohmann_transfer_orbit" title="Hohmann transfer orbit">transfer orbit</a></td>
+<td><a href="/wiki/Phobos_(moon)" title="Phobos (moon)">Phobos</a> surface</td>
+<td align="center">0.5<sup id="cite_ref-marsdeltavs_7-5" class="reference"><a href="#cite_note-marsdeltavs-7"><span>[</span>7<span>]</span></a></sup></td>
+</tr>
+<tr>
+<td><a href="/wiki/Mars" title="Mars">Mars</a> <a href="/wiki/Capture_orbit" title="Capture orbit" class="mw-redirect">capture orbit</a></td>
+<td>Low <a href="/wiki/Mars" title="Mars">Mars</a> orbit</td>
+<td align="center">1.4<sup id="cite_ref-marsdeltavs_7-6" class="reference"><a href="#cite_note-marsdeltavs-7"><span>[</span>7<span>]</span></a></sup></td>
+</tr>
+<tr>
+<td>Low <a href="/wiki/Mars" title="Mars">Mars</a> orbit</td>
+<td><a href="/wiki/Mars" title="Mars">Mars</a> surface</td>
+<td align="center">4.1<sup id="cite_ref-marsdeltavs_7-7" class="reference"><a href="#cite_note-marsdeltavs-7"><span>[</span>7<span>]</span></a></sup></td>
+</tr>
+<tr>
+<td>EML-2</td>
+<td><a href="/wiki/Mars" title="Mars">Mars</a> transfer orbit</td>
+<td align="center">&lt;1.0<sup id="cite_ref-Zegler_6-1" class="reference"><a href="#cite_note-Zegler-6"><span>[</span>6<span>]</span></a></sup></td>
+</tr>
+<tr>
+<td><a href="/wiki/Mars" title="Mars">Mars</a> transfer orbit</td>
+<td>Low <a href="/wiki/Mars" title="Mars">Mars</a> Orbit</td>
+<td align="center">2.7<sup id="cite_ref-Zegler_6-2" class="reference"><a href="#cite_note-Zegler-6"><span>[</span>6<span>]</span></a></sup></td>
+</tr>
+<tr>
+<td><a href="/wiki/Earth" title="Earth">Earth</a> <a href="/wiki/Escape_velocity" title="Escape velocity">escape velocity</a> (C3=0)</td>
+<td>Closest <a href="/wiki/Near-Earth_object" title="Near-Earth object">NEO</a><sup id="cite_ref-8" class="reference"><a href="#cite_note-8"><span>[</span>8<span>]</span></a></sup></td>
+<td align="center">0.8–2.0</td>
+</tr>
+</table>
+<p>According to Marsden and Ross, "The energy levels of the Sun–Earth <a href="/wiki/Lagrangian_point#L1" title="Lagrangian point">L<sub>1</sub></a> and <a href="/wiki/Lagrangian_point#L2" title="Lagrangian point">L<sub>2</sub></a> points differ from those of the Earth–Moon system by only 50 m/s (as measured by maneuver velocity)."<sup id="cite_ref-9" class="reference"><a href="#cite_note-9"><span>[</span>9<span>]</span></a></sup></p>
+<h3><span class="mw-headline" id="Delta-vs_between_Earth.2C_Moon_and_Mars">Delta-vs between Earth, Moon and Mars</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=8" title="Edit section: Delta-vs between Earth, Moon and Mars">edit</a><span class="mw-editsection-bracket">]</span></span></h3>
+<div class="thumb tleft">
+<div class="thumbinner" style="width:502px;"><a href="/wiki/File:Delta-Vs_for_inner_Solar_System.svg" class="image"><img alt="" src="//upload.wikimedia.org/wikipedia/commons/thumb/7/74/Delta-Vs_for_inner_Solar_System.svg/500px-Delta-Vs_for_inner_Solar_System.svg.png" width="500" height="707" class="thumbimage" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/7/74/Delta-Vs_for_inner_Solar_System.svg/750px-Delta-Vs_for_inner_Solar_System.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/7/74/Delta-Vs_for_inner_Solar_System.svg/1000px-Delta-Vs_for_inner_Solar_System.svg.png 2x" data-file-width="744" data-file-height="1052" /></a>
+<div class="thumbcaption">
+<div class="magnify"><a href="/wiki/File:Delta-Vs_for_inner_Solar_System.svg" class="internal" title="Enlarge"></a></div>
+Delta-v needed for various orbital manoeuvers using conventional rockets.<sup id="cite_ref-marsdeltavs_7-8" class="reference"><a href="#cite_note-marsdeltavs-7"><span>[</span>7<span>]</span></a></sup> See:<sup id="cite_ref-10" class="reference"><a href="#cite_note-10"><span>[</span>10<span>]</span></a></sup><sup id="cite_ref-11" class="reference"><a href="#cite_note-11"><span>[</span>11<span>]</span></a></sup> Red arrows show where optional <a href="/wiki/Aerobraking" title="Aerobraking">aerobraking</a> can be performed in that particular direction, black numbers give delta-v in km/s that apply in either direction. Lower-delta-v transfers than shown can often be achieved, but involve rare transfer windows or take significantly longer, see: <a href="/wiki/Orbital_mechanics#Interplanetary_Transport_Network_and_fuzzy_orbits" title="Orbital mechanics">fuzzy orbital transfers</a>. Electric propulsion vehicles going from Mars C3=0 to Earth C3=0 without using the <a href="/wiki/Oberth_effect" title="Oberth effect">Oberth effect</a> need a larger deltaV of between 2.6&#160;km/s and 3.15&#160;km/s.<sup id="cite_ref-12" class="reference"><a href="#cite_note-12"><span>[</span>12<span>]</span></a></sup> Not all possible links are shown.<br />
+<i>Abbreviations key: <a href="/wiki/Escape_orbit" title="Escape orbit" class="mw-redirect">Escape orbit</a> (<b>C3</b>), <a href="/wiki/Geostationary_orbit" title="Geostationary orbit">Geostationary orbit</a> (<b>GEO</b>), <a href="/wiki/Geostationary_transfer_orbit" title="Geostationary transfer orbit">Geostationary transfer orbit</a> (<b>GTO</b>), Earth–Moon <a href="/wiki/Lagrangian_point#L4_and_L5" title="Lagrangian point">L<sub>5</sub></a> <a href="/wiki/Lagrangian_point" title="Lagrangian point">Lagrangian point</a> (<b>L5</b>), <a href="/wiki/Low_Earth_orbit" title="Low Earth orbit">low Earth orbit</a> (<b>LEO</b>)</i></div>
+</div>
+</div>
+<div style="clear:both;"></div>
+<h3><span class="mw-headline" id="Near-Earth_objects">Near-Earth objects</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=9" title="Edit section: Near-Earth objects">edit</a><span class="mw-editsection-bracket">]</span></span></h3>
+<p><a href="/wiki/Near-Earth_object" title="Near-Earth object">Near-Earth objects</a> are asteroids that are within the orbit of Mars. The delta-<i>v</i> to return from them are usually quite small, sometimes as low as 60&#160;m/s, using <a href="/wiki/Aerobraking" title="Aerobraking">aerobraking</a> in Earth's atmosphere.<sup id="cite_ref-rendez_13-0" class="reference"><a href="#cite_note-rendez-13"><span>[</span>13<span>]</span></a></sup> However, <a href="/wiki/Heat_shield" title="Heat shield">heat shields</a> are required for this, which add mass and constrain spacecraft geometry. The orbital phasing can be problematic; once rendezvous has been achieved, low delta-<i>v</i> return windows can be fairly far apart (more than a year, often many years), depending on the body.</p>
+<p>However, the delta-<i>v</i> to reach near-Earth objects is usually over 3.8&#160;km/s,<sup id="cite_ref-rendez_13-1" class="reference"><a href="#cite_note-rendez-13"><span>[</span>13<span>]</span></a></sup> which is still less than the delta-<i>v</i> to reach the Moon's surface. In general bodies that are much further away or closer to the Sun than Earth have more frequent windows for travel, but usually require larger delta-<i>v</i>s.</p>
+<h2><span class="mw-headline" id="See_also">See also</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=10" title="Edit section: See also">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="noprint portal tright" style="border:solid #aaa 1px;margin:0.5em 0 0.5em 1em">
+<table style="background:#f9f9f9;font-size:85%;line-height:110%;max-width:175px">
+<tr style="vertical-align:middle">
+<td style="text-align:center"><a href="/wiki/File:RocketSunIcon.svg" class="image"><img alt="Portal icon" src="//upload.wikimedia.org/wikipedia/commons/thumb/d/d6/RocketSunIcon.svg/28px-RocketSunIcon.svg.png" width="28" height="28" class="noviewer" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/d/d6/RocketSunIcon.svg/42px-RocketSunIcon.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/d/d6/RocketSunIcon.svg/56px-RocketSunIcon.svg.png 2x" data-file-width="128" data-file-height="128" /></a></td>
+<td style="padding:0 0.2em;vertical-align:middle;font-style:italic;font-weight:bold"><a href="/wiki/Portal:Spaceflight" title="Portal:Spaceflight">Spaceflight portal</a></td>
+</tr>
+</table>
+</div>
+<ul>
+<li><a href="/wiki/Bi-elliptic_transfer" title="Bi-elliptic transfer">Bi-elliptic transfer</a></li>
+<li><a href="/wiki/Gravity_assist" title="Gravity assist">Gravity assist</a></li>
+<li><a href="/wiki/Hohmann_transfer" title="Hohmann transfer" class="mw-redirect">Hohmann transfer</a></li>
+<li><a href="/wiki/Oberth_effect" title="Oberth effect">Oberth effect</a></li>
+<li><a href="/wiki/Orbital_speed" title="Orbital speed">Orbital speed</a></li>
+<li><a href="/wiki/Tsiolkovsky_rocket_equation" title="Tsiolkovsky rocket equation">Tsiolkovsky rocket equation</a></li>
+<li><a href="/wiki/Pork-chop_plot" title="Pork-chop plot" class="mw-redirect">Pork-chop plot</a></li>
+<li><a href="/wiki/Synodic_period" title="Synodic period" class="mw-redirect">Synodic period</a></li>
+</ul>
+<h2><span class="mw-headline" id="References">References</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=11" title="Edit section: References">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="reflist" style="list-style-type: decimal;">
+<ol class="references">
+<li id="cite_note-1"><span class="mw-cite-backlink"><b><a href="#cite_ref-1">^</a></b></span> <span class="reference-text"><a rel="nofollow" class="external text" href="http://science.nasa.gov/headlines/y2006/06nov_loworbit.htm">Frozen lunar orbits</a></span></li>
+<li id="cite_note-2"><span class="mw-cite-backlink"><b><a href="#cite_ref-2">^</a></b></span> <span class="reference-text"><a rel="nofollow" class="external text" href="http://uplink.space.com/showthreaded.php?Cat=&amp;Board=missions&amp;Number=23879&amp;page=&amp;view=&amp;sb=&amp;o=&amp;vc=1">list of delta-v</a></span></li>
+<li id="cite_note-3"><span class="mw-cite-backlink"><b><a href="#cite_ref-3">^</a></b></span> <span class="reference-text"><a rel="nofollow" class="external text" href="http://www.nasaspaceflight.com/_docs/haloOrbitLunarStation.pdf"></a><a href="/wiki/Lagrangian_point#L2" title="Lagrangian point">L<sub>2</sub></a> Halo lunar orbit</span></li>
+<li id="cite_note-4"><span class="mw-cite-backlink"><b><a href="#cite_ref-4">^</a></b></span> <span class="reference-text"><a rel="nofollow" class="external text" href="https://web.archive.org/web/20130222140006/http://ares.jsc.nasa.gov/HumanExplore/Exploration/EXLibrary/DOCS/EIC042.HTML">Strategic Considerations for Cislunar Space Infrastructure</a></span></li>
+<li id="cite_note-FISO-5"><span class="mw-cite-backlink">^ <a href="#cite_ref-FISO_5-0"><sup><i><b>a</b></i></sup></a> <a href="#cite_ref-FISO_5-1"><sup><i><b>b</b></i></sup></a></span> <span class="reference-text"><a rel="nofollow" class="external text" href="http://www.futureinspaceoperations.com/papers/HumanOps_Beyond_LEO_11_2010.pdf">FISO “Gateway” Concepts 2010, various authors page 26</a><sup class="noprint Inline-Template"><span style="white-space: nowrap;">[<i><a href="/wiki/Wikipedia:Link_rot" title="Wikipedia:Link rot"><span title="&#160;since February 2016">dead link</span></a></i>]</span></sup></span></li>
+<li id="cite_note-Zegler-6"><span class="mw-cite-backlink">^ <a href="#cite_ref-Zegler_6-0"><sup><i><b>a</b></i></sup></a> <a href="#cite_ref-Zegler_6-1"><sup><i><b>b</b></i></sup></a> <a href="#cite_ref-Zegler_6-2"><sup><i><b>c</b></i></sup></a></span> <span class="reference-text"><a rel="nofollow" class="external text" href="http://www.ulalaunch.com/site/docs/publications/DepotBasedTransportationArchitecture2010.pdf">Zegler and Kutter (AIAA 2010-8638)</a></span></li>
+<li id="cite_note-marsdeltavs-7"><span class="mw-cite-backlink">^ <a href="#cite_ref-marsdeltavs_7-0"><sup><i><b>a</b></i></sup></a> <a href="#cite_ref-marsdeltavs_7-1"><sup><i><b>b</b></i></sup></a> <a href="#cite_ref-marsdeltavs_7-2"><sup><i><b>c</b></i></sup></a> <a href="#cite_ref-marsdeltavs_7-3"><sup><i><b>d</b></i></sup></a> <a href="#cite_ref-marsdeltavs_7-4"><sup><i><b>e</b></i></sup></a> <a href="#cite_ref-marsdeltavs_7-5"><sup><i><b>f</b></i></sup></a> <a href="#cite_ref-marsdeltavs_7-6"><sup><i><b>g</b></i></sup></a> <a href="#cite_ref-marsdeltavs_7-7"><sup><i><b>h</b></i></sup></a> <a href="#cite_ref-marsdeltavs_7-8"><sup><i><b>i</b></i></sup></a></span> <span class="reference-text"><cite class="citation web"><a rel="nofollow" class="external text" href="https://web.archive.org/20070701211813/http://www.pma.caltech.edu:80/~chirata/deltav.html">"Rockets and Space Transportation"</a>. Archived from <a rel="nofollow" class="external text" href="http://www.pma.caltech.edu/~chirata/deltav.html">the original</a> on July 1, 2007<span class="reference-accessdate">. Retrieved <span class="nowrap">June 1,</span> 2013</span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3ADelta-v+budget&amp;rft.btitle=Rockets+and+Space+Transportation&amp;rft.genre=unknown&amp;rft_id=http%3A%2F%2Fwww.pma.caltech.edu%2F~chirata%2Fdeltav.html&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook" class="Z3988"><span style="display:none;">&#160;</span></span></span></li>
+<li id="cite_note-8"><span class="mw-cite-backlink"><b><a href="#cite_ref-8">^</a></b></span> <span class="reference-text"><a rel="nofollow" class="external text" href="http://echo.jpl.nasa.gov/~lance/delta_v/delta_v.rendezvous.html">NEO list</a></span></li>
+<li id="cite_note-9"><span class="mw-cite-backlink"><b><a href="#cite_ref-9">^</a></b></span> <span class="reference-text"><cite class="citation web"><a rel="nofollow" class="external text" href="http://www.ams.org/bull/2006-43-01/S0273-0979-05-01085-2/home.html">"New methods in celestial mechanics and mission design"</a>. Bull. Amer. Math. Soc.</cite><span title="ctx_ver=Z39.88-2004&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3ADelta-v+budget&amp;rft.btitle=New+methods+in+celestial+mechanics+and+mission+design&amp;rft.genre=unknown&amp;rft_id=http%3A%2F%2Fwww.ams.org%2Fbull%2F2006-43-01%2FS0273-0979-05-01085-2%2Fhome.html&amp;rft.pub=Bull.+Amer.+Math.+Soc.&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook" class="Z3988"><span style="display:none;">&#160;</span></span></span></li>
+<li id="cite_note-10"><span class="mw-cite-backlink"><b><a href="#cite_ref-10">^</a></b></span> <span class="reference-text"><a rel="nofollow" class="external text" href="http://www.projectrho.com/rocket/rocket3b.html">Atomic Rocket: Missions</a></span></li>
+<li id="cite_note-11"><span class="mw-cite-backlink"><b><a href="#cite_ref-11">^</a></b></span> <span class="reference-text"><a rel="nofollow" class="external text" href="http://www.strout.net/info/science/delta-v/intro.html">cislunar delta-vs</a></span></li>
+<li id="cite_note-12"><span class="mw-cite-backlink"><b><a href="#cite_ref-12">^</a></b></span> <span class="reference-text"><cite class="citation web"><a rel="nofollow" class="external text" href="http://trs-new.jpl.nasa.gov/dspace/bitstream/2014/15789/1/00-1530.pdf">"<span style="padding-left:0.2em;">"</span>Ion Propulsion for a Mars Sample Return Mission" John R. Brophy and David H. Rodgers, AIAA-200-3412, Table 1"</a> <span style="font-size:85%;">(PDF)</span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3ADelta-v+budget&amp;rft.btitle=%22Ion+Propulsion+for+a+Mars+Sample+Return+Mission%22+John+R.+Brophy+and+David+H.+Rodgers%2C+AIAA-200-3412%2C+Table+1&amp;rft.genre=unknown&amp;rft_id=http%3A%2F%2Ftrs-new.jpl.nasa.gov%2Fdspace%2Fbitstream%2F2014%2F15789%2F1%2F00-1530.pdf&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook" class="Z3988"><span style="display:none;">&#160;</span></span></span></li>
+<li id="cite_note-rendez-13"><span class="mw-cite-backlink">^ <a href="#cite_ref-rendez_13-0"><sup><i><b>a</b></i></sup></a> <a href="#cite_ref-rendez_13-1"><sup><i><b>b</b></i></sup></a></span> <span class="reference-text"><cite class="citation web"><a rel="nofollow" class="external text" href="http://echo.jpl.nasa.gov/~lance/delta_v/delta_v.rendezvous.html">"Near-Earth Asteroid Delta-V for Spacecraft Rendezvous"</a>. JPL NASA.</cite><span title="ctx_ver=Z39.88-2004&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3ADelta-v+budget&amp;rft.btitle=Near-Earth+Asteroid+Delta-V+for+Spacecraft+Rendezvous&amp;rft.genre=unknown&amp;rft_id=http%3A%2F%2Fecho.jpl.nasa.gov%2F~lance%2Fdelta_v%2Fdelta_v.rendezvous.html&amp;rft.pub=JPL+NASA&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook" class="Z3988"><span style="display:none;">&#160;</span></span></span></li>
+</ol>
+</div>
+<h2><span class="mw-headline" id="External_links">External links</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit&amp;section=12" title="Edit section: External links">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<ul>
+<li><a rel="nofollow" class="external text" href="http://www.strout.net/info/science/delta-v/intro.html">Javascript Delta V calculator</a></li>
+<li><a rel="nofollow" class="external text" href="http://www.clowder.net/hop/railroad/deltaveemap.html">Decorative Delta-V Map</a></li>
+<li><a rel="nofollow" class="external text" href="http://www.lr.tudelft.nl/live/pagina.jsp?id=140fb8a8-0bfa-43dc-8ff9-02c923a2a8cb&amp;lang=en">Delft University DeltaV page</a></li>
+</ul>
+<table class="navbox" style="border-spacing:0">
+<tr>
+<td style="padding:2px">
+<table class="nowraplinks hlist collapsible collapsed navbox-inner" style="border-spacing:0;background:transparent;color:inherit">
+<tr>
+<th scope="col" class="navbox-title" colspan="2">
+<div class="plainlinks hlist navbar mini">
+<ul>
+<li class="nv-view"><a href="/wiki/Template:Orbits" title="Template:Orbits"><abbr title="View this template" style=";;background:none transparent;border:none;">v</abbr></a></li>
+<li class="nv-talk"><a href="/wiki/Template_talk:Orbits" title="Template talk:Orbits"><abbr title="Discuss this template" style=";;background:none transparent;border:none;">t</abbr></a></li>
+<li class="nv-edit"><a class="external text" href="//en.wikipedia.org/w/index.php?title=Template:Orbits&amp;action=edit"><abbr title="Edit this template" style=";;background:none transparent;border:none;">e</abbr></a></li>
+</ul>
+</div>
+<div style="font-size:114%">Gravitational <a href="/wiki/Orbit" title="Orbit">orbits</a></div>
+</th>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<td colspan="2" class="navbox-list navbox-odd" style="width:100%;padding:0px">
+<div style="padding:0em 0.25em"></div>
+<table class="nowraplinks collapsible collapsed navbox-subgroup" style="border-spacing:0">
+<tr>
+<th scope="col" class="navbox-title" colspan="2" style=";"><span style="float:left;width:6em">&#160;</span>
+<div style="font-size:114%"><a href="/wiki/Orbit" title="Orbit">Orbits</a></div>
+</th>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<td colspan="2" class="navbox-list navbox-odd" style="width:100%;padding:0px">
+<div style="padding:0em 0.25em"></div>
+<table class="nowraplinks navbox-subgroup" style="border-spacing:0">
+<tr>
+<th scope="row" class="navbox-group">General</th>
+<td class="navbox-list navbox-odd" style="text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px">
+<div style="padding:0em 0.25em">
+<ul>
+<li><a href="/wiki/Box_orbit" title="Box orbit">Box</a></li>
+<li><a href="/wiki/Parabolic_trajectory" title="Parabolic trajectory">Capture</a></li>
+<li><a href="/wiki/Circular_orbit" title="Circular orbit">Circular</a></li>
+<li><a href="/wiki/Elliptic_orbit" title="Elliptic orbit">Elliptical</a> / <a href="/wiki/Highly_elliptical_orbit" title="Highly elliptical orbit">Highly elliptical</a></li>
+<li><a href="/wiki/Parabolic_trajectory" title="Parabolic trajectory">Escape</a></li>
+<li><a href="/wiki/Graveyard_orbit" title="Graveyard orbit">Graveyard</a></li>
+<li><a href="/wiki/Hyperbolic_trajectory" title="Hyperbolic trajectory">Hyperbolic trajectory</a></li>
+<li><a href="/wiki/Inclined_orbit" title="Inclined orbit">Inclined</a> / <a href="/wiki/Non-inclined_orbit" title="Non-inclined orbit">Non-inclined</a></li>
+<li><a href="/wiki/Osculating_orbit" title="Osculating orbit">Osculating</a></li>
+<li><a href="/wiki/Parabolic_trajectory" title="Parabolic trajectory">Parabolic trajectory</a></li>
+<li><a href="/wiki/Parking_orbit" title="Parking orbit">Parking</a></li>
+<li><a href="/wiki/Synchronous_orbit" title="Synchronous orbit">Synchronous</a>
+<ul>
+<li><a href="/wiki/Semi-synchronous_orbit" title="Semi-synchronous orbit">semi</a></li>
+<li><a href="/wiki/Subsynchronous_orbit" title="Subsynchronous orbit">sub</a></li>
+</ul>
+</li>
+<li><a href="/wiki/Hohmann_transfer_orbit" title="Hohmann transfer orbit">Transfer orbit</a></li>
+</ul>
+</div>
+</td>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<th scope="row" class="navbox-group"><a href="/wiki/Geocentric_orbit" title="Geocentric orbit">Geocentric</a></th>
+<td class="navbox-list navbox-even" style="text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px">
+<div style="padding:0em 0.25em">
+<ul>
+<li><a href="/wiki/Geosynchronous_orbit" title="Geosynchronous orbit">Geosynchronous</a></li>
+<li><a href="/wiki/Geostationary_orbit" title="Geostationary orbit">Geostationary</a></li>
+<li><a href="/wiki/Sun-synchronous_orbit" title="Sun-synchronous orbit">Sun-synchronous</a></li>
+<li><a href="/wiki/Low_Earth_orbit" title="Low Earth orbit">Low Earth</a></li>
+<li><a href="/wiki/Medium_Earth_orbit" title="Medium Earth orbit">Medium Earth</a></li>
+<li><a href="/wiki/High_Earth_orbit" title="High Earth orbit">High Earth</a></li>
+<li><a href="/wiki/Molniya_orbit" title="Molniya orbit">Molniya</a></li>
+<li><a href="/wiki/Near_equatorial_orbit" title="Near equatorial orbit" class="mw-redirect">Near-equatorial</a></li>
+<li><a href="/wiki/Orbit_of_the_Moon" title="Orbit of the Moon">Orbit of the Moon</a></li>
+<li><a href="/wiki/Polar_orbit" title="Polar orbit">Polar</a></li>
+<li><a href="/wiki/Tundra_orbit" title="Tundra orbit">Tundra</a></li>
+<li><a href="/wiki/Two-line_element_set" title="Two-line element set">Two-line elements</a></li>
+</ul>
+</div>
+</td>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<th scope="row" class="navbox-group">About other points</th>
+<td class="navbox-list navbox-odd" style="text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px">
+<div style="padding:0em 0.25em">
+<ul>
+<li><a href="/wiki/Areosynchronous_orbit" title="Areosynchronous orbit">Areosynchronous</a></li>
+<li><a href="/wiki/Areostationary_orbit" title="Areostationary orbit">Areostationary</a></li>
+<li><a href="/wiki/Halo_orbit" title="Halo orbit">Halo</a></li>
+<li><a href="/wiki/Lissajous_orbit" title="Lissajous orbit">Lissajous</a></li>
+<li><a href="/wiki/Lunar_orbit" title="Lunar orbit">Lunar</a></li>
+<li><a href="/wiki/Heliocentric_orbit" title="Heliocentric orbit">Heliocentric</a></li>
+<li><a href="/wiki/Heliosynchronous_orbit" title="Heliosynchronous orbit" class="mw-redirect">Heliosynchronous</a></li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<td colspan="2" class="navbox-list navbox-even" style="width:100%;padding:0px">
+<div style="padding:0em 0.25em"></div>
+<table class="nowraplinks collapsible collapsed navbox-subgroup" style="border-spacing:0">
+<tr>
+<th scope="col" class="navbox-title" colspan="2" style=";"><span style="float:left;width:6em">&#160;</span>
+<div style="font-size:114%"><a href="/wiki/Orbital_elements" title="Orbital elements">Parameters</a></div>
+</th>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<td colspan="2" class="navbox-list navbox-odd" style="width:100%;padding:0px">
+<div style="padding:0em 0.25em"></div>
+<table class="nowraplinks navbox-subgroup" style="border-spacing:0">
+<tr>
+<th scope="row" class="navbox-group">Shape/Size</th>
+<td class="navbox-list navbox-odd" style="text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px">
+<div style="padding:0em 0.25em">
+<ul>
+<li><img class="mwe-math-fallback-image-inline tex" alt="e\,\!" src="//upload.wikimedia.org/math/4/6/0/460a1940ceddf45878d2e095af31128a.png" />&#160;<a href="/wiki/Orbital_eccentricity" title="Orbital eccentricity">Eccentricity</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="a\,\!" src="//upload.wikimedia.org/math/1/2/d/12de7673992b1735e29cdd211851fa05.png" />&#160;<a href="/wiki/Semi-major_axis" title="Semi-major axis">Semi-major axis</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="b\,\!" src="//upload.wikimedia.org/math/6/f/1/6f1f9c73279ad1872b1fa74df9858c5c.png" />&#160;<a href="/wiki/Semi-minor_axis" title="Semi-minor axis">Semi-minor axis</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="Q,q\,\!" src="//upload.wikimedia.org/math/9/c/d/9cdcc6a784cb2550a0ccd5a22362d47e.png" />&#160;<a href="/wiki/Apsis" title="Apsis">Apsides</a></li>
+</ul>
+</div>
+</td>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<th scope="row" class="navbox-group">Orientation</th>
+<td class="navbox-list navbox-even" style="text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px">
+<div style="padding:0em 0.25em">
+<ul>
+<li><img class="mwe-math-fallback-image-inline tex" alt="i\,\!" src="//upload.wikimedia.org/math/a/7/9/a796b40d92e81ae190a1e4f4e2a2c3ed.png" />&#160;<a href="/wiki/Inclination" title="Inclination" class="mw-redirect">Inclination</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="\Omega\,\!" src="//upload.wikimedia.org/math/4/2/e/42e294677ad426aff0fcadd03f77e54a.png" />&#160;<a href="/wiki/Longitude_of_the_ascending_node" title="Longitude of the ascending node">Longitude of the ascending node</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="\omega\,\!" src="//upload.wikimedia.org/math/1/4/1/141205d798217ffe19177ba53c00c409.png" />&#160;<a href="/wiki/Argument_of_periapsis" title="Argument of periapsis">Argument of periapsis</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="\varpi\,\!" src="//upload.wikimedia.org/math/e/1/6/e161137344373f046e2cfe3f095325de.png" />&#160;<a href="/wiki/Longitude_of_the_periapsis" title="Longitude of the periapsis">Longitude of the periapsis</a></li>
+</ul>
+</div>
+</td>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<th scope="row" class="navbox-group">Position</th>
+<td class="navbox-list navbox-odd" style="text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px">
+<div style="padding:0em 0.25em">
+<ul>
+<li><img class="mwe-math-fallback-image-inline tex" alt="M\,\!" src="//upload.wikimedia.org/math/3/b/6/3b652357e59da356dbb6f2105020406e.png" />&#160;<a href="/wiki/Mean_anomaly" title="Mean anomaly">Mean anomaly</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="\nu\,\!" src="//upload.wikimedia.org/math/2/f/2/2f22ac11583dfea7c5f77622cd09363c.png" />&#160;<a href="/wiki/True_anomaly" title="True anomaly">True anomaly</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="E\,\!" src="//upload.wikimedia.org/math/8/0/1/801dd8e49c12855a8fb959ec5fe215ee.png" />&#160;<a href="/wiki/Eccentric_anomaly" title="Eccentric anomaly">Eccentric anomaly</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="L\,\!" src="//upload.wikimedia.org/math/1/0/2/102dc7004515c2ac64327380faa80844.png" />&#160;<a href="/wiki/Mean_longitude" title="Mean longitude">Mean longitude</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="l\,\!" src="//upload.wikimedia.org/math/2/4/a/24a4d5e671be5bb7026ad86a68d14220.png" />&#160;<a href="/wiki/True_longitude" title="True longitude">True longitude</a></li>
+</ul>
+</div>
+</td>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<th scope="row" class="navbox-group">Variation</th>
+<td class="navbox-list navbox-even" style="text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px">
+<div style="padding:0em 0.25em">
+<ul>
+<li><img class="mwe-math-fallback-image-inline tex" alt="T\,\!" src="//upload.wikimedia.org/math/c/d/3/cd322a0269b30952befe1f9ae7972bcc.png" />&#160;<a href="/wiki/Orbital_period" title="Orbital period">Orbital period</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="n\,\!" src="//upload.wikimedia.org/math/b/a/a/baa52b85c066dbd5eeff3c078a69205b.png" />&#160;<a href="/wiki/Mean_motion" title="Mean motion">Mean motion</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="v\,\!" src="//upload.wikimedia.org/math/7/8/e/78e5b690a2281690cf20f3ce49f2caab.png" />&#160;<a href="/wiki/Orbital_speed" title="Orbital speed">Orbital speed</a></li>
+<li><img class="mwe-math-fallback-image-inline tex" alt="t_0\,\!" src="//upload.wikimedia.org/math/9/b/6/9b69f8cc025b84cfc0c42487abaa77b7.png" />&#160;<a href="/wiki/Epoch_(astronomy)" title="Epoch (astronomy)">Epoch</a></li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<td colspan="2" class="navbox-list navbox-odd" style="width:100%;padding:0px">
+<div style="padding:0em 0.25em"></div>
+<table class="nowraplinks collapsible collapsed navbox-subgroup" style="border-spacing:0">
+<tr>
+<th scope="col" class="navbox-title" colspan="2" style=";"><span style="float:left;width:6em">&#160;</span>
+<div style="font-size:114%"><a href="/wiki/Orbital_maneuver" title="Orbital maneuver">Maneuvers</a></div>
+</th>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<td colspan="2" class="navbox-list navbox-odd" style="width:100%;padding:0px">
+<div style="padding:0em 0.25em">
+<ul>
+<li><a href="/wiki/Collision_avoidance_(spacecraft)" title="Collision avoidance (spacecraft)">Collision avoidance (spacecraft)</a></li>
+<li><a href="/wiki/Delta-v" title="Delta-v">Delta-v</a></li>
+<li><strong class="selflink">Delta-v budget</strong></li>
+<li><a href="/wiki/Bi-elliptic_transfer" title="Bi-elliptic transfer">Bi-elliptic transfer</a></li>
+<li><a href="/wiki/Geostationary_transfer_orbit" title="Geostationary transfer orbit">Geostationary transfer</a></li>
+<li><a href="/wiki/Gravity_assist" title="Gravity assist">Gravity assist</a></li>
+<li><a href="/wiki/Gravity_turn" title="Gravity turn">Gravity turn</a></li>
+<li><a href="/wiki/Hohmann_transfer_orbit" title="Hohmann transfer orbit">Hohmann transfer</a></li>
+<li><a href="/wiki/Low_energy_transfer" title="Low energy transfer" class="mw-redirect">Low energy transfer</a></li>
+<li><a href="/wiki/Oberth_effect" title="Oberth effect">Oberth effect</a></li>
+<li><a href="/wiki/Orbital_inclination_change" title="Orbital inclination change">Inclination change</a></li>
+<li><a href="/wiki/Orbit_phasing" title="Orbit phasing">Phasing</a></li>
+<li><a href="/wiki/Rocket_equation" title="Rocket equation" class="mw-redirect">Rocket equation</a></li>
+<li><a href="/wiki/Space_rendezvous" title="Space rendezvous">Rendezvous</a></li>
+<li><a href="/wiki/Transposition,_docking,_and_extraction" title="Transposition, docking, and extraction">Transposition, docking, and extraction</a></li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<td colspan="2" class="navbox-list navbox-even" style="width:100%;padding:0px">
+<div style="padding:0em 0.25em"></div>
+<table class="nowraplinks collapsible collapsed navbox-subgroup" style="border-spacing:0">
+<tr>
+<th scope="col" class="navbox-title" colspan="2" style=";"><span style="float:left;width:6em">&#160;</span>
+<div style="font-size:114%">Other <a href="/wiki/Orbital_mechanics" title="Orbital mechanics">orbital mechanics</a> topics</div>
+</th>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<td colspan="2" class="navbox-list navbox-odd" style="width:100%;padding:0px">
+<div style="padding:0em 0.25em">
+<ul>
+<li><a href="/wiki/Celestial_coordinate_system" title="Celestial coordinate system">Celestial coordinate system</a></li>
+<li><a href="/wiki/Characteristic_energy" title="Characteristic energy">Characteristic energy</a></li>
+<li><a href="/wiki/Ephemeris" title="Ephemeris">Ephemeris</a></li>
+<li><a href="/wiki/Equatorial_coordinate_system" title="Equatorial coordinate system">Equatorial coordinate system</a></li>
+<li><a href="/wiki/Ground_track" title="Ground track">Ground track</a></li>
+<li><a href="/wiki/Hill_sphere" title="Hill sphere">Hill sphere</a></li>
+<li><a href="/wiki/Interplanetary_Transport_Network" title="Interplanetary Transport Network">Interplanetary Transport Network</a></li>
+<li><a href="/wiki/Kepler%27s_laws_of_planetary_motion" title="Kepler's laws of planetary motion">Kepler's laws of planetary motion</a></li>
+<li><a href="/wiki/Lagrangian_point" title="Lagrangian point">Lagrangian point</a></li>
+<li><a href="/wiki/N-body_problem" title="N-body problem"><i>n</i>-body problem</a></li>
+<li><a href="/wiki/Orbit_equation" title="Orbit equation">Orbit equation</a></li>
+<li><a href="/wiki/Orbital_state_vectors" title="Orbital state vectors">Orbital state vectors</a></li>
+<li><a href="/wiki/Perturbation_(astronomy)" title="Perturbation (astronomy)">Perturbation</a></li>
+<li><a href="/wiki/Retrograde_motion" title="Retrograde motion" class="mw-redirect">Retrograde motion</a></li>
+<li><a href="/wiki/Specific_orbital_energy" title="Specific orbital energy">Specific orbital energy</a></li>
+<li><a href="/wiki/Specific_relative_angular_momentum" title="Specific relative angular momentum">Specific relative angular momentum</a></li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr style="height:2px">
+<td colspan="2"></td>
+</tr>
+<tr>
+<td class="navbox-abovebelow" colspan="2">
+<div>
+<ul>
+<li><b><a href="/wiki/List_of_orbits" title="List of orbits">List of orbits</a></b></li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+
+<!-- 
+NewPP limit report
+Parsed by mw1254
+Cached time: 20160224103017
+Cache expiry: 2592000
+Dynamic content: false
+CPU time usage: 0.236 seconds
+Real time usage: 0.428 seconds
+Preprocessor visited node count: 1898/1000000
+Preprocessor generated node count: 0/1500000
+Post‐expand include size: 60648/2097152 bytes
+Template argument size: 6926/2097152 bytes
+Highest expansion depth: 12/40
+Expensive parser function count: 3/500
+Lua time usage: 0.072/10.000 seconds
+Lua memory usage: 3.16 MB/50 MB
+Number of Wikibase entities loaded: 0-->
+
+<!-- 
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  357.488      1 - -total
+ 35.78%  127.926      1 - Template:Orbits
+ 32.42%  115.893      1 - Template:Navbox_with_collapsible_groups
+ 22.82%   81.586      2 - Template:Navbox
+ 18.62%   66.567      1 - Template:Reflist
+ 12.69%   45.361      4 - Template:Cite_web
+ 12.00%   42.899      2 - Template:Dead_link
+  9.80%   35.049      2 - Template:Fix
+  9.58%   34.255      2 - Template:L1
+  8.61%   30.780      4 - Template:Category_handler
+-->
+
+<!-- Saved in parser cache with key enwiki:pcache:idhash:931880-0!*!0!!en!4!*!math=0 and timestamp 20160224103017 and revision id 705939191
+ -->
+<noscript><img src="//en.wikipedia.org/wiki/Special:CentralAutoLogin/start?type=1x1" alt="" title="" width="1" height="1" style="border: none; position: absolute;" /></noscript></div>					<div class="printfooter">
+						Retrieved from "<a dir="ltr" href="https://en.wikipedia.org/w/index.php?title=Delta-v_budget&amp;oldid=705939191">https://en.wikipedia.org/w/index.php?title=Delta-v_budget&amp;oldid=705939191</a>"					</div>
+				<div id='catlinks' class='catlinks' data-mw='interface'><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="/wiki/Help:Category" title="Help:Category">Categories</a>: <ul><li><a href="/wiki/Category:Astrodynamics" title="Category:Astrodynamics">Astrodynamics</a></li><li><a href="/wiki/Category:Spacecraft_propulsion" title="Category:Spacecraft propulsion">Spacecraft propulsion</a></li></ul></div><div id="mw-hidden-catlinks" class="mw-hidden-catlinks mw-hidden-cats-hidden">Hidden categories: <ul><li><a href="/wiki/Category:All_articles_with_dead_external_links" title="Category:All articles with dead external links">All articles with dead external links</a></li><li><a href="/wiki/Category:Articles_with_dead_external_links_from_February_2016" title="Category:Articles with dead external links from February 2016">Articles with dead external links from February 2016</a></li><li><a href="/wiki/Category:Articles_containing_potentially_dated_statements_from_2011" title="Category:Articles containing potentially dated statements from 2011">Articles containing potentially dated statements from 2011</a></li><li><a href="/wiki/Category:All_articles_containing_potentially_dated_statements" title="Category:All articles containing potentially dated statements">All articles containing potentially dated statements</a></li><li><a href="/wiki/Category:Articles_with_dead_external_links_from_June_2015" title="Category:Articles with dead external links from June 2015">Articles with dead external links from June 2015</a></li></ul></div></div>				<div class="visualClear"></div>
+							</div>
+		</div>
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" class="" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-anonuserpage">Not logged in</li><li id="pt-anontalk"><a href="/wiki/Special:MyTalk" title="Discussion about edits from this IP address [n]" accesskey="n">Talk</a></li><li id="pt-anoncontribs"><a href="/wiki/Special:MyContributions" title="A list of edits made from this IP address [y]" accesskey="y">Contributions</a></li><li id="pt-createaccount"><a href="/w/index.php?title=Special:UserLogin&amp;returnto=Delta-v+budget&amp;type=signup" title="You are encouraged to create an account and log in; however, it is not mandatory">Create account</a></li><li id="pt-login"><a href="/w/index.php?title=Special:UserLogin&amp;returnto=Delta-v+budget" title="You're encouraged to log in; however, it's not mandatory. [o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+															<li  id="ca-nstab-main" class="selected"><span><a href="/wiki/Delta-v_budget"  title="View the content page [c]" accesskey="c">Article</a></span></li>
+															<li  id="ca-talk"><span><a href="/wiki/Talk:Delta-v_budget"  title="Discussion about the content page [t]" accesskey="t" rel="discussion">Talk</a></span></li>
+													</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<h3 id="p-variants-label">
+							<span>Variants</span><a href="#"></a>
+						</h3>
+
+						<div class="menu">
+							<ul>
+															</ul>
+						</div>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+															<li id="ca-view" class="selected"><span><a href="/wiki/Delta-v_budget" >Read</a></span></li>
+															<li id="ca-edit"><span><a href="/w/index.php?title=Delta-v_budget&amp;action=edit"  title="Edit this page [e]" accesskey="e">Edit</a></span></li>
+															<li id="ca-history" class="collapsible"><span><a href="/w/index.php?title=Delta-v_budget&amp;action=history"  title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>
+													</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+						<h3 id="p-cactions-label"><span>More</span><a href="#"></a></h3>
+
+						<div class="menu">
+							<ul>
+															</ul>
+						</div>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+
+						<form action="/w/index.php" id="searchform">
+							<div id="simpleSearch">
+							<input type="search" name="search" placeholder="Search" title="Search Wikipedia [f]" accesskey="f" id="searchInput" /><input type="hidden" value="Special:Search" name="title" /><input type="submit" name="fulltext" value="Search" title="Search Wikipedia for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton" /><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton" />							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="/wiki/Main_Page"  title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id='p-navigation' aria-labelledby='p-navigation-label'>
+			<h3 id='p-navigation-label'>Navigation</h3>
+
+			<div class="body">
+									<ul>
+						<li id="n-mainpage-description"><a href="/wiki/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-contents"><a href="/wiki/Portal:Contents" title="Guides to browsing Wikipedia">Contents</a></li><li id="n-featuredcontent"><a href="/wiki/Portal:Featured_content" title="Featured content – the best of Wikipedia">Featured content</a></li><li id="n-currentevents"><a href="/wiki/Portal:Current_events" title="Find background information on current events">Current events</a></li><li id="n-randompage"><a href="/wiki/Special:Random" title="Load a random article [x]" accesskey="x">Random article</a></li><li id="n-sitesupport"><a href="https://donate.wikimedia.org/wiki/Special:FundraiserRedirector?utm_source=donate&amp;utm_medium=sidebar&amp;utm_campaign=C13_en.wikipedia.org&amp;uselang=en" title="Support us">Donate to Wikipedia</a></li><li id="n-shoplink"><a href="//shop.wikimedia.org" title="Visit the Wikipedia store">Wikipedia store</a></li>					</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id='p-interaction' aria-labelledby='p-interaction-label'>
+			<h3 id='p-interaction-label'>Interaction</h3>
+
+			<div class="body">
+									<ul>
+						<li id="n-help"><a href="/wiki/Help:Contents" title="Guidance on how to use and edit Wikipedia">Help</a></li><li id="n-aboutsite"><a href="/wiki/Wikipedia:About" title="Find out about Wikipedia">About Wikipedia</a></li><li id="n-portal"><a href="/wiki/Wikipedia:Community_portal" title="About the project, what you can do, where to find things">Community portal</a></li><li id="n-recentchanges"><a href="/wiki/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li><li id="n-contactpage"><a href="//en.wikipedia.org/wiki/Wikipedia:Contact_us" title="How to contact Wikipedia">Contact page</a></li>					</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id='p-tb' aria-labelledby='p-tb-label'>
+			<h3 id='p-tb-label'>Tools</h3>
+
+			<div class="body">
+									<ul>
+						<li id="t-whatlinkshere"><a href="/wiki/Special:WhatLinksHere/Delta-v_budget" title="List of all English Wikipedia pages containing links to this page [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="/wiki/Special:RecentChangesLinked/Delta-v_budget" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-upload"><a href="/wiki/Wikipedia:File_Upload_Wizard" title="Upload files [u]" accesskey="u">Upload file</a></li><li id="t-specialpages"><a href="/wiki/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-permalink"><a href="/w/index.php?title=Delta-v_budget&amp;oldid=705939191" title="Permanent link to this revision of the page">Permanent link</a></li><li id="t-info"><a href="/w/index.php?title=Delta-v_budget&amp;action=info" title="More information about this page">Page information</a></li><li id="t-wikibase"><a href="//www.wikidata.org/wiki/Q5254541" title="Link to connected data repository item [g]" accesskey="g">Wikidata item</a></li><li id="t-cite"><a href="/w/index.php?title=Special:CiteThisPage&amp;page=Delta-v_budget&amp;id=705939191" title="Information on how to cite this page">Cite this page</a></li>					</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id='p-coll-print_export' aria-labelledby='p-coll-print_export-label'>
+			<h3 id='p-coll-print_export-label'>Print/export</h3>
+
+			<div class="body">
+									<ul>
+						<li id="coll-create_a_book"><a href="/w/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=Delta-v+budget">Create a book</a></li><li id="coll-download-as-rdf2latex"><a href="/w/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=Delta-v+budget&amp;returnto=Delta-v+budget&amp;oldid=705939191&amp;writer=rdf2latex">Download as PDF</a></li><li id="t-print"><a href="/w/index.php?title=Delta-v_budget&amp;printable=yes" title="Printable version of this page [p]" accesskey="p">Printable version</a></li>					</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id='p-lang' aria-labelledby='p-lang-label'>
+			<h3 id='p-lang-label'>Languages</h3>
+
+			<div class="body">
+									<ul>
+						<li class="interlanguage-link interwiki-fi"><a href="//fi.wikipedia.org/wiki/Nopeuslis%C3%A4" title="Nopeuslisä – Finnish" lang="fi" hreflang="fi">Suomi</a></li><li class="uls-p-lang-dummy"><a href="#"></a></li>					</ul>
+				<div class='after-portlet after-portlet-lang'><span class="wb-langlinks-edit wb-langlinks-link"><a href="//www.wikidata.org/wiki/Q5254541#sitelinks-wikipedia" title="Edit interlanguage links" class="wbc-editpage">Edit links</a></span></div>			</div>
+		</div>
+				</div>
+		</div>
+		<div id="footer" role="contentinfo">
+							<ul id="footer-info">
+											<li id="footer-info-lastmod"> This page was last modified on 20 February 2016, at 12:55.</li>
+											<li id="footer-info-copyright">Text is available under the <a rel="license" href="//en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License">Creative Commons Attribution-ShareAlike License</a><a rel="license" href="//creativecommons.org/licenses/by-sa/3.0/" style="display:none;"></a>;
+additional terms may apply.  By using this site, you agree to the <a href="//wikimediafoundation.org/wiki/Terms_of_Use">Terms of Use</a> and <a href="//wikimediafoundation.org/wiki/Privacy_policy">Privacy Policy</a>. Wikipedia® is a registered trademark of the <a href="//www.wikimediafoundation.org/">Wikimedia Foundation, Inc.</a>, a non-profit organization.</li>
+									</ul>
+							<ul id="footer-places">
+											<li id="footer-places-privacy"><a href="//wikimediafoundation.org/wiki/Privacy_policy" title="wmf:Privacy policy">Privacy policy</a></li>
+											<li id="footer-places-about"><a href="/wiki/Wikipedia:About" title="Wikipedia:About">About Wikipedia</a></li>
+											<li id="footer-places-disclaimer"><a href="/wiki/Wikipedia:General_disclaimer" title="Wikipedia:General disclaimer">Disclaimers</a></li>
+											<li id="footer-places-contact"><a href="//en.wikipedia.org/wiki/Wikipedia:Contact_us">Contact Wikipedia</a></li>
+											<li id="footer-places-developers"><a href="https://www.mediawiki.org/wiki/Special:MyLanguage/How_to_contribute">Developers</a></li>
+											<li id="footer-places-cookiestatement"><a href="//wikimediafoundation.org/wiki/Cookie_statement">Cookie statement</a></li>
+											<li id="footer-places-mobileview"><a href="//en.m.wikipedia.org/w/index.php?title=Delta-v_budget&amp;mobileaction=toggle_view_mobile" class="noprint stopMobileRedirectToggle">Mobile view</a></li>
+									</ul>
+										<ul id="footer-icons" class="noprint">
+											<li id="footer-copyrightico">
+							<a href="//wikimediafoundation.org/"><img src="/static/images/wikimedia-button.png" srcset="/static/images/wikimedia-button-1.5x.png 1.5x, /static/images/wikimedia-button-2x.png 2x" width="88" height="31" alt="Wikimedia Foundation"/></a>						</li>
+											<li id="footer-poweredbyico">
+							<a href="//www.mediawiki.org/"><img src="/static/1.27.0-wmf.13/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/static/1.27.0-wmf.13/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /static/1.27.0-wmf.13/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31" /></a>						</li>
+									</ul>
+						<div style="clear:both"></div>
+		</div>
+		<script>(window.RLQ = window.RLQ || []).push(function () {
+mw.loader.state({"ext.globalCssJs.site":"ready","ext.globalCssJs.user":"ready","user":"ready","user.groups":"ready"});mw.loader.load(["ext.cite.a11y","mediawiki.toc","mediawiki.action.view.postEdit","site","mediawiki.user","mediawiki.hidpi","mediawiki.page.ready","mediawiki.searchSuggest","ext.eventLogging.subscriber","ext.gadget.teahouse","ext.gadget.ReferenceTooltips","ext.gadget.DRN-wizard","ext.gadget.charinsert","ext.gadget.refToolbar","ext.gadget.switcher","ext.gadget.featured-articles-links","mmv.bootstrap.autostart","ext.visualEditor.targetLoader","ext.wikimediaEvents","ext.navigationTiming","schema.UniversalLanguageSelector","ext.uls.eventlogger","ext.uls.interlanguage"]);
+} );</script><script>(window.RLQ = window.RLQ || []).push(function () {
+mw.config.set({"wgBackendResponseTime":534,"wgHostname":"mw1254"}); /* @nomin */
+} );</script>
+	</body>
+</html>

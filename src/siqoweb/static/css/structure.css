@@ -187,6 +187,7 @@ div.StageSelector
   float            :left;
   height           :100%;
   width            :20%;
+  overflow         :auto;
 }
 /*----------------------------------------------------------------------------*/
 div.StageSelectorItem
@@ -249,6 +250,7 @@ div.Selector
   float            :left;
   height           :100%;
   width            :20%;
+  overflow         :auto;
 }
 /*----------------------------------------------------------------------------*/
 div.ForumItem

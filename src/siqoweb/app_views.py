@@ -3,24 +3,20 @@
 #------------------------------------------------------------------------------
 import os
 
-from   flask              import url_for, render_template, make_response
+from   flask              import make_response
 from   flask              import request, session, abort, redirect
 from   markupsafe         import escape
 
-import jinja2 as j2
-from   jinja2             import Environment, FileSystemLoader, PackageLoader, select_autoescape
+from   jinja2             import Environment, FileSystemLoader, select_autoescape
 
-import siqolib.general   as gen
-
-from   p_structure      import Structure
-from   p_login          import PageLogin
-from   p_page           import Page
-from   p_forum          import PageForum
+from   p_login            import PageLogin
+from   p_page             import Page
+from   p_forum            import PageForum
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.03'
+_VER      = '1.04'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
