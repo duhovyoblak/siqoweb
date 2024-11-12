@@ -11,7 +11,7 @@ import siqolib.general          as gen
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER       = '1.03'
+_VER       = '1.04'
 _CWD       = os.getcwd()
 
 _PING_LAG  =    2    # Number of hours after which ping is recomended
@@ -117,17 +117,16 @@ class Database:
         "Returns list of tables in the database"
 
         self.journal.I(f'{self.dtbs}.tables:')
-        toRet = []
         
         #----------------------------------------------------------------------
         # Ziskam zoznam tabuliek
         #----------------------------------------------------------------------
         rows = self.readDb(f"{self.dtbs}", sql="SELECT name FROM sqlite_master WHERE type='table' order by name")
         
-        if type(rows) == int:
+        if rows is None:
             self.journal.M(f'{self.dtbs}.tables: Method failed', True)
             self.journal.O()
-            return toRet
+            return None
         
         #----------------------------------------------------------------------
         # Skonvertujem do listu
@@ -143,7 +142,6 @@ class Database:
         "Returns list of attributes for respective table"
 
         self.journal.I(f"{self.dtbs}.attributes: table = '{table}'")
-        toRet = []
         
         #----------------------------------------------------------------------
         # Ziskam zoznam tabuliek
@@ -152,10 +150,10 @@ class Database:
                            sql="SELECT sql FROM sqlite_master WHERE type='table' and name=?",
                            params=(table,))
         
-        if type(rows) == int:
+        if rows is None:
             self.journal.M(f'{self.dtbs}.attributes: Method failed', True)
             self.journal.O()
-            return toRet
+            return None
         
         #----------------------------------------------------------------------
         # Ziskam text DDL prikazu CREATE TABLE ( content )
@@ -180,6 +178,8 @@ class Database:
         #----------------------------------------------------------------------
         # Extrahujem atributy do vysledneho listu
         #----------------------------------------------------------------------
+        toRet = []
+        
         for line in lst:
 
             attr = line.strip().split(' ')[0]
@@ -195,17 +195,16 @@ class Database:
         "Returns list of views in the database"
 
         self.journal.I(f'{self.dtbs}.views:')
-        toRet = []
 
         #----------------------------------------------------------------------
         # Ziskam zoznam views
         #----------------------------------------------------------------------
         rows = self.readDb(f"{self.dtbs}", sql="SELECT name FROM sqlite_master WHERE type='view' order by name")
 
-        if type(rows) == int:
+        if rows is None:
             self.journal.M(f'{self.dtbs}.views: Method failed', True)
             self.journal.O()
-            return toRet
+            return None
         
         #----------------------------------------------------------------------
         # Skonvertujem do listu
@@ -221,7 +220,6 @@ class Database:
         "Returns list of indexes in the database or in the table"
 
         self.journal.I(f"{self.dtbs}.indexes: table = '{table}'")
-        toRet = {}
         
         #----------------------------------------------------------------------
         # Ziskam zoznam indexov v DB alebo pre jednu tabulku
@@ -237,14 +235,16 @@ class Database:
                             sql = f"SELECT tbl_name, name FROM sqlite_master WHERE type='index' {where} order by tbl_name, name",
                             params = params)
         
-        if type(rows) == int:
+        if rows is None:
             self.journal.M(f'{self.dtbs}.indexes: Method failed', True)
             self.journal.O()
-            return toRet
+            return None
         
         #----------------------------------------------------------------------
         # Skonvertujem do dict
         #----------------------------------------------------------------------
+        toRet = {}
+
         for row in rows:
             
             if row[0] not in toRet.keys(): toRet[row[0]] = []
@@ -269,13 +269,13 @@ class Database:
 
             test = self.readDb(self.dtbs, "select 'OK'")
                 
-            if (test is not None) and (type(test)==list):
-                self.lastPing = datetime.now(gen._TIME_ZONE)
-                self.journal.M(f"{self.dtbs}.ping: Connection was pinged")
-
-            else:
+            if test is None:
                 self.isOpen = False
                 self.journal.M(f"{self.dtbs}.ping: Ping failed", True)
+
+            else:
+                self.lastPing = datetime.now(gen._TIME_ZONE)
+                self.journal.M(f"{self.dtbs}.ping: Connection was pinged")
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -287,7 +287,6 @@ class Database:
     def toJson(self, table, where='1=1'):
         
         self.journal.I(f"{self.dtbs}.toJson: table ={table} where {where}")
-        toRet = []
         
         #----------------------------------------------------------------------
         # Ziskam zoznam atributov
@@ -300,9 +299,16 @@ class Database:
         sql  = f"select * from {table} where {where}"
         rows = self.readDb(self.dtbs, sql)
         
+        if rows is None:
+            self.journal.M(f'{self.dtbs}.toJson: Method failed', True)
+            self.journal.O()
+            return None
+        
         #----------------------------------------------------------------------
         # Konverzia do json
         #----------------------------------------------------------------------
+        toRet = []
+
         toRet.append(atts)
         
         for row in rows:
@@ -362,10 +368,10 @@ class Database:
         
         rows = self.readDb(who, sql)
 
-        if type(rows) != list:
+        if rows is None:
             self.journal.I(f'{who}@{self.dtbs}.readTable: failed', True)
             self.journal.O()
-            return -2
+            return None
 
         #----------------------------------------------------------------------
         # Ak je vyzadovane, skonvertujem rows 
@@ -426,17 +432,16 @@ class Database:
     def selectItem(self, who, sql):
 
         self.journal.I(f'{who}@{self.dtbs}.selectItem: {sql}')
-        toRet = None
 
         #----------------------------------------------------------------------
         # Ziskam raw udaje
         #----------------------------------------------------------------------
         rows = self.readDb(who, sql)
         
-        if type(rows) == int:
+        if rows is None:
             self.journal.M(f'{who}@{self.dtbs}.selectItem: Method failed', True)
-            self.journal.O(f"{who}@{self.dtbs}.selectItem: '{toRet}'")
-            return toRet
+            self.journal.O()
+            return None
 
         #----------------------------------------------------------------------
         toRet  = rows[0][0]
@@ -456,7 +461,7 @@ class Database:
         if not self.isOpen:
             self.journal.M(f'{who}@{self.dtbs}.readDb: ERROR : Connection is not open', True)
             self.journal.O('')
-            return -1
+            return None
         
         #----------------------------------------------------------------------
         # Kontrola predchadzajuceho beziaceho prikazu
@@ -466,7 +471,7 @@ class Database:
             self.journal.M(f'{who}@{self.dtbs}.readDb: prev SQL: {self.prevCmd}',                   True)
             self.journal.M(f'{who}@{self.dtbs}.readDb: SQL     : {sql}',                            True)
             self.journal.O('')
-            return -2
+            return None
         
         #----------------------------------------------------------------------
         # Citanie udajov z konekcie
@@ -500,7 +505,7 @@ class Database:
             self.journal.M(f'{who}@{self.dtbs}.readDb: ERROR :{str(err)}', True)
             self.journal.M(f'{who}@{self.dtbs}.readDb: SQL   :{sql}',      True)
             self.journal.O('')
-            return -3
+            return None
 
     #--------------------------------------------------------------------------
     def sSql(self, who, sql, param=''):

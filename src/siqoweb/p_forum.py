@@ -119,7 +119,7 @@ class PageForum(Structure):
         toRet = []
 
         data = self.readForumItem()
-        print(data)
+        #print(data)
         
         #----------------------------------------------------------------------
         # Kontrola existencie itemu a konverzia hlavicky
@@ -155,7 +155,7 @@ class PageForum(Structure):
         toRet = []
 
         data = self.readSiblings()
-        print(data)
+        #print(data)
         
         #----------------------------------------------------------------------
         # Zoznam posledne zmenenych itemov pre root item, inak siblings
@@ -195,7 +195,7 @@ class PageForum(Structure):
         toRet = []
 
         data = self.readChildren()
-        print(data)
+        #print(data)
         
         #----------------------------------------------------------------------
         # Zoznam posledne zmenenych itemov pre root item, inak siblings

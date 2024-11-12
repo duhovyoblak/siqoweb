@@ -11,7 +11,9 @@ from   config          import Config
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER       = '1.01'
+_VER          = '1.02'
+
+_DMS_PREFIX   = 'SF'
 
 #==============================================================================
 # package's variables
@@ -41,7 +43,7 @@ class DMS:
         #----------------------------------------------------------------------
         # Identifikacia objektu
         #----------------------------------------------------------------------
-        self.name    = "DMS"
+        self.name    = f"DMS({db.dtbs})"
         self.journal = journal
         self.db      = db        # Database with DMS metadata
         self.docs    = []        # List of documents in RAM
@@ -66,19 +68,41 @@ class DMS:
     #==========================================================================
     # Tools
     #--------------------------------------------------------------------------
+    def idx2Fname(self, idx):
+        
+        return f"{Config.dmsPrefix}{str(idx).rjust(Config.dmsFnLen)}"
+
+    #--------------------------------------------------------------------------
     def uri(self, fName):
         
-        return f"{Config.dmsPath}{fName}"
+        return url_for('static', filename = f"{Config.dmsFolder}/{fName}")
 
     #==========================================================================
     # Praca s jednym dokumentom
     #--------------------------------------------------------------------------
     def docById(self, who, idx):
         
-        self.journal.I(f"{self.name}.docById: ID = '{id}'")
+        self.journal.I(f"{self.name}.docById: IDX = '{idx}'")
         
-        doc = self.docRead(who, where = f"DOC_ID = {idx}")[0]
-        doc['URI'] = url_for('static', filename=f"dms/{doc['FILENAME']}")
+        rows = self.docRead(who, where = f"DOC_ID = {idx}")
+        
+        if rows is None:
+            self.journal.M(f'{self.name}.docById: Method failed', True)
+            self.journal.O()
+            return None
+        
+        if len(rows) < 1:
+            self.journal.M(f'{self.name}.docById: Document with idx = {idx} does not exist', True)
+            self.journal.O()
+            return None
+        
+        if len(rows) > 1:
+            self.journal.M(f'{self.name}.docById: Too many documents with idx = {idx}', True)
+            self.journal.O()
+            return None
+        
+        doc = rows[0]
+        doc['URI'] = self.uri( doc['FILENAME'] )
         
         self.journal.O()
         return doc
@@ -91,7 +115,7 @@ class DMS:
 
         self.journal.I(f"{self.name}.docRead: where '{where}'")
         
-        self.docs = self.db.readTable(who, Config.tabDms, where)
+        self.docs = self.db.readTable(who, Config.tabDms, where, header='detail')
 
         # DOC_ID,C_FUNC,USER_ID,D_CREATED,C_TYPE,FILENAME,ORIGNAME,THUMBNAME,
         # N_SIZE,C_PUB,TITLE,NOTES,D_VALID,D_EXPIRY,MD5
@@ -110,16 +134,16 @@ class DMS:
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    from   siqo_lib                 import SiqoJournal
-    journal = SiqoJournal('test-DMS', debug=4)
+    from   siqolib.journal         import SiqoJournal
+    from   database                import Database
     
-    from   siqo_web.database        import Database
+    journal = SiqoJournal('test-DMS', debug=4)
     db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=False)
     
     dms = DMS(journal, db)
     
     docs = dms.docRead('ja')
-#    doc  = dms.docById('ja', 57)
+    doc  = dms.docById('ja', 57)
 
 #==============================================================================
 # Test cases

@@ -55,6 +55,8 @@ class HTML:
     def itemRender(self, item, lang):
         "Returns HTML for json-encoded item"
         
+        self.journal.I("HTML_{self.who}.itemRender:")
+
         copyItem = dict(item)
         
         (item, typ) = self.itemDrop(item, 'TYPE')
@@ -115,9 +117,10 @@ class HTML:
         except Exception as err:
             
             self.journal.M(f"HTML_{self.who}.itemRender: {str(err)}", True)
-            
             toRet = f'<p>{str(err)}</p><br><p>{copyItem}</p>'
         
+        #----------------------------------------------------------------------
+        self.journal.O()
         return toRet
         
     #--------------------------------------------------------------------------
@@ -158,25 +161,31 @@ class HTML:
     #--------------------------------------------------------------------------
     def a(self, item, lang):
 
+        (item, uri) = self.itemDrop(item, 'URI'  )
         (item, url) = self.itemDrop(item, 'URL'  )
         (item, idx) = self.itemDrop(item, 'IDX'  )
         (item, arg) = self.itemDrop(item, 'ARG'  )
         (item, brk) = self.itemDrop(item, 'BREAK')
         (item, txt) = self.itemDrop(item, lang   )
     
-        link = url_for(url)
+        #----------------------------------------------------------------------
+        # Vytvorenie href - prednost ma uri
+        #----------------------------------------------------------------------
+        if uri != '': 
+            link = uri
+            
+        else:
+            link = url_for(url)
+            if idx != '': link += f'/{idx.strip()}'
+            if arg != '': link += f'?{arg}'
         
-        #----------------------------------------------------------------------
-        # Vytvorenie href
-        #----------------------------------------------------------------------
-        if idx != '': link += f'/{idx.strip()}'
-        if arg != '': link += f'?{arg}'
         item["href"] = link
 
         #----------------------------------------------------------------------
         toRet = f'<a {self.html_atts(item)}>{txt}</a>'
         if brk: toRet += self.breakLine()
         
+        self.journal.M(f"HTML_{self.who}.a:{toRet}")
         return toRet
     
     #--------------------------------------------------------------------------
@@ -253,6 +262,8 @@ class HTML:
         (item, txt   ) = self.itemDrop(item, lang)
         (item, target) = self.itemDrop(item, 'target')
 
+        self.journal.I(f"HTML_{self.who}.textItem: {txt[:32]}...")
+
         args   = {lang:txt}
         toRet  = self.pStart(args, lang)
         toRet += self.pStop()
@@ -264,6 +275,8 @@ class HTML:
         
         for spl in splits:
             
+            self.journal.M(f"HTML_{self.who}.textItem: SPLIT {spl}")
+
             repl  = self.pStop() + self.split() + self.pStart()
             toRet = re.sub(spl, repl, toRet)
         
@@ -271,10 +284,11 @@ class HTML:
         # Nahradenie liniek
         #----------------------------------------------------------------------
         links = re.findall(r'{LINK.+?}', txt)
-        print(links)
         
         for link in links:
             
+            self.journal.M(f"HTML_{self.who}.textItem: LINK {link}")
+
             parts = link[1:-1].split(',')
             
             idx  = parts[1]
@@ -289,10 +303,11 @@ class HTML:
         # Nahradenie obrazkov
         #----------------------------------------------------------------------
         images = re.findall(r'{IMAGE.+?}', txt)
-        print(images)
 
         for image in images:
             
+            self.journal.M(f"HTML_{self.who}.textItem: IMAGE {image}")
+
             parts = image[1:-1].split(',')
             # {IMAGE,  idx,  h, w, float}
             
@@ -308,13 +323,12 @@ class HTML:
             else           : args['float' ] = 'left'
 
             imageHtml = self.imageThumb(args, lang)
-            print(imageHtml)
-            print()
             
-            #toRet = re.sub(image, imageHtml, toRet)
+            toRet = re.sub(image, imageHtml, toRet)
     
         
         #----------------------------------------------------------------------
+        self.journal.O()
         return toRet
         
     #==========================================================================
@@ -354,7 +368,9 @@ class HTML:
     #--------------------------------------------------------------------------
     def date(self, item, lang):
         
-        return f'<>' 
+        (item, date) = self.itemDrop(item, lang)
+
+        return date 
         
     #--------------------------------------------------------------------------
     def image(self, item, lang):
@@ -367,25 +383,17 @@ class HTML:
         #----------------------------------------------------------------------
         # Informacie v iteme
         #----------------------------------------------------------------------
-        (item, sdmId ) = self.itemDrop(item, 'sdmId' )
+        (item, idx   ) = self.itemDrop(item, 'idx'   )
         (item, height) = self.itemDrop(item, 'height')
         (item, width ) = self.itemDrop(item, 'width' )
         (item, flt   ) = self.itemDrop(item, 'float' )
-    
-        #----------------------------------------------------------------------
-        # Informacie ziskane z SDM podla sdmId
-        #----------------------------------------------------------------------
-        doc  = self.dms.docById(self.who, sdmId)
-        
-        uri   = doc['URI'  ]
-        title = doc['TITLE']
 
         #----------------------------------------------------------------------
         # Div
         #----------------------------------------------------------------------
         args = {"class"  :"ObjectImage"
-               ,"name"   :f"sdm_{sdmId}"
-               ,"id"     :f"sdm_{sdmId}"
+               ,"name"   :f"dms_{idx}"
+               ,"id"     :f"dms_{idx}"
                ,"style"  :f"height:{height}; width:{width}; float:{flt}"
                }
         toRet = self.divStart(args)
@@ -393,14 +401,19 @@ class HTML:
         #----------------------------------------------------------------------
         # Link
         #----------------------------------------------------------------------
+        doc  = self.dms.docById(self.who, idx)
+        
+        uri   = doc['URI'  ]
+        title = doc['TITLE']
+
         args = {"src"    :uri
                ,"style"  :"width:100%; max-height:90%"
                ,"alt"    :"SIQO DMS is loading image..."
                }
     
         linkTxt = self.image(args, lang)
-        
-        args = {"URL":uri, "target":"_blank", lang:linkTxt}
+       
+        args = {"URI":uri, "target":"_blank", lang:linkTxt}
         toRet += self.a(args, lang)
         
         #----------------------------------------------------------------------
@@ -414,6 +427,7 @@ class HTML:
         #----------------------------------------------------------------------
         toRet += self.divStop()
         
+        self.journal.M(f"HTML_{self.who}.imageThumb: {toRet}")
         return toRet
     
     #--------------------------------------------------------------------------
