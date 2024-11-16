@@ -17,11 +17,12 @@ import siqolib.general   as gen
 from   app_dms           import DMS
 from   html_render       import HTML
 from   object            import Object
+from   f_form            import FormStruct
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.02'
+_VER      = '1.03'
 
 #==============================================================================
 # package's variables
@@ -43,6 +44,9 @@ class Structure(Object):
         
         journal.I(f"Structure({classId}).init:")
         
+        #----------------------------------------------------------------------
+        # Identifikacia usera
+        #----------------------------------------------------------------------
         user = current_user
         
         if user is not None and str(user)[:5]=='User>': 
@@ -83,13 +87,9 @@ class Structure(Object):
         journal.M(f"Structure({self.classId}).init: lang = '{self.lang}'")
 
         #----------------------------------------------------------------------
-        # DMS
+        # Vytvorenie DMS a HTM renderera
         #----------------------------------------------------------------------
         self.dms = DMS(self.journal, self)
-
-        #----------------------------------------------------------------------
-        # HTML
-        #----------------------------------------------------------------------
         self.html = HTML(self.journal, who=self.name, dms=self.dms)
 
         #----------------------------------------------------------------------
@@ -108,12 +108,13 @@ class Structure(Object):
         #----------------------------------------------------------------------
         self.idContext = self.loadContent()
         self.addContext(self.idContext)
+       
+        #----------------------------------------------------------------------
+        # Doplnenie defaultneho formulara
+        #----------------------------------------------------------------------
+        self.formStruct = FormStruct()
+        self.addContext({'formStruct':self.formStruct})
 
-        #----------------------------------------------------------------------
-        # Ak je template staged, tak urcim defaultne nastaveny stage
-        #----------------------------------------------------------------------
-        
-        
         #----------------------------------------------------------------------
         #gen.dictPrint(dct=self.context)
         self.journal.O(f"Structure({self.name}).init")
@@ -303,31 +304,6 @@ class Structure(Object):
     #==========================================================================
     # Response generators
     #--------------------------------------------------------------------------
-    def respPost(self):
-     
-        self.journal.I(f"{self.classId}.respPost: Default None post response")
-        
-        self.journal.O()
-        return None
-
-    #--------------------------------------------------------------------------
-    def respGet(self):
-     
-        self.journal.I(f"{self.classId}.respGet: Default html get response from template='{self.template}'")
-        
-        template = self.env.get_template(self.template)
-        self.journal.M(f"{self.name}.resp: template loaded")
-
-        #----------------------------------------------------------------------
-        # Vygenerujem html
-        #----------------------------------------------------------------------
-        resp = make_response(template.render(**self.context), 200)
-        resp.headers['X-Something'] = 'A value'
-
-        self.journal.O()
-        return resp
-
-    #--------------------------------------------------------------------------
     def resp(self):
      
         self.journal.I(f"{self.classId}.resp:")
@@ -360,6 +336,34 @@ class Structure(Object):
         self.journal.O()
         return resp
 
+    #--------------------------------------------------------------------------
+    def respPost(self):
+     
+        self.journal.I(f"{self.classId}.respPost: Default None post response")
+        
+        
+        
+        
+        self.journal.O()
+        return None
+
+    #--------------------------------------------------------------------------
+    def respGet(self):
+     
+        self.journal.I(f"{self.classId}.respGet: Default html get response from template='{self.template}'")
+        
+        template = self.env.get_template(self.template)
+        self.journal.M(f"{self.name}.resp: template loaded")
+
+        #----------------------------------------------------------------------
+        # Vygenerujem html response
+        #----------------------------------------------------------------------
+        resp = make_response(template.render(**self.context), 200)
+        resp.headers['X-Something'] = 'A value'
+
+        self.journal.O()
+        return resp
+
     #==========================================================================
     # Internal methods
     #--------------------------------------------------------------------------
@@ -382,9 +386,9 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Definicia stranky
         #----------------------------------------------------------------------
-        self.context["height"]= self.height
-        self.context["initId"]= self.initId
-        self.context["lang"  ]= self.lang
+        self.context["height"              ] = self.height
+        self.context["initId"              ] = self.initId
+        self.context["lang"                ] = self.lang
 
         #----------------------------------------------------------------------
         # Navigation Bar

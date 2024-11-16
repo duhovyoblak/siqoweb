@@ -10,7 +10,7 @@ from   flask                    import url_for
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.05'
+_VER           = '1.05'
 
 #==============================================================================
 # package's variables
@@ -55,7 +55,7 @@ class HTML:
     def itemRender(self, item, lang):
         "Returns HTML for json-encoded item"
         
-        self.journal.I("HTML_{self.who}.itemRender:")
+        self.journal.I(f"HTML_{self.who}.itemRender: for lang = '{lang}'")
 
         copyItem = dict(item)
         
@@ -135,6 +135,15 @@ class HTML:
         
         return (item, val)
         
+    #--------------------------------------------------------------------------
+    def itemTxt(self, item, lang):
+        
+        (item, txt) = self.itemDrop(item, lang)
+        
+        #if txt == '': txt = f"No resource for lang='{lang}'"
+        
+        return (item, txt)
+        
     #==========================================================================
     # Jednoriadkove HTML vyrazy
     #--------------------------------------------------------------------------
@@ -152,7 +161,7 @@ class HTML:
     #--------------------------------------------------------------------------
     def h(self, item, lang, deg):
         
-        (item, txt) = self.itemDrop(item, lang)
+        (item, txt) = self.itemTxt(item, lang)
     
         return f'<h{deg} {self.html_atts(item)}>{txt}</h1> \n'
     
@@ -166,7 +175,8 @@ class HTML:
         (item, idx) = self.itemDrop(item, 'IDX'  )
         (item, arg) = self.itemDrop(item, 'ARG'  )
         (item, brk) = self.itemDrop(item, 'BREAK')
-        (item, txt) = self.itemDrop(item, lang   )
+        
+        (item, txt) = self.itemTxt(item, lang   )
     
         #----------------------------------------------------------------------
         # Vytvorenie href - prednost ma uri
@@ -201,9 +211,10 @@ class HTML:
     #--------------------------------------------------------------------------
     def pStart(self, item={}, lang='SK'):
     
-        (item, hid   ) = self.itemDrop(item, 'hidden')
-        (item, txt   ) = self.itemDrop(item, lang    )
         
+        (item, txt   ) = self.itemTxt (item, lang    )
+        (item, hid   ) = self.itemDrop(item, 'hidden')
+
         #----------------------------------------------------------------------
         # If paragraph is/is not hidden
         #----------------------------------------------------------------------
@@ -213,14 +224,14 @@ class HTML:
     #--------------------------------------------------------------------------
     def pCont(self, item={}, lang='SK'):
     
-        (item, txt   ) = self.itemDrop(item, lang    )
+        (item, txt   ) = self.itemTxt(item, lang    )
     
         return txt
     
     #--------------------------------------------------------------------------
     def pStop(self, item={}, lang='SK'):
     
-        (item, txt   ) = self.itemDrop(item, lang    )
+        (item, txt   ) = self.itemTxt(item, lang    )
         
         return f'{txt}</p>\n'
     
@@ -245,13 +256,13 @@ class HTML:
     #--------------------------------------------------------------------------
     def pre(self, item, lang):
     
-        (item, txt) = self.itemDrop(item, lang)
+        (item, txt) = self.itemTxt(item, lang)
         return f'<pre {self.html_atts(item)}>{txt}</pre>\n'
     
     #--------------------------------------------------------------------------
     def label(self, item, lang):
     
-        (item, txt) = self.itemDrop(item, lang)
+        (item, txt) = self.itemTxt(item, lang)
         return f'<label {self.html_atts(item)}>{txt}</label>\n'
     
     #--------------------------------------------------------------------------
@@ -259,7 +270,7 @@ class HTML:
     #--------------------------------------------------------------------------
     def textItem(self, item, lang):
 
-        (item, txt   ) = self.itemDrop(item, lang)
+        (item, txt   ) = self.itemTxt(item, lang)
         (item, target) = self.itemDrop(item, 'target')
 
         self.journal.I(f"HTML_{self.who}.textItem: {txt[:32]}...")

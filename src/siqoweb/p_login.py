@@ -22,7 +22,7 @@ from   f_formLogin        import FormLogin
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.01'
+_VER      = '1.03'
 
 #==============================================================================
 # package's variables
@@ -59,7 +59,7 @@ class PageLogin(Structure):
         #----------------------------------------------------------------------
         # Continue as Guest User
         #----------------------------------------------------------------------
-        if self.formLogin.asGuest.data:
+        if self.formLogin.btnGuest.data:
                 
                 user_id = _ANONYM
                 pasw    = '?'
@@ -76,7 +76,7 @@ class PageLogin(Structure):
         #----------------------------------------------------------------------
         # Logout
         #----------------------------------------------------------------------
-        if self.formLogin.logout.data:
+        if self.formLogin.btnLogout.data:
                 
                 logout_user()
             
@@ -99,7 +99,7 @@ class PageLogin(Structure):
         if self.formLogin.validate_on_submit():
             
             #------------------------------------------------------------------
-            # Autentifikacia usera podla udajov z formulara
+            # Vytvornie usera podla udajov z formulara
             #------------------------------------------------------------------
             user_id = self.formLogin.username.data
             pasw    = self.formLogin.password.data
@@ -107,6 +107,9 @@ class PageLogin(Structure):
             
             self.user = User(self.journal)
 
+            #------------------------------------------------------------------
+            # Autentifikacia usera podla udajov z formulara sa nepodarila
+            #------------------------------------------------------------------
             if not self.user.authenticate(user_id, pasw):
                 
                 logout_user()

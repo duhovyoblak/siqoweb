@@ -33,6 +33,12 @@
     <script>InitElement("{{initId}}")</script>
     {% block jsInit %}{% endblock %}
 
+    <!--------------------------------------------------------FORM STRUCTURE-->
+    <form class="hidden" id="formStruct" action="" method="post" novalidate>
+        {{ formStruct.pgXver   }}
+        {{ formStruct.lastPage }}
+    </form>
+
     <!----------------------------------------------------------------HEADER-->
     <div class="Header" id="Header" onclick="ShowElement('Content')">
     {% block header %}{% endblock %}

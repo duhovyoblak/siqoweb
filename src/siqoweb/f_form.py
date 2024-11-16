@@ -4,13 +4,13 @@
 import os
 
 from flask_wtf          import FlaskForm
-from wtforms            import StringField, PasswordField, BooleanField, SubmitField
+from wtforms            import HiddenField, StringField, TextAreaField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.01'
+_VER      = '1.02'
 _CWD      = os.getcwd()
 
 #==============================================================================
@@ -20,12 +20,10 @@ _CWD      = os.getcwd()
 #==============================================================================
 # Form
 #------------------------------------------------------------------------------
-class PgForm(FlaskForm):
+class FormStruct(FlaskForm):
     
-    UserActType  = SubmitField('Sign In')
-    UserObj  = SubmitField('Continue as Guest User')
-    UserAct = SubmitField('Sign Out')
-
+    pgXver   = HiddenField(u'pgXver')
+    lastPage = HiddenField(u'')
 
 #==============================================================================
 print(f"forms {_VER}")

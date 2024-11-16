@@ -7,7 +7,7 @@ from flask_wtf          import FlaskForm
 from wtforms            import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 
-from f_form             import PgForm
+from f_form             import FormStruct
 
 #==============================================================================
 # package's constants
@@ -22,11 +22,11 @@ _CWD      = os.getcwd()
 #==============================================================================
 # FormForum
 #------------------------------------------------------------------------------
-class FormForum(PgForm):
+class FormForum(FormStruct):
     
-    username = StringField  ('Username', validators=[DataRequired()] )
-    password = PasswordField('Password', validators=[DataRequired()] )
-    remember = BooleanField ('Remember Me')
+    #username = StringField  ('Username', validators=[DataRequired()] )
+    #password = PasswordField('Password', validators=[DataRequired()] )
+    #remember = BooleanField ('Remember Me')
     
     sfUp         = SubmitField('Up')
     sfEdit       = SubmitField('Edit')
