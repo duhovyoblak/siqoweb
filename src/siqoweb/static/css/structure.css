@@ -240,6 +240,9 @@ div.Content
   position         :relative;
   left             :0px;
   top              :0px;
+  
+  margin           :0px;
+  padding          :5px;
 }
 /*----------------------------------------------------------------------------*/
 div.Selector
@@ -249,8 +252,11 @@ div.Selector
   
   float            :left;
   height           :100%;
+  margin           :0px;
+  overflow-x       :clip;
+  overflow-y       :auto;
+
   width            :20%;
-  overflow         :auto;
 }
 /*----------------------------------------------------------------------------*/
 div.ForumItem
@@ -260,8 +266,11 @@ div.ForumItem
 
   float            :left;
   height           :100%;
-  width            :80%;
-  overflow         :auto;
+  margin           :0px;
+  overflow-x       :clip;
+  overflow-y       :auto;
+  
+  width            :60%;
 }
 /*----------------------------------------------------------------------------*/
 /* Tirage Elements                                                            */

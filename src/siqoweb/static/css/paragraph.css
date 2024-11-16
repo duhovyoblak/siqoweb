@@ -162,8 +162,8 @@ a:link {
   width            :100%;
   height           :auto; 
 
-  margin           :4px 0px 4px 8px;
-  padding          :0px 2px 0px 2px;
+  margin           :0px;
+  padding          :0px;
   border           :none;
 
   text-align       :left;
@@ -180,8 +180,8 @@ a.smallFont:link {
   width            :100%;
   height           :auto; 
 
-  margin           :4px 0px 4px 8px;
-  padding          :0px 2px 0px 2px;
+  margin           :0px;
+  padding          :0px;
   border           :none;
 
   text-align       :left;

@@ -10,7 +10,7 @@ from   flask                    import url_for
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.04'
+_VER      = '1.05'
 
 #==============================================================================
 # package's variables
@@ -271,7 +271,7 @@ class HTML:
         #----------------------------------------------------------------------
         # Nahradenie split
         #----------------------------------------------------------------------
-        splits = re.findall(r'{SPLIT.*?}', txt)
+        splits = re.findall(r'{\s*SPLIT\s*}', txt)
         
         for spl in splits:
             
@@ -283,7 +283,7 @@ class HTML:
         #----------------------------------------------------------------------
         # Nahradenie liniek
         #----------------------------------------------------------------------
-        links = re.findall(r'{LINK.+?}', txt)
+        links = re.findall(r'{\s*LINK.+?}', txt)
         
         for link in links:
             
@@ -295,14 +295,14 @@ class HTML:
             aTxt = parts[2]
             
             args  = {'URL':target, 'IDX':idx, lang:aTxt}
-            aHtml = self.a(args, lang)
-            
-            toRet = re.sub(link, aHtml, toRet)
+
+            repl  = self.a(args, lang)
+            toRet = re.sub(link, repl, toRet)
         
         #----------------------------------------------------------------------
         # Nahradenie obrazkov
         #----------------------------------------------------------------------
-        images = re.findall(r'{IMAGE.+?}', txt)
+        images = re.findall(r'{\s*IMAGE.+?}', txt)
 
         for image in images:
             
@@ -322,10 +322,8 @@ class HTML:
             if len(parts)>4: args['float' ] = parts[4].strip()
             else           : args['float' ] = 'left'
 
-            imageHtml = self.imageThumb(args, lang)
-            
-            toRet = re.sub(image, imageHtml, toRet)
-    
+            repl  = self.pStop() + self.imageThumb(args, lang) + self.pStart()
+            toRet = re.sub(image, repl, toRet)
         
         #----------------------------------------------------------------------
         self.journal.O()

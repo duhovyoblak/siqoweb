@@ -9,10 +9,8 @@ backup/
 htmlcov/
 venv/
 
-siqo_web/static/dms
 dist/
 build/
-
 
 *.egg-info/
 *.pyc
