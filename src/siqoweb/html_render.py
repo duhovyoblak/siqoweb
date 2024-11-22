@@ -126,12 +126,8 @@ class HTML:
     #--------------------------------------------------------------------------
     def itemDrop(self, item, key):
         
-        if key in item.keys(): 
-            
-            val = item[key]
-            item[key] = ''
-            
-        else: val = ''
+        if key in item.keys(): val = item.pop(key)
+        else                 : val = ''
         
         return (item, val)
         

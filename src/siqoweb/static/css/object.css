@@ -148,7 +148,6 @@ div.ObjectBackSpace {
   position         :relative;
   top              :0;
   width            :auto;
-   //  overflow         :hidden;
   overflow-y       :auto;
 
   color            :#003366;

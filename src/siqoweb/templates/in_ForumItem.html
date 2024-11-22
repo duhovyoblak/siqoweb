@@ -27,3 +27,73 @@
 <!---------------------------------------------------------------------------->
 <!-- End of the file -->
 <!---------------------------------------------------------------------------->
+public function Show( $stage, $action, $h='', $w='', $ObjectID='' )
+{
+  $this->se->JournalS( $this->obj, 'S_Object.php', 'Show()...', 'OK', $this->lvl );
+  $this->height = $h;
+  $this->width  = $w;
+  
+  //----------------------------------------------------------------------------
+  // Vytvorenie formulara
+  //----------------------------------------------------------------------------
+  $this->ObjectStart( $action, $ObjectID );
+
+  //----------------------------------------------------------------------------
+  // Header Section
+  //----------------------------------------------------------------------------
+  $this->ObjectHeaderStart();
+
+  $this->ShowHeader();
+
+  //----------------------------------------------------------------------------
+  // Backward Section 
+  //----------------------------------------------------------------------------
+  $this->ObjectBackStart();
+
+  if( $this->AllowPasive() ) $this->ShowBack( $stage, $action );
+  else
+    p( 'NedostatoÄnÃ© prÃ¡va. ZÃ­skajte dostatoÄnÃ© prÃ¡va na pouÅ¾itie tejto funkÄnosti' );
+
+  //----------------------------------------------------------------------------
+  // Front Section 
+  //----------------------------------------------------------------------------
+  $this->ObjectFrontStart();
+  
+  if( $this->AllowPasive() ) $this->ShowFront( $stage, $action );
+  else
+    p( 'NedostatoÄnÃ© prÃ¡va. ZÃ­skajte dostatoÄnÃ© prÃ¡va na pouÅ¾itie tejto funkÄnosti' );
+  
+  //----------------------------------------------------------------------------
+  // Control Section
+  //----------------------------------------------------------------------------
+  $this->ObjectControlStart( $stage );
+  $this->ShowButtons();
+  
+  //----------------------------------------------------------------------------
+  // Koniec formulara tabulky
+  //----------------------------------------------------------------------------
+  $this->ObjectStop();
+}
+//------------------------------------------------------------------------------
+protected function ShowHeader()
+{
+  p( $this->ResourceGet( 'ObjectName' ), "ObjectName" ); 
+}
+//------------------------------------------------------------------------------
+protected function ShowBack( $stage, $action )
+{
+  foreach( $this->items as $name=>$item ) 
+    $this->ShowItem( $item, 'B',  $stage, $action  ); 
+}
+//------------------------------------------------------------------------------
+protected function ShowFront( $stage, $action )
+{
+  foreach( $this->items as $name=>$item ) 
+    $this->ShowItem( $item, 'F',  $stage, $action  ); 
+}
+//------------------------------------------------------------------------------
+private function ShowButtons()
+{
+  foreach( $this->btns as $name=>$btn ) $this->ShowButton( $btn ); 
+}
+//------------------------------------------------------------------------------
