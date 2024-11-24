@@ -5,6 +5,7 @@
 #------------------------------------------------------------------------------
 import os
 import re
+import traceback
 from   flask                    import url_for
 
 #==============================================================================
@@ -107,7 +108,7 @@ class HTML:
         # Priprava
         #----------------------------------------------------------------------
         try:
-            item['objId'] = f"{self.classId}.objId"
+            item['objId'] = f"{self.classId}.{objId}"
             copyItem = dict(item)
         
             (item, typ) = self.itemDrop(item, 'TYPE')
@@ -169,17 +170,21 @@ class HTML:
         except Exception as err:
             
             self.journal.M(f"HTML_{self.who}.itemRender: {str(err)}", True)
-            toRet = f'<p>{str(err)}</p><br><p>{copyItem}</p>'
+            toRet = f'<p>{str(err)}</p><br><p>{copyItem}</p><br><p>{traceback.format_exc()}</p>'
         
         #----------------------------------------------------------------------
         self.journal.O()
         return toRet
         
     #--------------------------------------------------------------------------
-    def itemDrop(self, item, key):
+    def itemDrop(self, item, key, pop=True):
         
-        if key in item.keys(): val = item.pop(key)
-        else                 : val = ''
+        if key in item.keys(): 
+            
+            if pop: val = item.pop(key)
+            else  : val = item[key]
+            
+        else: val = ''
         
         return (item, val)
         
@@ -573,6 +578,7 @@ class HTML:
     #--------------------------------------------------------------------------
     # DB Objects block
     #--------------------------------------------------------------------------
+#!!!!
     def dbObject(self, item, lang):
         """Renders objects based on parameters"""
         
@@ -581,19 +587,34 @@ class HTML:
         #----------------------------------------------------------------------
         # Define parameters of an object
         #----------------------------------------------------------------------
-        (item, objName     ) = self.itemDrop(item, lang    )
-        (item, objId       ) = self.itemDrop(item, 'objId' )
+        (item, objClass    ) = self.itemDrop(item, 'CLASS' )
+        (item, target      ) = self.itemDrop(item, 'target', False)
         (item, crForm      ) = self.itemDrop(item, 'crForm')
+        
+        (item, objId       ) = self.itemDrop(item, 'objId' )
         (item, height      ) = self.itemDrop(item, 'height')
         (item, width       ) = self.itemDrop(item, 'width' )
+        
+        if width  == '': width  = '99%'
+        if height == '': height = '94%'
   
         #----------------------------------------------------------------------
-        # Render the object
+        # Read instance of the object for respective class
+        #----------------------------------------------------------------------
+        dbItem = self.loadDbItem(who='ja', objClass=objClass, item=item)
+        
+        if len(dbItem) == 0:
+            
+            self.journal.M(f"HTML_{self.who}.dbObject: No dbItem for class={objClass} and item={item}", True)
+            return toRet
+
+        #----------------------------------------------------------------------
+        # Render the object formular
         #----------------------------------------------------------------------
         if crForm == 'Y': 
             
-            (item, method) = self.itemDrop(item, 'method')
-            (item, action) = self.itemDrop(item, 'action')
+            method = 'POST'
+            action = url_for(target)
     
             atts = {"name":objId, "id":objId, "method":method, "action":action, "enctype":"multipart/form-data"}
             toRet += self.formStart(atts)
@@ -609,9 +630,7 @@ class HTML:
         #----------------------------------------------------------------------
         atts = {"name":objId, "id":f"{objId}_HS", "class":"ObjectHeaderSpace", "onclick":f"ObjectContentControl('{objId}', '20')"}
         toRet += self.divStart(atts);
-        
-        toRet += self.p({lang:objName}, lang)
-        
+        toRet += self.objectHead(objClass, item=item, dbItem=dbItem, lang=lang)
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -629,9 +648,7 @@ class HTML:
         #----------------------------------------------------------------------
         atts = {"name":objId, "id":f"{objId}_FS", "class":"ObjectFrontSpace", "style":f"height:{height};"}
         toRet += self.divStart(atts);
-   
-#           ShowFront( $stage, $action );
-
+        toRet += self.objectFront(objClass, item=item, dbItem=dbItem, lang=lang)
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -653,11 +670,106 @@ class HTML:
         if crForm == 'Y': self.formStop()
         
         #----------------------------------------------------------------------
-        print(toRet)
         return toRet
 
     #--------------------------------------------------------------------------
+    def loadDbItem(self, who, objClass, item):
+        
+        toRet = {}
+    
+        #----------------------------------------------------------------------
+        # Nacitanie objektu podla class
+        #----------------------------------------------------------------------
+        if objClass == 'FORUM':
+            
+            (item, forumId) = self.itemDrop(item, 'FORUM', False)
+            
+            toRet = self.dms.loadForumItem(who, forumId=forumId, idx=0, target='')
+            
+       
+        #----------------------------------------------------------------------
+        print('dbItem > ', toRet)
+        return toRet
+    
+    #--------------------------------------------------------------------------
+    def objectHead(self, objClass, item, dbItem, lang):
+        
+        toRet = ''
+        
+        #----------------------------------------------------------------------
+        # Vytvorenie hlavicky objektu podla class
+        #----------------------------------------------------------------------
+        if objClass == 'FORUM':
+            
+            (dbItem, title) = self.itemDrop(dbItem, 'TITLE')
+            toRet += self.itemRender(title, lang)
+            
+        else: 
+            (dbItem, objName) = self.itemDrop(dbItem, lang)
+            toRet += self.p({lang:objName}, lang)
 
+        #----------------------------------------------------------------------
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def objectFront(self, objClass, item, dbItem, lang):
+
+        toRet = ''
+
+        #----------------------------------------------------------------------
+        # Vytvorenie Front/end objektu podla class
+        #----------------------------------------------------------------------
+        if objClass == 'FORUM':
+            
+            (dbItem, objId) = self.itemDrop(dbItem, 'ITEM_ID'  )
+            (dbItem, parId) = self.itemDrop(dbItem, 'PARENT_ID')
+            (dbItem, narr ) = self.itemDrop(dbItem, 'NARR'     )
+            (dbItem, d_crt) = self.itemDrop(dbItem, 'D_CRT'    )
+            (dbItem, d_chg) = self.itemDrop(dbItem, 'D_CHG'    )
+            (dbItem, text ) = self.itemDrop(dbItem, 'TEXT'     )
+            
+            (item, forumId) = self.itemDrop(item, 'FORUM' , False)
+            (item, target ) = self.itemDrop(item, 'target', False)
+            
+            idx    = objId['SK']
+            parIdx = parId['SK']
+
+            print('idx,    ', idx)
+            print('parIdx, ', parIdx)
+            
+            
+            
+            #------------------------------------------------------------------
+            # Vykreslenie Siblings/Changes
+            #------------------------------------------------------------------
+            toRet += self.divStart({"class":"Selector", "style":"height:100%; width:20%; display:block"})
+            sibs   = self.dms.loadForumSiblings(who='ja', forumId=forumId, parIdx=parIdx, target=target)
+            toRet += self.itemListRender(sibs, lang)
+            toRet += self.divStop()
+            
+            #------------------------------------------------------------------
+            # Vykreslenie Vykreslenie Forum itemu
+            #------------------------------------------------------------------
+            toRet += self.divStart({"class":"ForumItem", "style":"height:100%; width:60%; display:block"})
+            toRet += self.itemRender(d_chg, lang)
+            toRet += self.itemRender(narr,  lang)
+            toRet += self.itemRender(text,  lang)
+            toRet += self.divStop()
+            
+            #------------------------------------------------------------------
+            # Vykreslenie Children
+            #------------------------------------------------------------------
+            toRet += self.divStart({"class":"Selector", "style":"height:100%; width:20%; display:block"})
+            child  = self.dms.loadForumChildren(who='ja', forumId=forumId, idx=idx, target=target)
+            toRet += self.itemListRender(child, lang)
+            toRet += self.divStop()
+            
+        else: 
+            (dbItem, objName) = self.itemDrop(dbItem, lang)
+            toRet += self.p({lang:objName}, lang)
+
+        #----------------------------------------------------------------------
+        return toRet
 
     #--------------------------------------------------------------------------
     # Head block

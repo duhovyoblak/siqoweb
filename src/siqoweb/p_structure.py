@@ -448,6 +448,9 @@ if __name__ == '__main__':
     page = Structure(journal, env, 'PagManContact', 700)
  
     rec = page.context
+
+    item = page.dms.loadForumItem('ja', forumId='OHISTORY')
+
     
 #==============================================================================
 print(f"Structure {_VER}")

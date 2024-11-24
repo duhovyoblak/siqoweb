@@ -2,18 +2,19 @@
 #  SIQO Homepage: DMS API
 #------------------------------------------------------------------------------
 import os
-
-from   flask                    import Flask, url_for, render_template, make_response
+from   flask                   import Flask, url_for, render_template, make_response
 
 import siqolib.general         as gen
-from   config          import Config
+from   config                  import Config
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER          = '1.02'
+_VER           = '1.04'
 
-_DMS_PREFIX   = 'SF'
+_DMS_PREFIX    = 'SF'
+_DAY_CHANGES   = 32       # Pocet dni, pocas ktorych sa item povazuje za cerstvo zmeneny
+_TITLE_MAX     = 36       # Maximalny pocet zobrazenych znakov TITLE v selectore
 
 #==============================================================================
 # package's variables
@@ -126,8 +127,171 @@ class DMS:
         return self.docs
 
     #==========================================================================
-    # Praca s Resources (page-obj-resource-key)
+    # Praca s FORUM
     #--------------------------------------------------------------------------
+    def loadForumItem(self, who, forumId, idx=0, target=''):
+    
+        self.journal.I(f"{self.name}.loadForumItem: {forumId}.{idx}")
+        toRet = {}
+
+        #----------------------------------------------------------------------
+        # Ak NIE je zname idx nacitam root item fora, inak nacitam nacitam item
+        #----------------------------------------------------------------------
+        if idx > 0: where = f" FORUM_ID = '{forumId}' and ITEM_ID   = {idx}"
+        else      : where = f" FORUM_ID = '{forumId}' and PARENT_ID = 0"
+
+        self.journal.M(f"{self.name}.loadForumItem: {where}")
+        
+        #----------------------------------------------------------------------
+        # Nacitanie polozky z DB ako dict
+        #----------------------------------------------------------------------
+        item = self.db.readTable(who=who, table=Config.tabForum, where=where, header='detail')
+        
+        #----------------------------------------------------------------------
+        # Kontrola existencie forum itemu
+        #----------------------------------------------------------------------
+        if len(item) == 0: 
+
+            self.journal.M(f"{self.name}.loadForumItem: Item {where} does not exist")
+            self.journal.O()
+            return None
+        
+        #----------------------------------------------------------------------
+        # Konverzia dat do objektu
+        #----------------------------------------------------------------------
+        data = item[0]
+
+        if data is not None: 
+            
+            title = data['TITLE']
+            if data['C_FUNC'] == 'K': title = f"KONCEPT: {title}"
+            
+            toRet['ITEM_ID'  ] = {'SK': data['ITEM_ID'  ], 'TYPE':'VAR'                        }
+            toRet['PARENT_ID'] = {'SK': data['PARENT_ID'], 'TYPE':'VAR'                        }
+            toRet['TITLE'    ] = {'SK': title,             'TYPE':'H2'                         }
+            toRet['NARR'     ] = {'SK': data['NARRATOR' ], 'TYPE':'H3'                         }
+            toRet['D_CRT'    ] = {'SK': data['D_CREATED'], 'TYPE':'DATE'                       }
+            toRet['D_CHG'    ] = {'SK': data['D_CHANGED'], 'TYPE':'DATE'                       }
+            toRet['TEXT'     ] = {'SK': data['ITEM'     ], 'TYPE':'TEXT_ITEM', 'target':target }
+
+        else: 
+            apology = f"Oops, it seems forum item {self.idx} doesn't exist in forum {self.target}"
+            
+            toRet['ITEM_ID'  ] = {'SK': -1               , 'TYPE':'VAR'   }
+            toRet['PARENT_ID'] = {'SK': -1               , 'TYPE':'VAR'   }
+            toRet['TITLE'    ] = {'SK': apology          , 'TYPE':'H2'    }
+            toRet['NARR'     ] = {'SK': "Unknown"        , 'TYPE':'H3'    }
+            toRet['D_CRT'    ] = {'SK': 'now'            , 'TYPE':'DATE'  }
+            toRet['D_CHG'    ] = {'SK': 'now'            , 'TYPE':'DATE'  }
+            toRet['TEXT'     ] = {'SK': ''               , 'TYPE':'P'     }
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def loadForumSiblings(self, who, forumId, parIdx, target):
+    
+        self.journal.I(f"{self.name}.loadForumSiblings: For item {forumId}.{parIdx}")
+        toRet = []
+
+        #----------------------------------------------------------------------
+        # Zoznam posledne zmenenych itemov pre root item, inak siblings
+        #----------------------------------------------------------------------
+        if parIdx == 0: toRet.append( {'SibsLabel':{'SK': 'Naposledy zmenené kapitoly', 'TYPE':'LABEL' }} )
+        else          : toRet.append( {'SibsLabel':{'SK': 'Obsah tejto kapitoly'      , 'TYPE':'LABEL' }} )
+
+        toRet.append( {'SibsSplit':{'TYPE':'SPLIT'}} )
+        
+        #----------------------------------------------------------------------
+        # Nacitam siblings z DB
+        #----------------------------------------------------------------------
+        data = self.readForumChildren(who, forumId, parIdx=parIdx)
+
+        #----------------------------------------------------------------------
+        # Konverzia nacitanych riadkov z DB do itemov
+        #----------------------------------------------------------------------
+        i = 0
+        for row in data:
+
+            idx   = str(row[0])
+            func  = row[1]
+            title = row[2]
+            
+            #------------------------------------------------------------------
+            # Pre koncepty vlozim pred titul C
+            #------------------------------------------------------------------
+            if func=='K': title = f"C {title}"
+        
+            toRet.append( {f"sibl_{i}": {'class':'smallFont', 'SK':title[:_TITLE_MAX], 'TYPE':'A', 'URL':target, 'IDX':idx, 'BREAK':True }} )
+
+            i += 1
+      
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def loadForumChildren(self, who, forumId, idx, target):
+    
+        self.journal.I(f"{self.name}.loadForumChildren: {forumId}.{idx}")
+        toRet = []
+
+        #----------------------------------------------------------------------
+        # Zoznam podkapitol
+        #----------------------------------------------------------------------
+        toRet.append( {'ChildLabel':{'SK': 'Podkapitoly',  'TYPE':'LABEL' }} )
+        toRet.append( {'ChildSplit':{'TYPE':'SPLIT'}} )
+        
+        #----------------------------------------------------------------------
+        # Nacitam children z DB
+        #----------------------------------------------------------------------
+        data = self.readForumChildren(who, forumId, parIdx=idx)
+        
+        #----------------------------------------------------------------------
+        # Konverzia nacitanych riadkov z DB do itemov
+        #----------------------------------------------------------------------
+        i = 0
+        for row in data:
+
+            idx   = str(row[0])
+            func  = row[1]
+            title = row[2]
+            
+            #------------------------------------------------------------------
+            # Pre koncepty vlozim pred titul C
+            #------------------------------------------------------------------
+            if func=='K': title = f"C {title}"
+        
+            toRet.append( {f"child_{i}": {'class':'smallFont', 'SK':title[:_TITLE_MAX], 'TYPE':'A', 'URL':target, 'IDX':idx, 'BREAK':True }} )
+
+            i += 1
+      
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def readForumChildren(self, who, forumId, parIdx, days=_DAY_CHANGES):
+        "Reads from DB items for respective <parIdx> and changed in last <days>"
+    
+        self.journal.I(f"{self.name}.readForumChildren: {forumId}.{parIdx} in last {days} days")
+
+        #----------------------------------------------------------------------
+        # Zoznam posledne zmenenych itemov pre root item, inak siblings
+        #----------------------------------------------------------------------
+        if parIdx == 0: where = f" FORUM_ID = '{forumId}' and julianday('now')-julianday(d_changed) <= {days}"
+        else          : where = f" FORUM_ID = '{forumId}' and PARENT_ID = {str(parIdx)}"
+
+        #----------------------------------------------------------------------
+        # Nacitanie zoznamu TITLEs z DB ako list
+        #----------------------------------------------------------------------
+        sql = f"select ITEM_ID, C_FUNC, TITLE from {Config.tabForum} where {where}"
+        children = self.db.readDb(who=who, sql=sql)
+        
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return children
 
 #==============================================================================
 # Test cases
@@ -144,6 +308,7 @@ if __name__ == '__main__':
     
     docs = dms.docRead('ja')
     doc  = dms.docById('ja', 57)
+    
 
 #==============================================================================
 # Test cases
