@@ -22,7 +22,7 @@ from   f_form            import FormStruct
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.04'
+_VER      = '1.05'
 
 #==============================================================================
 # package's variables
@@ -89,8 +89,8 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Vytvorenie DMS a HTM renderera
         #----------------------------------------------------------------------
-        self.dms = DMS(self.journal, self)
-        self.html = HTML(self.journal, who=self.name, dms=self.dms)
+        self.dms  = DMS (self.journal, self)
+        self.html = HTML(self.journal, who=self.name, dms=self.dms, classId=classId)
 
         #----------------------------------------------------------------------
         # Inicializacia statickeho contextu
@@ -106,8 +106,8 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Doplnenie specifickeho contextu z DB podla id
         #----------------------------------------------------------------------
-        self.idContext = self.loadContent()
-        self.addContext(self.idContext)
+#        self.idContext = self.loadContent()
+#        self.addContext(self.idContext)
        
         #----------------------------------------------------------------------
         # Doplnenie defaultneho formulara
@@ -143,25 +143,39 @@ class Structure(Object):
         res = self.pageGet(self.user)
         
         #----------------------------------------------------------------------
-        # Zistim ako sa vola objekt pre navBarLinks
+        # NavBar objects
         #----------------------------------------------------------------------
-        for navBarObjId, navBarLst in res['__NAVB__'].items():
-                
-            #------------------------------------------------------------------
-            # Vsetkym objektom v NavBarLst nastavim type=BARMENUITEM
-            #------------------------------------------------------------------
-            for navBarObj in navBarLst:
-                
-                #{'1_Admin': {'SK': 'Admin', 'URL': 'pgAdmin'}}
-                key = list(navBarObj.keys())[0]
-                navBarObj[key]["TYPE"] = "BARMENUITEM"
+        userBarLink = {"User":{"SK":self.userName, "URL":"pgLogin", "TYPE":"BARMENUITEM"}}
 
-            #----------------------------------------------------------------------
-            # 0-ta polozka v NavBarLst je UserItem - vlozim ho tam
-            #----------------------------------------------------------------------
-            userBarLink = {"User":{"SK":self.userName, "URL":"pgLogin", "TYPE":"BARMENUITEM"}}
-            res['__NAVB__'][navBarObjId].insert(0, userBarLink)
+        #----------------------------------------------------------------------
+        # Skontrolujem ci existuje definicia NavBar objects
+        #----------------------------------------------------------------------
+        if len(res['__NAVB__']) > 0:
+
+            #------------------------------------------------------------------
+            # Zistim ako sa vola objekt pre navBarLinks
+            #------------------------------------------------------------------
+            for navBarObjId, navBarLst in res['__NAVB__'].items():
+                
+                #--------------------------------------------------------------
+                # Vsetkym objektom v NavBarLst nastavim type=BARMENUITEM
+                #--------------------------------------------------------------
+                for navBarObj in navBarLst:
+                
+                    #{'1_Admin': {'SK': 'Admin', 'URL': 'pgAdmin'}}
+                    key = list(navBarObj.keys())[0]
+                    navBarObj[key]["TYPE"] = "BARMENUITEM"
+
+                #--------------------------------------------------------------
+                # 0-ta polozka v NavBarLst je UserItem - vlozim ho tam
+                #--------------------------------------------------------------
+                res['__NAVB__'][navBarObjId].insert(0, userBarLink)
             
+        #----------------------------------------------------------------------
+        # NavBar nedefinovany, vlozim usera
+        #----------------------------------------------------------------------
+        else: res['__NAVB__'] = {'NavLinks': [userBarLink]}
+
         #----------------------------------------------------------------------
         # Stage objects
         #----------------------------------------------------------------------
@@ -427,8 +441,11 @@ if __name__ == '__main__':
     ,loader     = FileSystemLoader(['templates'])
     )
 
-    page = Structure(journal, env, 'PagManLogin', 700)
+#    page = Structure(journal, env, 'PagManLogin', 700)
 #    page = Structure(journal, env, 'PagManHomepage', 700)
+#    page = Structure(journal, env, 'FAQ', 700)
+#    page = Structure(journal, env, 'OHISTORY', 700)
+    page = Structure(journal, env, 'PagManContact', 700)
  
     rec = page.context
     

@@ -14,7 +14,7 @@ from   app_dms                 import DMS
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.04'
+_VER      = '1.05'
 
 _LANG_DEF = 'SK'       # Default language
 _SYSUSER  = 'SIQO'     # System superuser
@@ -111,7 +111,7 @@ class Object(Database):
         toRet = {'__HEAD__': {}
                 ,'__NAVB__': {}
                 ,'__STAG__': {}
-                ,'__OBJ__' : {}
+                ,'__CONT__': {}
                 }
         
         #----------------------------------------------------------------------
@@ -698,8 +698,9 @@ if __name__ == '__main__':
     journal = SiqoJournal('test-object', debug=3)
     
 #    obj = Object(journal, 'palo4', 'PagManLogin')
-    obj = Object(journal, 'palo4', 'PagManHomepage')
-    
+#    obj = Object(journal, 'palo4', 'PagManHomepage')
+    obj = Object(journal, 'palo4', 'PagManContact')
+
     rec = obj.pageGet('ja')
 
 #==============================================================================

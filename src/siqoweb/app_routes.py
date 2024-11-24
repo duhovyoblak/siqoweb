@@ -205,7 +205,7 @@ def pgSession():
 def pgContact():
 
     journal.M("PagManContact():")
-    return app_views.pgEmpty(classId='PagManSession')
+    return app_views.pgEmpty(classId='PagManContact')
 
 #------------------------------------------------------------------------------
 @app.route('/faq',           methods=['GET'])

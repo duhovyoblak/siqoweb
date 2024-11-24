@@ -10,7 +10,7 @@ from   flask                    import url_for
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.06'
+_VER           = '1.07'
 
 #==============================================================================
 # package's variables
@@ -26,11 +26,12 @@ class HTML:
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, who, dms=None):
+    def __init__(self, journal, who, dms=None, classId='noClass'):
         
         self.journal = journal
         self.who     = who
         self.dms     = dms
+        self.classId = classId
 
     #--------------------------------------------------------------------------
     def objectsRender(self, objDic, lang):
@@ -61,7 +62,7 @@ class HTML:
                 #--------------------------------------------------------------
                 # Zavolam itemListRender
                 #--------------------------------------------------------------
-                toRet += self.itemListRender(rec, lang)
+                toRet += self.itemListRender(rec, lang, objId)
             
             #------------------------------------------------------------------
             # Inak je to neznamy udaj
@@ -73,7 +74,7 @@ class HTML:
         return toRet
         
     #--------------------------------------------------------------------------
-    def itemListRender(self, itemLst, lang):
+    def itemListRender(self, itemLst, lang, objId='noObjId'):
         "Returns HTML for json-encoded item"
         
         toRet = ''
@@ -91,12 +92,12 @@ class HTML:
                 #--------------------------------------------------------------
                 # Zavolam itemRender pre itemDic
                 #--------------------------------------------------------------
-                toRet += self.itemRender(itemDic, lang)
+                toRet += self.itemRender(itemDic, lang, objId)
             
         return toRet
         
     #--------------------------------------------------------------------------
-    def itemRender(self, item, lang):
+    def itemRender(self, item, lang, objId='noObjId'):
         "Returns HTML for json-encoded item"
         
         self.journal.I(f"HTML_{self.who}.itemRender: for lang = '{lang}'")
@@ -106,6 +107,7 @@ class HTML:
         # Priprava
         #----------------------------------------------------------------------
         try:
+            item['objId'] = f"{self.classId}.objId"
             copyItem = dict(item)
         
             (item, typ) = self.itemDrop(item, 'TYPE')
@@ -121,10 +123,12 @@ class HTML:
         #----------------------------------------------------------------------
         try:
             if   typ == 'CHECKBOX'      : toRet = self.inputCheckBox(item, lang)
-        #    elif typ == 'BUTTON'        : toRet = self.inputButton(item, lang)
+        #   elif typ == 'BUTTON'        : toRet = self.inputButton(item, lang)
             elif typ == 'RADIO'         : toRet = self.inputRadio(item, lang)
             elif typ == 'TEXT'          : toRet = self.inputText(item, lang)
-    
+            
+            elif typ == 'OBJECT'        : toRet = self.dbObject(item, lang)
+
             elif typ == 'LABEL'         : toRet = self.label(item, lang)
             elif typ == 'H1'            : toRet = self.h(item, lang, 1)
             elif typ == 'H2'            : toRet = self.h(item, lang, 2)
@@ -397,11 +401,21 @@ class HTML:
         return '</div> \n'
     
     #--------------------------------------------------------------------------
-    def divBreak(self, item, lang):
+    def divBreak(self, item):
     
         atts = { "class": "Break"}
     
         return f'<div {self.html_atts(atts)}></div> \n'
+        
+    #--------------------------------------------------------------------------
+    def formStart(self, item):
+
+        return f"<form {self.html_atts(item)}>\n"
+
+    #--------------------------------------------------------------------------
+    def formStop(self):
+        
+        return "</form> \n"
         
     #--------------------------------------------------------------------------
     def textThumb(self, item, lang):
@@ -556,6 +570,95 @@ class HTML:
         editType = ''
         return f'<input {self.html_atts(item)} {editType}/>\n'
     
+    #--------------------------------------------------------------------------
+    # DB Objects block
+    #--------------------------------------------------------------------------
+    def dbObject(self, item, lang):
+        """Renders objects based on parameters"""
+        
+        toRet = ''
+        
+        #----------------------------------------------------------------------
+        # Define parameters of an object
+        #----------------------------------------------------------------------
+        (item, objName     ) = self.itemDrop(item, lang    )
+        (item, objId       ) = self.itemDrop(item, 'objId' )
+        (item, crForm      ) = self.itemDrop(item, 'crForm')
+        (item, height      ) = self.itemDrop(item, 'height')
+        (item, width       ) = self.itemDrop(item, 'width' )
+  
+        #----------------------------------------------------------------------
+        # Render the object
+        #----------------------------------------------------------------------
+        if crForm == 'Y': 
+            
+            (item, method) = self.itemDrop(item, 'method')
+            (item, action) = self.itemDrop(item, 'action')
+    
+            atts = {"name":objId, "id":objId, "method":method, "action":action, "enctype":"multipart/form-data"}
+            toRet += self.formStart(atts)
+
+        #----------------------------------------------------------------------
+        # Object space
+        #----------------------------------------------------------------------
+        atts = {"name":objId, "id":f"{objId}_OS", "class":"Object", "style":f"height:{height}; width:{width};"}
+        toRet += self.divStart(atts);
+
+        #----------------------------------------------------------------------
+        # Header space
+        #----------------------------------------------------------------------
+        atts = {"name":objId, "id":f"{objId}_HS", "class":"ObjectHeaderSpace", "onclick":f"ObjectContentControl('{objId}', '20')"}
+        toRet += self.divStart(atts);
+        
+        toRet += self.p({lang:objName}, lang)
+        
+        toRet += self.divStop()
+
+        #----------------------------------------------------------------------
+        # Back space
+        #----------------------------------------------------------------------
+        atts = {"name":objId, "id":f"{objId}_BS", "class":"ObjectBackSpace", "style":"height:0px;"}
+        toRet += self.divStart(atts);
+        
+#         ShowBack( $stage, $action );
+        
+        toRet += self.divStop()
+
+        #----------------------------------------------------------------------
+        # Front space
+        #----------------------------------------------------------------------
+        atts = {"name":objId, "id":f"{objId}_FS", "class":"ObjectFrontSpace", "style":f"height:{height};"}
+        toRet += self.divStart(atts);
+   
+#           ShowFront( $stage, $action );
+
+        toRet += self.divStop()
+
+        #----------------------------------------------------------------------
+        # Control space
+        #----------------------------------------------------------------------
+        atts = {"name":objId, "id":f"{objId}_CS", "class":"ObjectControlSpace"}
+        toRet += self.divStart(atts);
+        
+#           $this->ShowButtons();
+        
+        toRet += self.divStop()
+
+        #----------------------------------------------------------------------
+        # Object space end
+        #----------------------------------------------------------------------
+        toRet += self.divStop()
+
+        #----------------------------------------------------------------------
+        if crForm == 'Y': self.formStop()
+        
+        #----------------------------------------------------------------------
+        print(toRet)
+        return toRet
+
+    #--------------------------------------------------------------------------
+
+
     #--------------------------------------------------------------------------
     # Head block
     #--------------------------------------------------------------------------
