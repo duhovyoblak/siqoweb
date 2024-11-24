@@ -1,31 +1,75 @@
-{'__HEAD__': { 'items': [ {'1_Title': {'SK': 'SIQO Homepage'}},
-                          {'2_Comment': {'SK': 'Development environment'}},
-                          {'3_SubTitle': {'SK': 'Hlavná stránka projektu SIQO'}}
+{'__HEAD__':    {
+                    'HeadItems: 
+				        [
+                           {'1_Title'   : {'SK': 'SIQO Homepage', 'TYPE': 'HEADTITLE'}},
+                           {'2_Comment' : {'SK': 'Development environment'}},
+                           {'3_SubTitle': {'SK': 'Hlavná stránka projektu SIQO'}}
+                        ]
+                },
+ '__NAVB__':    {
+                    'NavLinks':
+				        [
+                           {'User'      : {'SK': 'Guest User', 'URL': 'pgLogin',    'TYPE': 'BARMENUITEM'}},
+                           {'1_Admin'   : {'SK': 'Admin',      'URL': 'pgAdmin',    'TYPE': 'BARMENUITEM'}},
+                           {'2_Res'     : {'SK': 'Resource',   'URL': 'pgResource', 'TYPE': 'BARMENUITEM'}},
+                           {'3_Doc'     : {'SK': 'Documents',  'URL': 'pgDms',      'TYPE': 'BARMENUITEM'}},
+                           {'4_Sess'    : {'SK': 'Sessions',   'URL': 'pgSession',  'TYPE': 'BARMENUITEM'}}
+                        ]
+                },
+ '__STAG__':    {
+                    'Stage_SIQO':
+      					[
+                           {'0_Stage': {'SK': 'O stránkach SIQO', 'POS': 1,  'TYPE': 'STAGESELECTOR'}},
+                           {'1_Item' : {'SK': 'S.I.Q.O. - to je spoločnosť s IQ obmedzeným', 'TYPE': 'STAGESTART', 'typeStash': 'H2', 'POS': 1}},
+                           {'2_Item' : {'SK': 'Projekt SIQO je experimentálna základňa pre projekty, spojené vývojom asociatívne adresovaných pamäťových priestorov. Naozaj, aj keď sa to možno podľa aplikácií nezdá.', 'TYPE': 'P'}},
+                           {'3_Item' : {'SK': 'Asociatívne pamäte sa testujú na viacerých demonštračných projektoch, opísaných v príslušných záložkách', 'TYPE': 'P'}},
+                           {'4_Item' : {'SK': 'Zároveň s vývojom a testovaním pamätí prebieha vývoj frameworku, optimalizovaného pre takéto aplikácie', 'TYPE': 'STAGESTOP', 'typeStash': 'P', 'POS': 1}}
                         ],
-               'objs': {}
-              },
- '__NAVB__': {'items':  [{'PagManAdmin': {'SK': 'Admin', 'URL': 'pgadmin'}},
-                         {'PagManDoc': {'SK': 'Documents', 'URL': 'pgdocument'}},
-                         {'PagManRes': {'SK': 'Resource', 'URL': 'pgresource'}},
-                         {'PagManSess': {'SK': 'Sessions', 'URL': 'pgsession'}}
-                        ],
-              'objs': {}
-             },
- '__STAG__': {'items': [],
-              'objs': {'Stage_1': {'items': [{'StagePos': {'POS': '1'}}
-                                            ],
-                                    'objs': {'SCont_1': {'items': [ {'SItem_11': {'SK': 'S.I.Q.O. - to je spoločnosť s IQ obmedzeným', 'TYPE': 'H2'}},
-                                                                    {'SItem_12': {'SK': 'Projekt SIQO je experimentálna základňa pre projekty, spojené vývojom asociatívne adresovaných pamäťových priestorov. Naozaj, aj keď sa to možno podľa aplikácií nezdá.',         'TYPE': 'P'}},
-                                                                    {'SItem_13': {'SK': 'Asociatívne pamäte sa testujú na viacerých demonštračných projektoch, opísaných v príslušných záložkách',          'TYPE': 'P'}},
-                                                                    {'SItem_14': {'SK': 'Zároveň s vývojom a testovaním pamätí prebieha vývoj frameworku, optimalizovaného pre takéto aplikácie',          'TYPE': 'P'}}
-                                                                  ],
-                                                         'objs': {}
-													    },
-                                             'SName_1': {'items': [{'SSB_1': {'SK': 'O stránkach SIQO'}}],
-													     'objs': {}
-														}
-								            }
-								  }
-					  }
-			  }
+
+                    'Stage_OHST' :
+					    [
+                           {'0_Stage': {'SK': 'Oral History', 'POS': 2, 'TYPE': 'STAGESELECTOR'}},
+                           {'1_Item' : {'SK': 'Oral History', 'TYPE': 'STAGESTART', 'typeStash': 'H2', 'POS': 2}},
+                           {'2_Item' : {'SK': 'Veľká história sa zaoberá veľkými udalosťami, ktoré ovplyvnia mnoho ľudí a zvyčajne sa nezaobídu bez príslušného počtu mŕtvol alebo aspoň jedu, dýky a kráľa. Tieto príbehy sú také veľké, že sa nedokážu dostať k nášmu srdcu a dotýkajú sa nás asi ako boje medzi zelenokožími citrusmi v susednej galaxii.', 'TYPE': 'P'}},
+                           {'3_Item' : {'SK': 'Príbehy ', 'TYPE': 'P_START'}},
+                           {'4_Item' : {'SK': 'oral history ', 'TYPE': 'A', 'URL': 'pgOhistory'}},
+                           {'5_Item' : {'SK': ' sú malé, omnoho menšie ako tie z učebníc dejepisu. Sú dostatočne drobné na to, aby sa dostali k nášmu vnútru a zanechali tam stopu. Tieto príbehy sa stali ľuďom, ktorí sa na nás veľmi podobali. Skoro by sa mohli stať aj nám, keby sme tam vtedy boli.', 'TYPE': 'P_STOP'}},
+                           {'6_Item' : {'SK': 'Ráčte ', 'TYPE': 'P_START'}},
+                           {'7_Item' : {'SK': 'vstúpiť ', 'TYPE': 'A', 'URL': 'pgOhistory'}},
+                           {'8_Item' : {'SK': '', 'TYPE': 'STAGESTOP', 'typeStash': 'P_STOP', 'POS': 2}}
+                        ]
+				}
 }
+
+
+{'__HEAD__':    [
+                    {'1_Title': {'SK': 'SIQO Homepage'}},
+                    {'2_Comment': {'SK': 'Development environment'}},
+                    {'3_SubTitle': {'SK': 'Hlavná stránka projektu SIQO'}}
+				],
+				
+ '__NAVB__':    [
+                    {'1_Admin': {'SK': 'Admin', 'URL': 'pgAdmin'}},
+                    {'2_Res': {'SK': 'Resource', 'URL': 'pgResource'}},
+                    {'3_Doc': {'SK': 'Documents', 'URL': 'pgDms'}},
+                    {'4_Sess': {'SK': 'Sessions', 'URL': 'pgSession'}}
+				],
+				
+ '__STAG__':    [
+                   {'0_Stage': {'POS': '2', 'SK': 'Oral History'}},
+                   {'1_Item': {'SK': 'Oral History', 'TYPE': 'H2'}},
+                   {'2_Item': {'SK': 'Veľká história sa zaoberá veľkými udalosťami, ktoré ovplyvnia mnoho ľudí a zvyčajne sa nezaobídu bez príslušného počtu mŕtvol alebo aspoň jedu, dýky a kráľa. Tieto príbehy sú také veľké, že sa nedokážu dostať k nášmu srdcu a dotýkajú sa nás asi ako boje medzi zelenokožími citrusmi v susednej galaxii.','TYPE': 'P'}},
+                   {'3_Item': {'SK': 'Príbehy ', 'TYPE': 'P_START'}},
+                   {'4_Item': {'SK': 'oral history ', 'TYPE': 'A', 'URL': 'pgOhistory'}},
+                   {'5_Item': {'SK': ' sú malé, omnoho menšie ako tie z učebníc dejepisu. Sú dostatočne drobné na to, aby sa dostali k nášmu vnútru a zanechali tam stopu. Tieto príbehy sa stali ľuďom, ktorí sa na nás veľmi podobali. Skoro by sa mohli stať aj nám, keby sme tam vtedy boli.','TYPE': 'P_STOP'}},
+                   {'6_Item': {'SK': 'Ráčte ', 'TYPE': 'P_START'}},
+                   {'7_Item': {'SK': 'vstúpiť ', 'TYPE': 'A', 'URL': 'pgOhistory'}},
+                   {'8_Item': {'SK': '', 'TYPE': 'P_STOP'}},
+                   {'0_Stage': {'POS': '1', 'SK': 'O stránkach SIQO'}},
+                   {'1_Item': {'SK': 'S.I.Q.O. - to je spoločnosť s IQ obmedzeným','TYPE': 'H2'}},
+                   {'2_Item': {'SK': 'Projekt SIQO je experimentálna základňa pre projekty, spojené vývojom asociatívne adresovaných pamäťových priestorov. Naozaj, aj keď sa to možno podľa aplikácií nezdá.',
+    'TYPE': 'P'}},
+  {'3_Item': {'SK': 'Asociatívne pamäte sa testujú na viacerých demonštračných projektoch, opísaných v príslušných záložkách',
+    'TYPE': 'P'}},
+  {'4_Item': {'SK': 'Zároveň s vývojom a testovaním pamätí prebieha vývoj frameworku, optimalizovaného pre takéto aplikácie',
+    'TYPE': 'P'}}]}

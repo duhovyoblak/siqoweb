@@ -22,7 +22,7 @@ from   f_form            import FormStruct
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.03'
+_VER      = '1.04'
 
 #==============================================================================
 # package's variables
@@ -63,7 +63,7 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Konstruktor DataStructure
         #----------------------------------------------------------------------
-        super().__init__(journal, userId, classId, objPar='__ROOT__', rMode= 'STRICT', crForm='Y', lvl=5)
+        super().__init__(journal, userId, classId, objPar='__ROOT__', rMode= 'STRICT')
 
         #----------------------------------------------------------------------
         # Definicia stranky
@@ -112,8 +112,8 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Doplnenie defaultneho formulara
         #----------------------------------------------------------------------
-        self.formStruct = FormStruct()
-        self.addContext({'formStruct':self.formStruct})
+#        self.formStruct = FormStruct()
+#        self.addContext({'formStruct':self.formStruct})
 
         #----------------------------------------------------------------------
         #gen.dictPrint(dct=self.context)
@@ -131,6 +131,7 @@ class Structure(Object):
         return {'__CONT__':{}}
 
     #--------------------------------------------------------------------------
+#!!!! znacka
     def loadPageResource(self):
         "This method returns resources for this page saved in the Database"
         
@@ -139,49 +140,30 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Nacitanie objektov PAGE
         #----------------------------------------------------------------------
-        res = self.objectGet(self.user, objPar='__PAGE__')
+        res = self.pageGet(self.user)
         
         #----------------------------------------------------------------------
-        # Heads items
+        # Zistim ako sa vola objekt pre navBarLinks
         #----------------------------------------------------------------------
-        if '__HEAD__'  not in res.keys()            : res['__HEAD__'] = {}
-        if 'HeadItems' not in res['__HEAD__'].keys(): res['__HEAD__']['HeadItems'] = []
-
-        if '__HEAD__' in res.keys() and 'HeadItems' in res['__HEAD__'].keys():
-            
-            #------------------------------------------------------------------
-            # Vsetkym polozkam v Head nastavim prislusny type
-            #------------------------------------------------------------------
-            for item in res['__HEAD__']['HeadItems']:
+        for navBarObjId, navBarLst in res['__NAVB__'].items():
                 
-                if   '1_Title'    in item.keys(): item['1_Title'   ]['TYPE'] = 'HEADTITLE'
-                elif '2_SubTitle' in item.keys(): item['2_SubTitle']['TYPE'] = 'HEADSUBTIT'
-                elif '3_Comment'  in item.keys(): item['3_Comment' ]['TYPE'] = 'HEADCOMMENT'
+            #------------------------------------------------------------------
+            # Vsetkym objektom v NavBarLst nastavim type=BARMENUITEM
+            #------------------------------------------------------------------
+            for navBarObj in navBarLst:
                 
-        #----------------------------------------------------------------------
-        # NavBar items
-        #----------------------------------------------------------------------
-        if '__NAVB__' not in res.keys()            : res['__NAVB__'] = {}
-        if 'NavLinks' not in res['__NAVB__'].keys(): res['__NAVB__']['NavLinks'] = []
+                #{'1_Admin': {'SK': 'Admin', 'URL': 'pgAdmin'}}
+                key = list(navBarObj.keys())[0]
+                navBarObj[key]["TYPE"] = "BARMENUITEM"
 
-        #----------------------------------------------------------------------
-        # 0-ta polozka v NavBar je UserItem - ak nie je, potom ho tam vlozim
-        #----------------------------------------------------------------------
-        if len(res['__NAVB__']['NavLinks'])==0 or 'User' not in res['__NAVB__']['NavLinks'][0].keys():
-
-            userItem = {"User":{"SK":self.userName, "URL":"pgLogin"}}
-            res['__NAVB__']['NavLinks'].insert(0, userItem)
+            #----------------------------------------------------------------------
+            # 0-ta polozka v NavBarLst je UserItem - vlozim ho tam
+            #----------------------------------------------------------------------
+            userBarLink = {"User":{"SK":self.userName, "URL":"pgLogin", "TYPE":"BARMENUITEM"}}
+            res['__NAVB__'][navBarObjId].insert(0, userBarLink)
             
         #----------------------------------------------------------------------
-        # Vsetkym polozkam v NavBar nastavim type=BARMENUITEM
-        #----------------------------------------------------------------------
-        for item in res['__NAVB__']['NavLinks']:
-                
-            for itemId, args in item.items():
-                args["TYPE"] = "BARMENUITEM"
-
-        #----------------------------------------------------------------------
-        # Stage items
+        # Stage objects
         #----------------------------------------------------------------------
         if '__STAG__' in res.keys():
             
@@ -190,22 +172,22 @@ class Structure(Object):
             #------------------------------------------------------------------
             # Prejdem vsetky stage
             #------------------------------------------------------------------
-            for stageId, stageLst in res['__STAG__'].items():
+            for stageObj, stageLst in res['__STAG__'].items():
     
                 #--------------------------------------------------------------
-                # Vyriesim selector v polozke '0_StageName'
+                # Vyriesim selector v [0]-tej polozke s klucom '0_Stage'
                 #--------------------------------------------------------------
                 if '0_Stage' not in stageLst[0].keys():
                     
                     #----------------------------------------------------------
                     # Ak nie je kluc '0_Stage' v 0-tej polozke listu je to chyba
                     #----------------------------------------------------------
-                    self.journal.M(f"{self.name}.loadPageResource: Stage without 'StageName' will be skipped", True)
+                    self.journal.M(f"{self.name}.loadPageResource: Stage without '0_Stage' will be skipped", True)
                     continue
 
                 else:
                     #----------------------------------------------------------
-                    # Ak polozka '0_StageName' existuje, doplnim vlastnosti StageSelectora
+                    # Ak polozka '0_Stage' existuje, doplnim vlastnosti StageSelectora
                     #----------------------------------------------------------
                     stageLst[0]['0_Stage']['TYPE'] = 'STAGESELECTOR'
                     
@@ -214,9 +196,16 @@ class Structure(Object):
                     stageLst[0]['0_Stage']['POS'] = stagePos
                     
                 #--------------------------------------------------------------
+                # Ak stage conntent nie je definovany
+                #--------------------------------------------------------------
+                if len(stageLst)-1 == 0:
+
+                    self.journal.M(f"{self.name}.loadPageResource: Stage {stageObj} has no content defined", True)
+
+                #--------------------------------------------------------------
                 # Ak stage conntent obsahuje len 1 item (okrem 0_StageName)
                 #--------------------------------------------------------------
-                if len(stageLst)-1 == 1:
+                elif len(stageLst)-1 == 1:
                             
                     itemId = list(stageLst[1].keys())[0]
                             
@@ -438,7 +427,9 @@ if __name__ == '__main__':
     ,loader     = FileSystemLoader(['templates'])
     )
 
-    page = Structure(journal, env, 'PagManHomepage', 700)
+    page = Structure(journal, env, 'PagManLogin', 700)
+#    page = Structure(journal, env, 'PagManHomepage', 700)
+ 
     rec = page.context
     
 #==============================================================================

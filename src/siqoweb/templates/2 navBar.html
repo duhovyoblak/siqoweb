@@ -20,15 +20,14 @@
 <!--------------------------------------------------------------------HEADER-->
 {% block header %}
 
-
-	{{ html.itemListRender(__HEAD__['HeadItems'], lang)|safe }}
+	{{ html.objectsRender(__HEAD__, lang)|safe }}
 
 {% endblock %}
 
 <!--------------------------------------------------------------------NAVBAR-->
 {% block navbar %}
 
-   	{{ html.itemListRender(__NAVB__['NavLinks'], lang)|safe }}
+   	{{ html.objectsRender(__NAVB__, lang)|safe }}
 
 {% endblock %}
 

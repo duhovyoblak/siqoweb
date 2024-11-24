@@ -14,7 +14,7 @@ from   app_dms                 import DMS
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.02'
+_VER      = '1.04'
 
 _LANG_DEF = 'SK'       # Default language
 _SYSUSER  = 'SIQO'     # System superuser
@@ -39,7 +39,7 @@ class Object(Database):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, user, classId, objPar='__PAGE__', rMode= 'STRICT', crForm='Y', lvl=5):
+    def __init__(self, journal, user, classId, objPar='__PAGE__', rMode= 'STRICT', crForm='N'):
         "Call constructor of Object"
 
         journal.I("Object.init:")
@@ -55,28 +55,24 @@ class Object(Database):
         self.name    = f"Object({classId}.{objPar})"
         self.user    = user      # User, ku ktoremu patri objekt
         
-        self.objPar  = objPar    # Identifikacia parent objektu vramci page
         self.classId = classId   # Typ objektu/Page, ku ktoremu patri objekt
+        self.objPar  = objPar    # Identifikacia parent objektu vramci page
+
+        self.items   = []        # zoznam zobrazitelnych poloziek 
+        self.btns    = []        # zoznam buttonov
+
+
+
 
         self.rMode   = rMode     # uroven kontroly privilegii, STRICT, ROOT
-
         if self.rMode == 'ROOT': self.objLog = gen.words(self.obj)[0] 
                                  # jednotliva identita (obj)                  pre rMode = 'STRICT'
                                  # skupinova identifikacia objektov word(obj) pre RMode = 'ROOT'
  
         self.uRole   = "Unknown" # Rola usera, priradena k tomuto objektu
-        
         self.crForm  = crForm    # vytvaranie formulara, Y, N
-  
         self.height  = 10        # vyska content space
         self.width   = 10        # vyska content space
-  
-        self.items   = []        # zoznam zobrazitelnych poloziek 
-        self.btns    = []        # zoznam buttonov
-        
-        self.ssbPos  = 1         # Pozicia polozky Stage Selectora
-
-        self.lvl     = lvl       # journal level
 
         #----------------------------------------------------------------------
         # Verifikujem/registrujem logicky Objekt v databaze
@@ -104,12 +100,48 @@ class Object(Database):
     #==========================================================================
     # Praca s objektom (page-obj)
     #--------------------------------------------------------------------------
-    def objectGet(self, who, objPar='__PAGE__'):
-        "Returns dict of obects {objId:{'items':[{}], 'objs':{}}}"
-#!!!! znacka
-        self.journal.I(f"{self.name}.objectGet: For parent '{objPar}'")
+    def pageGet(self, who):
+        """"Returns dict of default objects {'objDefId': { 'objId':[<items>] } }"""
+        
+        self.journal.I(f"{self.name}.pageGet: For page '{self.classId}'")
 
-        # objs = { objId = {'items':[ {itemId:{attributes}} ], 'objs':{objs} } }
+        #----------------------------------------------------------------------
+        # Inicializacia default objektov
+        #----------------------------------------------------------------------
+        toRet = {'__HEAD__': {}
+                ,'__NAVB__': {}
+                ,'__STAG__': {}
+                ,'__OBJ__' : {}
+                }
+        
+        #----------------------------------------------------------------------
+        # Prehladanie objektov pre parenta parId a objektu objId
+        #----------------------------------------------------------------------
+        for parId in toRet.keys():
+
+            #------------------------------------------------------------------
+            # Pokusim sa ziskat vnorene objekty
+            #------------------------------------------------------------------
+            inObjs = self.objectGet(who, objPar=parId)
+                
+            #------------------------------------------------------------------
+            # Ak existuju vnorene objekty, tak ich vlozim
+            #------------------------------------------------------------------
+            if len(inObjs) > 0: toRet[parId] = inObjs
+            else              : self.journal.M(f"{self.name}.pageGet: '{parId}' has no children objects")
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
+#!!!! znacka
+    def objectGet(self, who, objPar):
+        """"Returns dict of objects { 'objId'   : [ {'itemId':{<item def>}} ] }
+                                or  { 'objParId': { 'objId':[<items>]         }
+        """
+        
+        self.journal.I(f"{self.name}.objectGet: For parent '{objPar}'")
 
         #----------------------------------------------------------------------
         # Inicializacia odpovede
@@ -121,24 +153,17 @@ class Object(Database):
         #----------------------------------------------------------------------
         pagStr = gen.quoted(self.classId)
         parStr = gen.quoted(objPar)
-        
-        #----------------------------------------------------------------------
-        # Ak je parent "__PAGE__" upravim podmienku parent obj na "__%"
-        #----------------------------------------------------------------------
-        if objPar == '__PAGE__': parCond =  "SUBSTR(OBJ_PAR, 1, 2) = '__'"
-        else                   : parCond = f"OBJ_PAR = {parStr}"
  
-        #              0         1          2         3        4            5            6      7
-        cols = ('CLASS_ID', 'OBJ_ID', 'OBJ_PAR', 'C_FUNC', 'NOTES', 'D_CREATED', 'D_CHANGED', 'WHO')
-        
         #----------------------------------------------------------------------
         # Ziskanie zoznamu objektov pre dany class a parent objekt
         #----------------------------------------------------------------------
+        #              0         1          2         3        4            5            6      7
+        cols = ('CLASS_ID', 'OBJ_ID', 'OBJ_PAR', 'C_FUNC', 'NOTES', 'D_CREATED', 'D_CHANGED', 'WHO')
+        
         sql = f"""select {','.join(cols)} from {Config.tabObj} 
-                  where CLASS_ID = {pagStr} and {parCond}
+                  where CLASS_ID = {pagStr} and OBJ_PAR = {parStr}
                   order by OBJ_PAR, OBJ_ID"""
         
-        #self.journal.M(f"{self.name}.objectGet: {sql}")
         rows = self.readDb(who, sql)
         
         #----------------------------------------------------------------------
@@ -146,14 +171,15 @@ class Object(Database):
         #----------------------------------------------------------------------
         if type(rows)==int or len(rows)==0:
             
-            self.journal.M(f"{self.name}.objectGet: No objects for '{objPar}'")
+            self.journal.M(f"{self.name}.objectGet: Parent '{objPar}' has no children objects")
             self.journal.O()
             return toRet
 
-        #self.journal.M(f"{self.name}.objectGet: Rows for analysis {rows}")
+        objStr = ','.join([row[1] for row in rows])
+        self.journal.M(f"{self.name}.objectGet: Parent '{objPar}' consits of objects [{objStr}]")
 
         #----------------------------------------------------------------------
-        # Prehladanie objektov pre parenta parId
+        # Prehladanie objektov pre parenta parId a objektu objId
         #----------------------------------------------------------------------
         for row in rows:
 
@@ -168,16 +194,12 @@ class Object(Database):
                 objId = row[1]
                 parId = row[2]
                 self.journal.M(f"{self.name}.objectGet: '{parId}.{objId}' is being analysed...")
+
+                #--------------------------------------------------------------
+                # Pokusim sa ziskat vnorene objekty
+                #--------------------------------------------------------------
+                inObjs = {}
                 
-                if parId not in toRet.keys(): toRet[parId] = {}
-
-                #--------------------------------------------------------------
-                # Pokusim sa ziskat resource k objektu objId
-                #--------------------------------------------------------------
-                items = self.resourceGet(who, objId=objId)
-                toRet[parId][objId] = items
-                self.journal.M(f"{self.name}.objectGet: '{parId}.{objId}' has resource '{items}'")
-
                 #--------------------------------------------------------------
                 # Ak nie som sam sebe parentom
                 #--------------------------------------------------------------
@@ -188,10 +210,31 @@ class Object(Database):
                     #----------------------------------------------------------
                     inObjs = self.objectGet(who, objPar=objId)
                 
+                #--------------------------------------------------------------
+                # Ak existuju vnorene objekty, tak ich vlozim
+                #--------------------------------------------------------------
+                if len(inObjs) > 0: 
+                    
+                    # Vytvorim dictionary pre vnorene objekty
+                    if objId not in toRet.keys(): toRet[objId] = {}
+                
+                    toRet[objId] = inObjs
+
+                #--------------------------------------------------------------
+                # Ak NEexistuju vnorene objekty, ziskam zoznam itemov tohoto objektu
+                #--------------------------------------------------------------
+                else:
+
+                    # Vytvorim list pre zoznam itemov objektu
+                    if objId not in toRet.keys(): toRet[objId] = []
+
                     #----------------------------------------------------------
-                    # Ak existuju vnorene objekty, tak ich vlozim
+                    # Pokusim sa ziskat resource k objektu objId
                     #----------------------------------------------------------
-                    if len(inObjs) > 0: toRet[parId][objId] = inObjs
+                    items = self.resourceGet(who, objId=objId)
+                    
+                    if len(items) > 0: toRet[objId].extend( items )
+                    else             : self.journal.M(f"{self.name}.objectGet: '{parId}.{objId}' has no resource")
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -288,15 +331,6 @@ class Object(Database):
                 itemId = row[0]
                 key    = row[1]
                 val    = row[3]
-
-                #--------------------------------------------------------------
-                # Ak je key = SBB potom vygenerujem polozku Stage selectora
-                #--------------------------------------------------------------
-                if key == 'SSB' and False:
-                    
-                    key     = 'SK'
-                    itemId  = f'SSB_{self.ssbPos}'
-                    self.ssbPos += 1
 
                 #--------------------------------------------------------------
                 # Ak je to novy itemId, vlozim predchadzajuci do zoznamu a resetnem item
@@ -663,11 +697,10 @@ if __name__ == '__main__':
     from   siqolib.journal                 import SiqoJournal
     journal = SiqoJournal('test-object', debug=3)
     
-    obj = Object(journal, 'palo4', 'Homepage')
+#    obj = Object(journal, 'palo4', 'PagManLogin')
+    obj = Object(journal, 'palo4', 'PagManHomepage')
     
-    rec = obj.objectGet('ja')
-    #res = obj.resourceGet('ja', '__STAG__')
-
+    rec = obj.pageGet('ja')
 
 #==============================================================================
 print(f"Object {_VER}")

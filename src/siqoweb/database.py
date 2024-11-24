@@ -790,7 +790,7 @@ if __name__ == '__main__':
     users      = db.readTable('who', Config.tabUser)
     palo4      = db.readTable('who', Config.tabUser, "user_id = 'palo4'")
     
-#    db.sSqlScript(who='test', fName='ohistory.ini')
+    db.sSqlScript(who='test', fName='ohistory.ini')
     
     db.sJournal('SIQO')
     

@@ -119,12 +119,11 @@ class PageForum(Structure):
         toRet = []
 
         data = self.readForumItem()
-        #print(data)
         
         #----------------------------------------------------------------------
-        # Kontrola existencie itemu a konverzia hlavicky
+        # Kontrola existencie forum itemu a konverzia hlavicky
         #----------------------------------------------------------------------
-        if (type(data) == dict) and (len(data)>0): 
+        if data is not None: 
             
             title = data['TITLE']
             if data['C_FUNC'] == 'K': title = f"KONCEPT: {title}"
@@ -155,7 +154,6 @@ class PageForum(Structure):
         toRet = []
 
         data = self.readSiblings()
-        #print(data)
         
         #----------------------------------------------------------------------
         # Zoznam posledne zmenenych itemov pre root item, inak siblings
@@ -195,7 +193,6 @@ class PageForum(Structure):
         toRet = []
 
         data = self.readChildren()
-        #print(data)
         
         #----------------------------------------------------------------------
         # Zoznam posledne zmenenych itemov pre root item, inak siblings
@@ -245,7 +242,12 @@ class PageForum(Structure):
         # Nacitanie polozky z DB ako dict
         #----------------------------------------------------------------------
         item = self.readTable(who=self.user, table=Config.tabForum, where=where, header='detail')
-        self.forumItem = item[0]
+        
+        #----------------------------------------------------------------------
+        # Kontrola existencie forum item
+        #----------------------------------------------------------------------
+        if len(item) > 0: self.forumItem = item[0]
+        else            : self.forumItem = None
         
         #----------------------------------------------------------------------
         self.journal.O()

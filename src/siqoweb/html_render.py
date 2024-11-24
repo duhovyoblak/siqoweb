@@ -10,7 +10,7 @@ from   flask                    import url_for
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.05'
+_VER           = '1.06'
 
 #==============================================================================
 # package's variables
@@ -33,21 +33,65 @@ class HTML:
         self.dms     = dms
 
     #--------------------------------------------------------------------------
+    def objectsRender(self, objDic, lang):
+        "Returns HTML for json-encoded item"
+        
+        toRet = ''
+    
+        #----------------------------------------------------------------------
+        # Prejdem vsetky objekty
+        #----------------------------------------------------------------------
+        for objId, rec in objDic.items():
+            
+            #------------------------------------------------------------------
+            # Ak je rec typu dict, ide o vnoreny objekt
+            #------------------------------------------------------------------
+            if type(rec)==dict:
+              
+                #--------------------------------------------------------------
+                # Rekurzivne zavolam objectsRender
+                #--------------------------------------------------------------
+                toRet += self.objectsRender(rec, lang)
+                
+            #------------------------------------------------------------------
+            # Ak je rec typu list, ide o zoznam itemov
+            #------------------------------------------------------------------
+            elif type(rec)==list:
+              
+                #--------------------------------------------------------------
+                # Zavolam itemListRender
+                #--------------------------------------------------------------
+                toRet += self.itemListRender(rec, lang)
+            
+            #------------------------------------------------------------------
+            # Inak je to neznamy udaj
+            #------------------------------------------------------------------
+            else:
+                self.journal.M(f"HTML_{self.who}.objectsRender: UNKNOWN object '{objDic}'", True)
+
+        #----------------------------------------------------------------------
+        return toRet
+        
+    #--------------------------------------------------------------------------
     def itemListRender(self, itemLst, lang):
         "Returns HTML for json-encoded item"
         
         toRet = ''
     
         #----------------------------------------------------------------------
-        # Prejdem zoznam itemov
+        # Prejdem zoznam itemov [ {itemId : {arg1:, arg2:, } } ]
         #----------------------------------------------------------------------
-        for itemDic in itemLst:
+        for item in itemLst:
             
             #------------------------------------------------------------------
-            # Z itemDic vytiahnem jeho definiciu
+            # Ziskam itemId a itemDic
             #------------------------------------------------------------------
-            item = list(itemDic.values())[0]
-            toRet += self.itemRender(item, lang)
+            for itemId, itemDic in item.items():
+
+                #--------------------------------------------------------------
+                # Zavolam itemRender pre itemDic
+                #--------------------------------------------------------------
+                toRet += self.itemRender(itemDic, lang)
             
         return toRet
         
@@ -56,18 +100,22 @@ class HTML:
         "Returns HTML for json-encoded item"
         
         self.journal.I(f"HTML_{self.who}.itemRender: for lang = '{lang}'")
-
-        copyItem = dict(item)
-        
-        (item, typ) = self.itemDrop(item, 'TYPE')
-        if typ == '': typ = 'P'
-        
         toRet = ''
-    
+
         #----------------------------------------------------------------------
-        # Rozlisi Backward, Forward alebo nieco ine
+        # Priprava
         #----------------------------------------------------------------------
-    
+        try:
+            copyItem = dict(item)
+        
+            (item, typ) = self.itemDrop(item, 'TYPE')
+            if typ == '': typ = 'P'
+
+        except Exception as err:
+            
+            self.journal.M(f"HTML_{self.who}.itemRender: {str(err)}", True)
+            return f'<p>{str(err)}</p><br><p>{item}</p>'
+
         #----------------------------------------------------------------------
         # Skusim vsetky zname typy
         #----------------------------------------------------------------------
