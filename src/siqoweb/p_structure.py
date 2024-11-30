@@ -22,7 +22,7 @@ from   f_form            import FormStruct
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.05'
+_VER      = '1.06'
 
 #==============================================================================
 # package's variables
@@ -106,8 +106,8 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Doplnenie specifickeho contextu z DB podla id
         #----------------------------------------------------------------------
-#        self.idContext = self.loadContent()
-#        self.addContext(self.idContext)
+        self.idContext = self.loadContent()
+        self.addContext(self.idContext)
        
         #----------------------------------------------------------------------
         # Doplnenie defaultneho formulara
@@ -128,7 +128,7 @@ class Structure(Object):
         self.journal.I(f"{self.classId}.loadContent:")
         
         self.journal.O()
-        return {'__CONT__':{}}
+        return {}
 
     #--------------------------------------------------------------------------
 #!!!! znacka
@@ -138,7 +138,7 @@ class Structure(Object):
         self.journal.I(f"{self.classId}.loadPageResource:")
         
         #----------------------------------------------------------------------
-        # Nacitanie objektov PAGE
+        # Nacitanie objektov PAGE {'__HEAD__': {},'__NAVB__': {},'__STAG__': {},'__CONT__': {}}
         #----------------------------------------------------------------------
         res = self.pageGet(self.user)
         
@@ -441,15 +441,15 @@ if __name__ == '__main__':
     ,loader     = FileSystemLoader(['templates'])
     )
 
-#    page = Structure(journal, env, 'PagManLogin', 700)
+    page = Structure(journal, env, 'PagManLogin', 700)
 #    page = Structure(journal, env, 'PagManHomepage', 700)
 #    page = Structure(journal, env, 'FAQ', 700)
 #    page = Structure(journal, env, 'OHISTORY', 700)
-    page = Structure(journal, env, 'PagManContact', 700)
+#    page = Structure(journal, env, 'PagManContact', 700)
  
     rec = page.context
 
-    item = page.dms.loadForumItem('ja', forumId='OHISTORY')
+#    item = page.dms.loadForumItem('ja', forumId='OHISTORY')
 
     
 #==============================================================================

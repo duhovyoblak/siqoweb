@@ -48,20 +48,30 @@ INSERT INTO PM_OBJ_RESOURCE VALUES( 'PagManHomepage', 'Stage_OHST', '8_Item',  '
 /*----------------------------------------------------------------------------------------------*/
 /* OHISTORY Page Forum object */
 /*----------------------------------------------------------------------------------------------*/
-INSERT INTO PM_OBJECT       VALUES( 'OHISTORY',       'HeadItems', '__HEAD__', 'A', 'Oral history',               DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJECT       VALUES( 'OHISTORY',       'OHIST_cont','__CONT__', 'A', 'Oral history',               DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJECT       VALUES( 'OHISTORY',  'HeadItems',   '__HEAD__', 'A', 'Oral history',               DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJECT       VALUES( 'OHISTORY',  'OHIST_cont',  '__CONT__', 'A', 'Oral history',               DATE('now'), DATE('now'), 'SIQO');
 
 /*----------------------------------------------------------------------------------------------*/
 /* OHISTORY Page Forum Resources */
 /*----------------------------------------------------------------------------------------------*/
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',       'HeadItems', '1_Title',   'SK',  'A', 'Oral History',             DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',       'HeadItems', '1_Title',   'TYPE','A', 'HEADTITLE',                DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'HeadItems',   '1_Title',    'SK',    'A', 'Oral History',            DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'HeadItems',   '1_Title',    'TYPE',  'A', 'HEADTITLE',               DATE('now'), DATE('now'), 'SIQO');
 
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',       'HeadItems', '2_Comment', 'SK',  'A', 'Development environment',  DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',       'HeadItems', '2_Comment', 'TYPE','A', 'HEADCOMMENT',              DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'HeadItems',   '2_Comment',  'SK',    'A', 'Development environment', DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'HeadItems',   '2_Comment',  'TYPE',  'A', 'HEADCOMMENT',             DATE('now'), DATE('now'), 'SIQO');
 
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',       'HeadItems', '3_SubTitle','SK',  'A', 'Fórum projektu SIQO',      DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',       'HeadItems', '3_SubTitle','TYPE','A', 'HEADSUBTIT',               DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'HeadItems',   '3_SubTitle', 'SK',    'A', 'Fórum projektu SIQO',     DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'HeadItems',   '3_SubTitle', 'TYPE',  'A', 'HEADSUBTIT',              DATE('now'), DATE('now'), 'SIQO');
+
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'SK',    'A', 'TestObject',              DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'TYPE',  'A', 'OBJECT',                  DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'target','A', 'pgOhistory',              DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'height','A', '94%',                     DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'width', 'A', '99%',                     DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'CLASS', 'A', 'FORUM',                   DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'FORUM', 'A', 'OHISTORY',                DATE('now'), DATE('now'), 'SIQO');
+
+
 
 /*----------------------------------------------------------------------------------------------*/
 /* Meta */

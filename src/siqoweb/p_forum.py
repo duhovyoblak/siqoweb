@@ -59,36 +59,6 @@ class PageForum(Structure):
         self.journal.O()
 
     #==========================================================================
-    # Content methods
-    #--------------------------------------------------------------------------
-    def loadContent(self):
-        
-        self.journal.I(f"{self.name}.loadContent:")
-        toRet = {}
-        
-        #----------------------------------------------------------------------
-        # Nacitanie Forum item
-        #----------------------------------------------------------------------
-        items = self.loadItem()
-        toRet['__FORUM_ITEM__'] = {'items':items}
-
-        #----------------------------------------------------------------------
-        # Nacitanie Siblings/Changes
-        #----------------------------------------------------------------------
-        sibs = self.loadSiblings()
-        toRet['__SIBLINGS__'] = {'items':sibs}
-
-        #----------------------------------------------------------------------
-        # Nacitanie children
-        #----------------------------------------------------------------------
-        child = self.loadChildren()
-        toRet['__CHILDREN__'] = {'items':child}
-
-        #----------------------------------------------------------------------
-        self.journal.O()
-        return toRet
-
-    #==========================================================================
     # Response generators
     #--------------------------------------------------------------------------
     def respPost(self):
@@ -102,7 +72,7 @@ class PageForum(Structure):
             
             self.journal.M(f"{self.name}.resp: User logged in")
             self.journal.O()
-#            return redirect(url_for('orum'))
+            return redirect(url_for('pgHomepage'))
  
         #----------------------------------------------------------------------
         # Nie je POST
@@ -119,14 +89,14 @@ class PageForum(Structure):
 if __name__ == '__main__':
     
     from   siqolib.journal                 import SiqoJournal
-    journal = SiqoJournal('test-base', debug=7)
+    journal = SiqoJournal('test-base', debug=6)
     
     env = Environment(
      autoescape = select_autoescape()
     ,loader     = FileSystemLoader(['templates'])
     )
 
-    page = PageForum(journal, env, classId='FAQ', target='pgFaq', idx=275, height=700)
+    page = PageForum(journal, env, classId='OHISTORY', target='pgOhistory', idx=275, height=700)
     rec  = page.context
 
 #==============================================================================

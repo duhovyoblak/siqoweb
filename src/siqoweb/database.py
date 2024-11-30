@@ -783,10 +783,10 @@ if __name__ == '__main__':
     db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=True)
  
     tables     = db.tables()
-    attributes = db.attributes(Config.tabUser)
-    views      = db.views()
-    indexes    = db.indexes()
-    indexes    = db.indexes(Config.tabUser)
+#    attributes = db.attributes(Config.tabUser)
+#    views      = db.views()
+#    indexes    = db.indexes()
+#    indexes    = db.indexes(Config.tabUser)
     users      = db.readTable('who', Config.tabUser)
     palo4      = db.readTable('who', Config.tabUser, "user_id = 'palo4'")
     

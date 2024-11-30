@@ -90,7 +90,7 @@ def pgForum(classId, target, idx=0, height=670):
     
     journal.I('app_views.pgForum()')
 
-    page = PageForum(journal, env, classId=classId, target=target, idx=idx, height=height, template="3 forum.html")
+    page = PageForum(journal, env, classId=classId, target=target, idx=idx, height=height, template="3 empty.html")
     resp = page.resp()
 
     journal.O()
