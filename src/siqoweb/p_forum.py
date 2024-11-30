@@ -42,12 +42,12 @@ class PageForum(Structure):
     def __init__(self, journal, env, classId, target, idx=0, height=700, template="3 forum.html"):
         "Call constructor of Forum and initialise it"
         
-        journal.I("PageForum.init:")
+        journal.I(f"PageForum.init: Class '{classId}' for target {target}?idx={idx}")
         
         #----------------------------------------------------------------------
         # Forum premenne
         #----------------------------------------------------------------------
-        self.target    = target          # Nazov route metody pre zvolene forum
+        self.target    = target        # Nazov route metody pre zvolene forum
         self.idx       = idx           # Cislo itemu, default = 0 pre root
         self.forumItem = None          # Forum item nacitany z DB vo forme dict
 
@@ -56,6 +56,12 @@ class PageForum(Structure):
         #----------------------------------------------------------------------
         super().__init__(journal, env, classId=classId, height=height, template=template)
         
+        #----------------------------------------------------------------------
+        # Doplnenie dynamickych odkazov pre html_renderer
+        #----------------------------------------------------------------------
+        self.html.idx = idx
+
+
         self.journal.O()
 
     #==========================================================================
@@ -96,7 +102,7 @@ if __name__ == '__main__':
     ,loader     = FileSystemLoader(['templates'])
     )
 
-    page = PageForum(journal, env, classId='OHISTORY', target='pgOhistory', idx=275, height=700)
+    page = PageForum(journal, env, classId='OHISTORY', target='pgOhistory', idx=154, height=700)
     rec  = page.context
 
 #==============================================================================

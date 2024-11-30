@@ -30,9 +30,14 @@ class HTML:
     def __init__(self, journal, who, dms=None, classId='noClass'):
         
         self.journal = journal
-        self.who     = who
-        self.dms     = dms
-        self.classId = classId
+        self.who     = who   
+        self.dms     = dms       # DMS manager
+        self.classId = classId   # OBJECT_ID v pagman db
+        
+        #----------------------------------------------------------------------
+        # Dynamicky prenasane parametre
+        #----------------------------------------------------------------------
+        self.idx     = 0
 
     #--------------------------------------------------------------------------
     def objectsRender(self, objDic, lang):
@@ -684,7 +689,7 @@ class HTML:
             
             (item, forumId) = self.itemDrop(item, 'FORUM', False)
             
-            toRet = self.dms.loadForumItem(who, forumId=forumId, idx=0, target='')
+            toRet = self.dms.loadForumItem(who, forumId=forumId, idx=self.idx, target='')
             
        
         #----------------------------------------------------------------------
