@@ -65,6 +65,7 @@ INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'HeadItems',   '3_SubTitle', 'T
 
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'SK',    'A', 'TestObject',              DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'TYPE',  'A', 'OBJECT',                  DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'crForm','A', 'Y',                       DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'target','A', 'pgOhistory',              DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'height','A', '94%',                     DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'TestObject', 'width', 'A', '99%',                     DATE('now'), DATE('now'), 'SIQO');

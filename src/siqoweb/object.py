@@ -52,7 +52,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         # Identifikacia objektu
         #----------------------------------------------------------------------
-        self.name    = f"Object({classId}.{objPar})"
+        self.name    = f"{classId}.{objPar}"
         self.user    = user      # User, ku ktoremu patri objekt
         
         self.classId = classId   # Typ objektu/Page, ku ktoremu patri objekt

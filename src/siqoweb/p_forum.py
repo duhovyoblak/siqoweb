@@ -17,7 +17,7 @@ from   config              import Config
 from   database            import Database
 from   app_user            import User
 from   app_dms             import DMS
-from   p_structure         import Structure
+from   p_page              import Page
 
 #==============================================================================
 # package's constants
@@ -34,7 +34,7 @@ _TITLE_MAX     = 36       # Maximalny pocet zobrazenych znakov TITLE v selectore
 #==============================================================================
 # Forum
 #------------------------------------------------------------------------------
-class PageForum(Structure):
+class PageForum(Page):
     
     #==========================================================================
     # Constructor & Tools

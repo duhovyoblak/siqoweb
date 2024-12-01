@@ -35,38 +35,122 @@ _VER      = '1.01'
 class Page(Structure):
     
     #==========================================================================
-    # Content methods
+    # Constructor & Tools
     #--------------------------------------------------------------------------
-    def loadContent(self):
+    def __init__(self, journal, env, classId, height, template="1 structure.html"):
+        "Call constructor of Page and initialise it"
         
-        self.journal.I(f"{self.name}.loadContent:")
+        journal.I(f"Page({classId}).init:")
+        
+        #----------------------------------------------------------------------
+        # Identifikacia usera
+        #----------------------------------------------------------------------
+        user = current_user
+        
+        if user is not None and str(user)[:5]=='User>': 
+            
+            self.userId   = user.user_id
+            self.userName = user.userName()
+            self.lang     = user.lang_id
+            
+        else: 
+            self.userId   = 'Anonymous'
+            self.userName = 'Guest User'
+            self.lang     = 'SK'
+
+        #----------------------------------------------------------------------
+        # Konstruktor DataStructure,
+        #----------------------------------------------------------------------
+        super().__init__(journal, env, self.userId, classId, height, template)
+        self.name   = f"Page({self.name})"
+
+        #----------------------------------------------------------------------
+        # Aktualny user a jazyk
+        #----------------------------------------------------------------------
+        journal.M(f"{self.name}).init: user = '{self.userName}'")
+        journal.M(f"{self.name}).init: lang = '{self.lang}'")
 
         self.journal.O()
-        return {'content':[{'key':'val'}]}
 
     #==========================================================================
     # Response generators
     #--------------------------------------------------------------------------
-    def respPost(self):
+    def resp(self):
      
-        self.journal.I(f"{self.name}.respPost:")
+        self.journal.I(f"{self.name}.resp:")
         
         #----------------------------------------------------------------------
-        # Ak je POST, najprv vyhodnotim formular formLogin
+        # Vypisem si request data
         #----------------------------------------------------------------------
-        if self.formLogin.validate_on_submit():
-            
-            self.journal.M(f"{self.name}.resp: User logged in")
+#        self.journal.M(f"{self.name}.resp: user_agent       {request.user_agent}", True)
+        self.journal.M(f"{self.name}.resp: remote_addr      {request.remote_addr}", True)
+        self.journal.M(f"{self.name}.resp: is_secure        {request.is_secure}", True)
+        self.journal.M(f"{self.name}.resp: form             {request.form}", True)
+        self.journal.M(f"{self.name}.resp: data             {request.data}", True)
+        self.journal.M(f"{self.name}.resp: args             {request.args}", True)
+        self.journal.M(f"{self.name}.resp: access_route     {request.access_route}", True)
+
+        self.journal.M(f"{self.name}.resp: headers.Referer  {request.headers.get('Referer')}", True)
+#        self.journal.M(f"{self.name}.resp: headers.Cookie   {request.headers.get('Cookie' )}", True)
+
+
+        #----------------------------------------------------------------------
+        # Skontrolujem stav stranky, vyskocim ak nie je pripravena
+        #----------------------------------------------------------------------
+        if not self.loaded:
             self.journal.O()
-            return redirect(url_for('pgHomepage'))
- 
+            abort(500)
+        
         #----------------------------------------------------------------------
-        # Nie je POST
+        # POST Method: Vyhodnotim formulare
         #----------------------------------------------------------------------
+        if request.method == 'POST':
+            
+            resp = self.respPost()
+            
+            #------------------------------------------------------------------
+            # Ak je POST response validna
+            #------------------------------------------------------------------
+            if resp is not None:
+                self.journal.O()
+                return resp
+
+        #----------------------------------------------------------------------
+        # Default response: Ziskam template a vratim html
+        #----------------------------------------------------------------------
+        resp = self.respGet()
+        self.journal.O()
+        return resp
+
+    #--------------------------------------------------------------------------
+    def respPost(self):
+     
+        self.journal.I(f"{self.name}.respPost: Default None post response")
+        
+        
+        
+        
         self.journal.O()
         return None
 
     #--------------------------------------------------------------------------
+    def respGet(self):
+     
+        self.journal.I(f"{self.name}.respGet: Default html get response from template='{self.template}'")
+        
+        template = self.env.get_template(self.template)
+        self.journal.M(f"{self.name}.respGet: template loaded")
+
+        #----------------------------------------------------------------------
+        # Vygenerujem html response
+        #----------------------------------------------------------------------
+        resp = make_response(template.render(**self.context), 200)
+        
+        # V pripade potreby vies doplnit headers o custom data
+        # resp.headers['X-Something'] = 'A value'
+        
+        self.journal.O()
+        return resp
 
 #==============================================================================
 # Test cases

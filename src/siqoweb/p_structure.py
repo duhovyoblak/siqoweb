@@ -39,27 +39,11 @@ class Structure(Object):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, classId, height, template="1 structure.html"):
+    def __init__(self, journal, env, userId, classId, height, template="1 structure.html"):
         "Call constructor of Structure and initialise it"
         
         journal.I(f"Structure({classId}).init:")
         
-        #----------------------------------------------------------------------
-        # Identifikacia usera
-        #----------------------------------------------------------------------
-        user = current_user
-        
-        if user is not None and str(user)[:5]=='User>': 
-            
-            userId   = user.user_id
-            userName = user.userName()
-            lang     = user.lang_id
-            
-        else: 
-            userId   = 'Anonymous'
-            userName = 'Guest User'
-            lang     = 'SK'
-
         #----------------------------------------------------------------------
         # Konstruktor DataStructure
         #----------------------------------------------------------------------
@@ -68,24 +52,16 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Definicia stranky
         #----------------------------------------------------------------------
-        self.journal       = journal
+        self.name          = f"Struct({self.name})"
         self.loaded        = False
         self.env           = env
         
-        self.userName      = userName
-        self.lang          = lang
         self.template      = template
         self.height        = height
         
         self.initId        = "Content"
         self.context       = {}
         
-        #----------------------------------------------------------------------
-        # Aktualny user a jazyk
-        #----------------------------------------------------------------------
-        journal.M(f"Structure({self.classId}).init: user = '{userName}'")
-        journal.M(f"Structure({self.classId}).init: lang = '{self.lang}'")
-
         #----------------------------------------------------------------------
         # Vytvorenie DMS a HTM renderera
         #----------------------------------------------------------------------
@@ -110,14 +86,8 @@ class Structure(Object):
         self.addContext(self.idContext)
        
         #----------------------------------------------------------------------
-        # Doplnenie defaultneho formulara
-        #----------------------------------------------------------------------
-#        self.formStruct = FormStruct()
-#        self.addContext({'formStruct':self.formStruct})
-
-        #----------------------------------------------------------------------
         #gen.dictPrint(dct=self.context)
-        self.journal.O(f"Structure({self.name}).init")
+        self.journal.O(f"{self.name}.init")
         
     #==========================================================================
     # Content methods
@@ -135,7 +105,7 @@ class Structure(Object):
     def loadPageResource(self):
         "This method returns resources for this page saved in the Database"
         
-        self.journal.I(f"{self.classId}.loadPageResource:")
+        self.journal.I(f"{self.name}.loadPageResource:")
         
         #----------------------------------------------------------------------
         # Nacitanie objektov PAGE {'__HEAD__': {},'__NAVB__': {},'__STAG__': {},'__CONT__': {}}
@@ -305,69 +275,6 @@ class Structure(Object):
         return res
     
     #==========================================================================
-    # Response generators
-    #--------------------------------------------------------------------------
-    def resp(self):
-     
-        self.journal.I(f"{self.classId}.resp:")
-        
-        #----------------------------------------------------------------------
-        # Skontrolujem stav stranky, vyskocim ak nie je pripravena
-        #----------------------------------------------------------------------
-        if not self.loaded:
-            self.journal.O()
-            abort(500)
-        
-        #----------------------------------------------------------------------
-        # POST Method: Vyhodnotim formulare
-        #----------------------------------------------------------------------
-        if request.method == 'POST':
-            
-            resp = self.respPost()
-            
-            #------------------------------------------------------------------
-            # Ak je POST response validna
-            #------------------------------------------------------------------
-            if resp is not None:
-                self.journal.O()
-                return resp
-
-        #----------------------------------------------------------------------
-        # Default response: Ziskam template a vratim html
-        #----------------------------------------------------------------------
-        resp = self.respGet()
-        self.journal.O()
-        return resp
-
-    #--------------------------------------------------------------------------
-    def respPost(self):
-     
-        self.journal.I(f"{self.classId}.respPost: Default None post response")
-        
-        
-        
-        
-        self.journal.O()
-        return None
-
-    #--------------------------------------------------------------------------
-    def respGet(self):
-     
-        self.journal.I(f"{self.classId}.respGet: Default html get response from template='{self.template}'")
-        
-        template = self.env.get_template(self.template)
-        self.journal.M(f"{self.name}.resp: template loaded")
-
-        #----------------------------------------------------------------------
-        # Vygenerujem html response
-        #----------------------------------------------------------------------
-        resp = make_response(template.render(**self.context), 200)
-        resp.headers['X-Something'] = 'A value'
-
-        self.journal.O()
-        return resp
-
-    #==========================================================================
     # Internal methods
     #--------------------------------------------------------------------------
     # Context methods
@@ -375,7 +282,7 @@ class Structure(Object):
     def initContext(self):
         "Creates context"
     
-        self.journal.I(f"{self.classId}.initContext:")
+        self.journal.I(f"{self.name}.initContext:")
         self.context = {}
 
         #----------------------------------------------------------------------
@@ -407,21 +314,21 @@ class Structure(Object):
     def addContext(self, cont):
         "Add optional context"
         
-        self.journal.I(f"{self.classId}.addContext: {cont.keys()}")
+        self.journal.I(f"{self.name}.addContext: {cont.keys()}")
         self.context.update(cont)
         self.journal.O()
 
     #--------------------------------------------------------------------------
     def addFlash(self, mess):
 
-        self.journal.I(f"{self.classId}.addFlash: {mess}")
+        self.journal.I(f"{self.name}.addFlash: {mess}")
         flash(mess)
         self.journal.O()
 
     #--------------------------------------------------------------------------
     def setInitId(self, initId):
 
-        self.journal.I(f"{self.classId}.initId: {initId}")
+        self.journal.I(f"{self.name}.initId: {initId}")
         
         self.initId = initId
         self.addContext({"initId":self.initId})

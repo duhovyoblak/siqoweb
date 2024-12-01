@@ -6,12 +6,12 @@
 import os
 import re
 import traceback
-from   flask                    import url_for
+from   flask                    import request, url_for
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.07'
+_VER           = '1.08'
 
 #==============================================================================
 # package's variables
@@ -40,9 +40,33 @@ class HTML:
         self.idx     = 0
 
     #--------------------------------------------------------------------------
+    def itemDrop(self, item, key, pop=True):
+        
+        if key in item.keys(): 
+            
+            if pop: val = item.pop(key)
+            else  : val = item[key]
+            
+        else: val = ''
+        
+        return (item, val)
+        
+    #--------------------------------------------------------------------------
+    def itemTxt(self, item, lang):
+        
+        (item, txt) = self.itemDrop(item, lang)
+        
+        #if txt == '': txt = f"No resource for lang='{lang}'"
+        
+        return (item, txt)
+        
+    #==========================================================================
+    # Rendering API for templates
+    #--------------------------------------------------------------------------
     def objectsRender(self, objDic, lang):
         "Returns HTML for json-encoded item"
         
+        self.journal.I(f"HTML_{self.who}.objectsRender: Going to render an object dictionary...")
         toRet = ''
     
         #----------------------------------------------------------------------
@@ -77,12 +101,14 @@ class HTML:
                 self.journal.M(f"HTML_{self.who}.objectsRender: UNKNOWN object '{objDic}'", True)
 
         #----------------------------------------------------------------------
+        self.journal.O()
         return toRet
         
     #--------------------------------------------------------------------------
     def itemListRender(self, itemLst, lang, objId='noObjId'):
         "Returns HTML for json-encoded item"
         
+        self.journal.I(f"HTML_{self.who}.itemListRender: Going to render a list of items...")
         toRet = ''
     
         #----------------------------------------------------------------------
@@ -100,13 +126,14 @@ class HTML:
                 #--------------------------------------------------------------
                 toRet += self.itemRender(itemDic, lang, objId)
             
+        self.journal.O()
         return toRet
         
     #--------------------------------------------------------------------------
     def itemRender(self, item, lang, objId='noObjId'):
         "Returns HTML for json-encoded item"
         
-        self.journal.I(f"HTML_{self.who}.itemRender: for lang = '{lang}'")
+        self.journal.I(f"HTML_{self.who}.itemRender: I will render item {objId} for lang = '{lang}'")
         toRet = ''
 
         #----------------------------------------------------------------------
@@ -122,6 +149,7 @@ class HTML:
         except Exception as err:
             
             self.journal.M(f"HTML_{self.who}.itemRender: {str(err)}", True)
+            self.journal.O()
             return f'<p>{str(err)}</p><br><p>{item}</p>'
 
         #----------------------------------------------------------------------
@@ -175,35 +203,15 @@ class HTML:
         except Exception as err:
             
             self.journal.M(f"HTML_{self.who}.itemRender: {str(err)}", True)
-            toRet = f'<p>{str(err)}</p><br><p>{copyItem}</p><br><p>{traceback.format_exc()}</p>'
+            self.journal.O()
+            return f'<p>{str(err)}</p><br><p>{copyItem}</p><br><p>{traceback.format_exc()}</p>'
         
         #----------------------------------------------------------------------
         self.journal.O()
         return toRet
         
-    #--------------------------------------------------------------------------
-    def itemDrop(self, item, key, pop=True):
-        
-        if key in item.keys(): 
-            
-            if pop: val = item.pop(key)
-            else  : val = item[key]
-            
-        else: val = ''
-        
-        return (item, val)
-        
-    #--------------------------------------------------------------------------
-    def itemTxt(self, item, lang):
-        
-        (item, txt) = self.itemDrop(item, lang)
-        
-        #if txt == '': txt = f"No resource for lang='{lang}'"
-        
-        return (item, txt)
-        
     #==========================================================================
-    # Jednoriadkove HTML vyrazy
+    # Private htm rendering methods
     #--------------------------------------------------------------------------
     def newLine(self, ):
     
@@ -616,7 +624,7 @@ class HTML:
         #----------------------------------------------------------------------
         # Render the object formular
         #----------------------------------------------------------------------
-        if crForm == 'Y': 
+#        if crForm == 'Y': 
             
             method = 'POST'
             action = url_for(target)
@@ -672,7 +680,7 @@ class HTML:
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
-        if crForm == 'Y': self.formStop()
+#        if crForm == 'Y': self.formStop()
         
         #----------------------------------------------------------------------
         return toRet
@@ -693,7 +701,7 @@ class HTML:
             
        
         #----------------------------------------------------------------------
-        print('dbItem > ', toRet)
+#        print('dbItem > ', toRet)
         return toRet
     
     #--------------------------------------------------------------------------
@@ -739,8 +747,8 @@ class HTML:
             idx    = objId['SK']
             parIdx = parId['SK']
 
-            print('idx,    ', idx)
-            print('parIdx, ', parIdx)
+#            print('idx,    ', idx)
+#            print('parIdx, ', parIdx)
             
             
             

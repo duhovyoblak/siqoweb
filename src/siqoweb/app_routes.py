@@ -18,7 +18,7 @@ import app_views                as app_views
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER        = '1.05'
+_VER        = '1.06'
 _LOGIN_VIEW = 'pgLogin'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
@@ -142,14 +142,14 @@ def load_user(user_id='Anonymous'):
 @app.route('/login', methods=['GET', 'POST'])
 def pgLogin():
 
-    journal.M("pgLogin():")
+    journal.M("/login:")
     return app_views.pgLogin()
     
 #------------------------------------------------------------------------------
 @app.route('/logout')
 def pgLogout():
     
-    journal.M("pgLogout():")
+    journal.M("/logout:")
     
     # remove the username from the session if it's there
     session.pop('username', None)
@@ -164,7 +164,7 @@ def pgLogout():
 @login_required
 def pgHomepage():
 
-    journal.M("pgHomepage():")
+    journal.M("/homepage:")
     return app_views.pgStaged(classId='PagManHomepage')
 
 #------------------------------------------------------------------------------
@@ -172,7 +172,7 @@ def pgHomepage():
 @login_required
 def pgAdmin():
 
-    journal.M("pgAdmin():")
+    journal.M("/admin:")
     return app_views.pgStaged(classId='PagManAdmin')
 
 #------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ def pgAdmin():
 @login_required
 def pgResource():
 
-    journal.M("pgResource():")
+    journal.M("/resource:")
     return app_views.pgStaged(classId='PagManResource')
 
 #------------------------------------------------------------------------------
@@ -188,7 +188,7 @@ def pgResource():
 @login_required
 def pgDms():
 
-    journal.M("pgDms():")
+    journal.M("/dms:")
     return app_views.pgStaged(classId='PagManDMS')
 
 #------------------------------------------------------------------------------
@@ -196,7 +196,7 @@ def pgDms():
 @login_required
 def pgSession():
 
-    journal.M("pgSession():")
+    journal.M("/session:")
     return app_views.pgStaged(classId='PagManSession')
 
 #------------------------------------------------------------------------------
@@ -204,7 +204,7 @@ def pgSession():
 @login_required
 def pgContact():
 
-    journal.M("PagManContact():")
+    journal.M("/contact:")
     return app_views.pgEmpty(classId='PagManContact')
 
 #------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ def pgContact():
 @login_required
 def pgFaq(idx=0):
 
-    journal.M("pgFaq():")
+    journal.M("/faq:  idx={idx}")
     return app_views.pgForum(classId='FAQ', target='pgFaq', idx=idx)
 
 #------------------------------------------------------------------------------
@@ -222,7 +222,7 @@ def pgFaq(idx=0):
 @app.get('/user/<username>')
 def pgUser(username):
 
-    journal.M(f"pgUser(): username='{username}'")
+    journal.M(f"/user/username: username='{username}'")
 
     # show the user profile for that user
     return f"User {escape(username)}"
@@ -231,7 +231,7 @@ def pgUser(username):
 @app.route('/post/<int:postId>')
 def show_post(postId):
 
-    journal.M(f"show_post(): postId='{postId}'")
+    journal.M(f"/post: postId='{postId}'")
 
     # show the post with the given id, the id is an integer
     return f"Post {postId}"
@@ -240,7 +240,7 @@ def show_post(postId):
 @app.route('/path/<path:subpath>')
 def show_subpath(subpath):
 
-    journal.M(f"show_subpath(): subpath='{subpath}'")
+    journal.M(f"/path/subpath: subpath='{subpath}'")
 
     # show the subpath after /path/
     return f"Subpath {escape(subpath)}"
@@ -252,7 +252,7 @@ def show_subpath(subpath):
 @app.route('/oralhistory/<int:idx>', methods=['GET', 'POST'])
 def pgOhistory(idx=0):
 
-    journal.M(f"oralhistory: id='{idx}'")
+    journal.M(f"/oralhistory: idx='{idx}'")
     return app_views.pgForum(classId='OHISTORY', target='pgOhistory', idx=idx)
 
 #==============================================================================
