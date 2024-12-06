@@ -190,7 +190,7 @@ class DMS:
         return toRet
 
     #--------------------------------------------------------------------------
-    def loadForumSiblings(self, who, forumId, parIdx, target):
+    def loadForumSiblings(self, who, forumId, parIdx, idx, target):
     
         self.journal.I(f"{self.name}.loadForumSiblings: For item {forumId}.{parIdx}")
         toRet = []
@@ -199,7 +199,21 @@ class DMS:
         # Zoznam posledne zmenenych itemov pre root item, inak siblings
         #----------------------------------------------------------------------
         if parIdx == 0: toRet.append( {'SibsLabel':{'SK': 'Naposledy zmenené kapitoly', 'TYPE':'LABEL' }} )
-        else          : toRet.append( {'SibsLabel':{'SK': 'Obsah tejto kapitoly'      , 'TYPE':'LABEL' }} )
+        else: 
+            #------------------------------------------------------------------
+            # Nacitam parenta z DB
+            #------------------------------------------------------------------
+            parentDB = self.loadForumItem(who, forumId, idx=parIdx, target=target)
+            
+            atts = {}
+            atts['SK'   ] = f" << {parentDB['TITLE']['SK']} <<"
+            atts['TYPE' ] = 'A'
+            atts['URL'  ] = target
+            atts['IDX'  ] = str(parIdx)
+            atts['style'] = "text-align:center; font-style:italic;"
+            atts['BREAK'] = True
+            
+            toRet.append( {'SibsLabel':atts} )
 
         toRet.append( {'SibsSplit':{'TYPE':'SPLIT'}} )
         
@@ -214,16 +228,18 @@ class DMS:
         i = 0
         for row in data:
 
-            idx   = str(row[0])
-            func  = row[1]
-            title = row[2]
+            curIdx = str(row[0])
+            func   = row[1]
+            title  = row[2]
             
             #------------------------------------------------------------------
             # Pre koncepty vlozim pred titul C
             #------------------------------------------------------------------
-            if func=='K': title = f"C {title}"
+            if func   == 'K'     : title = f"C {title}"
+            
+            if curIdx == str(idx): title = f">> {title}"
         
-            toRet.append( {f"sibl_{i}": {'class':'smallFont', 'SK':title[:_TITLE_MAX], 'TYPE':'A', 'URL':target, 'IDX':idx, 'BREAK':True }} )
+            toRet.append( {f"sibl_{i}": {'class':'smallFont', 'SK':title[:_TITLE_MAX], 'TYPE':'A', 'URL':target, 'IDX':curIdx, 'BREAK':True }} )
 
             i += 1
       
@@ -286,7 +302,7 @@ class DMS:
         #----------------------------------------------------------------------
         # Nacitanie zoznamu TITLEs z DB ako list
         #----------------------------------------------------------------------
-        sql = f"select ITEM_ID, C_FUNC, TITLE from {Config.tabForum} where {where}"
+        sql = f"select ITEM_ID, C_FUNC, TITLE from {Config.tabForum} where {where} order by TITLE"
         children = self.db.readDb(who=who, sql=sql)
         
         #----------------------------------------------------------------------

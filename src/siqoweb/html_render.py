@@ -6,6 +6,8 @@
 import os
 import re
 import traceback
+
+from   datetime                 import date
 from   flask                    import request, url_for
 
 #==============================================================================
@@ -130,6 +132,7 @@ class HTML:
         return toRet
         
     #--------------------------------------------------------------------------
+#!!!!
     def itemRender(self, item, lang, objId='noObjId'):
         "Returns HTML for json-encoded item"
         
@@ -174,7 +177,7 @@ class HTML:
             elif typ == 'P_STOP'        : toRet = self.pStop(item, lang)
             elif typ == 'A'             : toRet = self.a(item, lang)
             elif typ == 'IMAGE'         : toRet = self.image(item, lang)
-            elif typ == 'DATE'          : toRet = self.date(item, lang)
+            elif typ == 'DATE'          : toRet = self.datePar(item, lang)
             elif typ == 'TEXT_ITEM'     : toRet = self.textItem(item, lang)
     
             elif typ == 'HEADTITLE'     : toRet = self.headTtile(item, lang)
@@ -451,11 +454,15 @@ class HTML:
         return toRet
     
     #--------------------------------------------------------------------------
-    def date(self, item, lang):
+    def datePar(self, item, lang):
         
-        (item, date) = self.itemDrop(item, lang)
+        (item, dat) = self.itemDrop(item, lang)
+        
+        day = date.fromisoformat(dat[:10]) 
+        
+        item[lang] = day.strftime('%d.%m. %Y')
 
-        return date 
+        return self.p(item, lang)
         
     #--------------------------------------------------------------------------
     def image(self, item, lang):
@@ -716,7 +723,7 @@ class HTML:
             
             (dbItem, title) = self.itemDrop(dbItem, 'TITLE')
             toRet += self.itemRender(title, lang)
-            
+
         else: 
             (dbItem, objName) = self.itemDrop(dbItem, lang)
             toRet += self.p({lang:objName}, lang)
@@ -750,13 +757,11 @@ class HTML:
 #            print('idx,    ', idx)
 #            print('parIdx, ', parIdx)
             
-            
-            
             #------------------------------------------------------------------
             # Vykreslenie Siblings/Changes
             #------------------------------------------------------------------
             toRet += self.divStart({"class":"Selector", "style":"height:100%; width:20%; display:block"})
-            sibs   = self.dms.loadForumSiblings(who='ja', forumId=forumId, parIdx=parIdx, target=target)
+            sibs   = self.dms.loadForumSiblings(who='ja', forumId=forumId, parIdx=parIdx, idx=idx, target=target)
             toRet += self.itemListRender(sibs, lang)
             toRet += self.divStop()
             
@@ -764,8 +769,10 @@ class HTML:
             # Vykreslenie Vykreslenie Forum itemu
             #------------------------------------------------------------------
             toRet += self.divStart({"class":"ForumItem", "style":"height:100%; width:60%; display:block"})
-            toRet += self.itemRender(d_chg, lang)
             toRet += self.itemRender(narr,  lang)
+            toRet += self.itemRender(d_chg, lang)
+
+            # Finalne vykreslenie textu
             toRet += self.itemRender(text,  lang)
             toRet += self.divStop()
             
