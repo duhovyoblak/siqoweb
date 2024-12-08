@@ -132,7 +132,6 @@ class DMS:
     def loadForumItem(self, who, forumId, idx=0, target=''):
     
         self.journal.I(f"{self.name}.loadForumItem: {forumId}.{idx}")
-        toRet = {}
 
         #----------------------------------------------------------------------
         # Ak NIE je zname idx nacitam root item fora, inak nacitam nacitam item
@@ -145,49 +144,50 @@ class DMS:
         #----------------------------------------------------------------------
         # Nacitanie polozky z DB ako dict
         #----------------------------------------------------------------------
-        item = self.db.readTable(who=who, table=Config.tabForum, where=where, header='detail')
+        rows = self.db.readTable(who=who, table=Config.tabForum, where=where, header='detail')
         
         #----------------------------------------------------------------------
         # Kontrola existencie forum itemu
         #----------------------------------------------------------------------
-        if len(item) == 0: 
+        if len(rows) == 0: 
 
             self.journal.M(f"{self.name}.loadForumItem: Item {where} does not exist")
             self.journal.O()
-            return None
+            return (None, None)
         
         #----------------------------------------------------------------------
         # Konverzia dat do objektu
         #----------------------------------------------------------------------
-        data = item[0]
+        item = {}
+        data = rows[0]
 
         if data is not None: 
             
             title = data['TITLE']
             if data['C_FUNC'] == 'K': title = f"KONCEPT: {title}"
             
-            toRet['ITEM_ID'  ] = {'SK': data['ITEM_ID'  ], 'TYPE':'VAR'                        }
-            toRet['PARENT_ID'] = {'SK': data['PARENT_ID'], 'TYPE':'VAR'                        }
-            toRet['TITLE'    ] = {'SK': title,             'TYPE':'H2'                         }
-            toRet['NARR'     ] = {'SK': data['NARRATOR' ], 'TYPE':'H3'                         }
-            toRet['D_CRT'    ] = {'SK': data['D_CREATED'], 'TYPE':'DATE'                       }
-            toRet['D_CHG'    ] = {'SK': data['D_CHANGED'], 'TYPE':'DATE'                       }
-            toRet['TEXT'     ] = {'SK': data['ITEM'     ], 'TYPE':'TEXT_ITEM', 'target':target }
+            item['ITEM_ID'  ] = {'SK': data['ITEM_ID'  ], 'TYPE':'VAR'                        }
+            item['PARENT_ID'] = {'SK': data['PARENT_ID'], 'TYPE':'VAR'                        }
+            item['TITLE'    ] = {'SK': title,             'TYPE':'H2'                         }
+            item['NARR'     ] = {'SK': data['NARRATOR' ], 'TYPE':'H3'                         }
+            item['D_CRT'    ] = {'SK': data['D_CREATED'], 'TYPE':'DATE'                       }
+            item['D_CHG'    ] = {'SK': data['D_CHANGED'], 'TYPE':'DATE'                       }
+            item['TEXT'     ] = {'SK': data['ITEM'     ], 'TYPE':'TEXT_ITEM', 'target':target }
 
         else: 
             apology = f"Oops, it seems forum item {self.idx} doesn't exist in forum {self.target}"
             
-            toRet['ITEM_ID'  ] = {'SK': -1               , 'TYPE':'VAR'   }
-            toRet['PARENT_ID'] = {'SK': -1               , 'TYPE':'VAR'   }
-            toRet['TITLE'    ] = {'SK': apology          , 'TYPE':'H2'    }
-            toRet['NARR'     ] = {'SK': "Unknown"        , 'TYPE':'H3'    }
-            toRet['D_CRT'    ] = {'SK': 'now'            , 'TYPE':'DATE'  }
-            toRet['D_CHG'    ] = {'SK': 'now'            , 'TYPE':'DATE'  }
-            toRet['TEXT'     ] = {'SK': ''               , 'TYPE':'P'     }
+            item['ITEM_ID'  ] = {'SK': -1               , 'TYPE':'VAR'   }
+            item['PARENT_ID'] = {'SK': -1               , 'TYPE':'VAR'   }
+            item['TITLE'    ] = {'SK': apology          , 'TYPE':'H2'    }
+            item['NARR'     ] = {'SK': "Unknown"        , 'TYPE':'H3'    }
+            item['D_CRT'    ] = {'SK': 'now'            , 'TYPE':'DATE'  }
+            item['D_CHG'    ] = {'SK': 'now'            , 'TYPE':'DATE'  }
+            item['TEXT'     ] = {'SK': ''               , 'TYPE':'P'     }
 
         #----------------------------------------------------------------------
         self.journal.O()
-        return toRet
+        return (data, item)
 
     #--------------------------------------------------------------------------
     def loadForumSiblings(self, who, forumId, parIdx, idx, target):
@@ -198,15 +198,15 @@ class DMS:
         #----------------------------------------------------------------------
         # Zoznam posledne zmenenych itemov pre root item, inak siblings
         #----------------------------------------------------------------------
-        if parIdx == 0: toRet.append( {'SibsLabel':{'SK': 'Naposledy zmenené kapitoly', 'TYPE':'LABEL' }} )
+        if parIdx == 0: toRet.append( {'SibsLabel':{'SK': 'Nedávno zmenené kapitoly', 'TYPE':'LABEL', 'style':'width:14em;' }} )
         else: 
             #------------------------------------------------------------------
             # Nacitam parenta z DB
             #------------------------------------------------------------------
-            parentDB = self.loadForumItem(who, forumId, idx=parIdx, target=target)
+            parentData, parentItem = self.loadForumItem(who, forumId, idx=parIdx, target=target)
             
             atts = {}
-            atts['SK'   ] = f" << {parentDB['TITLE']['SK']} <<"
+            atts['SK'   ] = f" << {parentItem['TITLE']['SK']} <<"
             atts['TYPE' ] = 'A'
             atts['URL'  ] = target
             atts['IDX'  ] = str(parIdx)

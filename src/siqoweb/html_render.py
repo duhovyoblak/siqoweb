@@ -57,7 +57,7 @@ class HTML:
     #--------------------------------------------------------------------------
     def itemTxt(self, item, lang):
         
-        (item, txt) = self.itemDrop(item, lang)
+        (item, txt) = self.itemDrop(item, lang, pop=True)
         
         #if txt == '': txt = f"No resource for lang='{lang}'"
         
@@ -345,6 +345,9 @@ class HTML:
 
         self.journal.I(f"HTML_{self.who}.textItem: {txt[:32]}...")
 
+        #----------------------------------------------------------------------
+        # Vlozenie zdrojoveho textu
+        #----------------------------------------------------------------------
         args   = {lang:txt}
         toRet  = self.pStart(args, lang)
         toRet += self.pStop()
@@ -405,7 +408,7 @@ class HTML:
 
             repl  = self.pStop() + self.imageThumb(args, lang) + self.pStart()
             toRet = re.sub(image, repl, toRet)
-        
+            
         #----------------------------------------------------------------------
         self.journal.O()
         return toRet
@@ -568,8 +571,6 @@ class HTML:
         
         atts = {"for": item['id']}
 
-        print(item)
-        
         #----------------------------------------------------------------------
         # html
         #----------------------------------------------------------------------
@@ -644,15 +645,17 @@ class HTML:
         #----------------------------------------------------------------------
         # Read instance of the object for respective class
         #----------------------------------------------------------------------
-        dbItem = self.loadDbItem(who='ja', objClass=objClass, item=item)
+        dbData, dbItem = self.loadDbItem(who='ja', objClass=objClass, item=item)
         
-        if len(dbItem) == 0:
+        print(dbData)
+        print()
+        print(dbItem)
+        
+        if dbItem is None:
             
             self.journal.M(f"HTML_{self.who}.dbObject: No dbItem for class={objClass} and item={item}", True)
             return toRet
 
-        print(dbItem)
-        print()
         #----------------------------------------------------------------------
         # Object space
         #----------------------------------------------------------------------
@@ -667,7 +670,6 @@ class HTML:
         toRet += self.objectHead(objClass, item=item, dbItem=dbItem, lang=lang)
         toRet += self.divStop()
 
-        print(dbItem)
         #----------------------------------------------------------------------
         # Back space
         #----------------------------------------------------------------------
@@ -703,7 +705,8 @@ class HTML:
     #--------------------------------------------------------------------------
     def loadDbItem(self, who, objClass, item):
         
-        toRet = {}
+        dbData = None
+        dbItem = None
     
         #----------------------------------------------------------------------
         # Nacitanie objektu podla class
@@ -713,11 +716,11 @@ class HTML:
             (item, forumId) = self.itemDrop(item, 'FORUM' )
             (item, target ) = self.itemDrop(item, 'target')
             
-            toRet = self.dms.loadForumItem(who, forumId=forumId, idx=self.dynIdx, target=target)
-       
+            dbData, dbItem = self.dms.loadForumItem(who, forumId=forumId, idx=self.dynIdx, target=target)
+      
         #----------------------------------------------------------------------
         #print('dbItem > ', toRet)
-        return toRet
+        return (dbData, dbItem)
     
     #--------------------------------------------------------------------------
     def saveDbItem(self, who, dbItem):
@@ -759,8 +762,6 @@ class HTML:
             (item, target ) = self.itemDrop(  item, 'target'   )
 
             (dbItem, title) = self.itemDrop(dbItem, 'TITLE'    )
-            print(title)
-            
             
             (dbItem, objId) = self.itemDrop(dbItem, 'ITEM_ID'  )
             (dbItem, parId) = self.itemDrop(dbItem, 'PARENT_ID')
@@ -768,6 +769,8 @@ class HTML:
             (dbItem, d_crt) = self.itemDrop(dbItem, 'D_CRT'    )
             (dbItem, d_chg) = self.itemDrop(dbItem, 'D_CHG'    )
             (dbItem, text ) = self.itemDrop(dbItem, 'TEXT'     )
+            
+            print(title)
             
             #------------------------------------------------------------------
             # Render the object formular
