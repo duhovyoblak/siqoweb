@@ -160,8 +160,8 @@ class HTML:
         #----------------------------------------------------------------------
         try:
             if   typ == 'CHECKBOX'      : toRet = self.inputCheckBox(item, lang)
-        #   elif typ == 'BUTTON'        : toRet = self.inputButton(item, lang)
             elif typ == 'RADIO'         : toRet = self.inputRadio(item, lang)
+            elif typ == 'BUTTON'        : toRet = self.inputButton(item, lang)
             elif typ == 'TEXT'          : toRet = self.inputText(item, lang)
             
             elif typ == 'OBJECT'        : toRet = self.dbObject(item, lang)
@@ -525,6 +525,24 @@ class HTML:
     #--------------------------------------------------------------------------
     # Input items
     #--------------------------------------------------------------------------
+    def inputCheckBox(self, item, lang):
+    
+        """
+        atts = { "type"    : "checkbox"
+                ,"class"   : classx
+                ,"name"    : name
+                ,"value"   : value
+                ,"ID"      : idx
+                ,"onchange": onChange
+               }
+        
+        if not edit: editType = 'readonly'
+        else       : editType = ""
+        """
+        editType = ''
+        return f'<input {self.html_atts(item)} {editType}/>\n'
+    
+    #--------------------------------------------------------------------------
     def inputRadio(self, item, lang):
     
         item["type"] = "radio"
@@ -558,23 +576,25 @@ class HTML:
         return toRet
     
     #--------------------------------------------------------------------------
-    def inputCheckBox(self, item, lang):
-    
-        """
-        atts = { "type"    : "checkbox"
-                ,"class"   : classx
-                ,"name"    : name
-                ,"value"   : value
-                ,"ID"      : idx
-                ,"onchange": onChange
+    def inputButton(self, item, lang, enabled=True):
+
+        atts = { "type"       : "text"
+                ,"name"       : name
+                ,"value"      : value
+                ,"class"      : classx
+                ,"title"      : title
+                ,"formaction" : fact
+                ,"onclick"    : onclick
+                ,"ID"         : idx
+                ,"size"       : size
+                ,"maxlength"  : maxlength
+                ,"onchange"   : onChange
+                ,"formtarget" : target
+                ,"style"      : 'width:'
                }
-        
-        if not edit: editType = 'readonly'
-        else       : editType = ""
-        """
-        editType = ''
-        return f'<input {self.html_atts(item)} {editType}/>\n'
-    
+       
+        if enabled: return f'<input {self.html_atts(item)} disabled />\n'
+
     #--------------------------------------------------------------------------
     def inputText(self, item, lang):
     
@@ -607,13 +627,13 @@ class HTML:
         #----------------------------------------------------------------------
         # Define parameters of an object
         #----------------------------------------------------------------------
-        (item, objClass    ) = self.itemDrop(item, 'CLASS' )
-        (item, target      ) = self.itemDrop(item, 'target', False)
-        (item, crForm      ) = self.itemDrop(item, 'crForm')
+        (item, objClass ) = self.itemDrop(item, 'CLASS' )
+        (item, target   ) = self.itemDrop(item, 'target', False)
+        (item, crForm   ) = self.itemDrop(item, 'crForm')
         
-        (item, objId       ) = self.itemDrop(item, 'objId' )
-        (item, height      ) = self.itemDrop(item, 'height')
-        (item, width       ) = self.itemDrop(item, 'width' )
+        (item, objId    ) = self.itemDrop(item, 'objId' )
+        (item, height   ) = self.itemDrop(item, 'height')
+        (item, width    ) = self.itemDrop(item, 'width' )
         
         if width  == '': width  = '99%'
         if height == '': height = '94%'
@@ -627,17 +647,6 @@ class HTML:
             
             self.journal.M(f"HTML_{self.who}.dbObject: No dbItem for class={objClass} and item={item}", True)
             return toRet
-
-        #----------------------------------------------------------------------
-        # Render the object formular
-        #----------------------------------------------------------------------
-#        if crForm == 'Y': 
-            
-            method = 'POST'
-            action = url_for(target)
-    
-            atts = {"name":objId, "id":objId, "method":method, "action":action, "enctype":"multipart/form-data"}
-            toRet += self.formStart(atts)
 
         #----------------------------------------------------------------------
         # Object space
@@ -658,9 +667,7 @@ class HTML:
         #----------------------------------------------------------------------
         atts = {"name":objId, "id":f"{objId}_BS", "class":"ObjectBackSpace", "style":"height:0px;"}
         toRet += self.divStart(atts);
-        
-#         ShowBack( $stage, $action );
-        
+        toRet += self.objectBack(objClass, item=item, dbItem=dbItem, lang=lang)
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -676,9 +683,7 @@ class HTML:
         #----------------------------------------------------------------------
         atts = {"name":objId, "id":f"{objId}_CS", "class":"ObjectControlSpace"}
         toRet += self.divStart(atts);
-        
-#           $this->ShowButtons();
-        
+        toRet += self.objectControll(objClass, item=item, dbItem=dbItem, lang=lang)
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -686,9 +691,6 @@ class HTML:
         #----------------------------------------------------------------------
         toRet += self.divStop()
 
-        #----------------------------------------------------------------------
-#        if crForm == 'Y': self.formStop()
-        
         #----------------------------------------------------------------------
         return toRet
 
@@ -702,9 +704,10 @@ class HTML:
         #----------------------------------------------------------------------
         if objClass == 'FORUM':
             
-            (item, forumId) = self.itemDrop(item, 'FORUM', False)
+            (item, forumId) = self.itemDrop(item, 'FORUM',  False)
+            (item, target ) = self.itemDrop(item, 'target', False)
             
-            toRet = self.dms.loadForumItem(who, forumId=forumId, idx=self.idx, target='')
+            toRet = self.dms.loadForumItem(who, forumId=forumId, idx=self.idx, target=target)
             
        
         #----------------------------------------------------------------------
@@ -732,6 +735,42 @@ class HTML:
         return toRet
 
     #--------------------------------------------------------------------------
+    def objectBack(self, objClass, item, dbItem, lang):
+
+        toRet = ''
+
+        #----------------------------------------------------------------------
+        # Vytvorenie Front/end objektu podla class
+        #----------------------------------------------------------------------
+        if objClass == 'FORUM':
+            
+            (item, target      ) = self.itemDrop(  item, 'target' , False)
+            (dbItem, objId     ) = self.itemDrop(dbItem, 'ITEM_ID', False)
+
+            #------------------------------------------------------------------
+            # Render the object formular
+            #------------------------------------------------------------------
+            method = 'POST'
+            action = url_for(target)
+    
+            atts = {"name":objId, "id":objId, "method":method, "action":action, "enctype":"multipart/form-data"}
+            toRet += self.formStart(atts)
+
+
+
+
+
+            #------------------------------------------------------------------
+            self.formStop()
+            
+        else: 
+            (dbItem, objName) = self.itemDrop(dbItem, lang)
+            toRet += self.p({lang:objName}, lang)
+
+        #----------------------------------------------------------------------
+        return toRet
+
+    #--------------------------------------------------------------------------
     def objectFront(self, objClass, item, dbItem, lang):
 
         toRet = ''
@@ -741,15 +780,16 @@ class HTML:
         #----------------------------------------------------------------------
         if objClass == 'FORUM':
             
-            (dbItem, objId) = self.itemDrop(dbItem, 'ITEM_ID'  )
+            (item, forumId) = self.itemDrop(  item, 'FORUM'  , False)
+            (item, target ) = self.itemDrop(  item, 'target' , False)
+
+            (dbItem, objId) = self.itemDrop(dbItem, 'ITEM_ID', False)
             (dbItem, parId) = self.itemDrop(dbItem, 'PARENT_ID')
             (dbItem, narr ) = self.itemDrop(dbItem, 'NARR'     )
             (dbItem, d_crt) = self.itemDrop(dbItem, 'D_CRT'    )
             (dbItem, d_chg) = self.itemDrop(dbItem, 'D_CHG'    )
             (dbItem, text ) = self.itemDrop(dbItem, 'TEXT'     )
             
-            (item, forumId) = self.itemDrop(item, 'FORUM' , False)
-            (item, target ) = self.itemDrop(item, 'target', False)
             
             idx    = objId['SK']
             parIdx = parId['SK']
@@ -784,6 +824,22 @@ class HTML:
             toRet += self.itemListRender(child, lang)
             toRet += self.divStop()
             
+        else: 
+            (dbItem, objName) = self.itemDrop(dbItem, lang)
+            toRet += self.p({lang:objName}, lang)
+
+        #----------------------------------------------------------------------
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def objectControll(self, objClass, item, dbItem, lang):
+
+        toRet = ''
+
+        if objClass == 'FORUM':
+            
+            pass
+
         else: 
             (dbItem, objName) = self.itemDrop(dbItem, lang)
             toRet += self.p({lang:objName}, lang)

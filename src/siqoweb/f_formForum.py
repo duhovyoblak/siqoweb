@@ -3,8 +3,7 @@
 #------------------------------------------------------------------------------
 import os
 
-from flask_wtf          import FlaskForm
-from wtforms            import StringField, PasswordField, BooleanField, SubmitField
+from wtforms            import StringField, TextAreaField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 
 from f_form             import FormStruct
@@ -24,9 +23,8 @@ _CWD      = os.getcwd()
 #------------------------------------------------------------------------------
 class FormForum(FormStruct):
     
-    #username = StringField  ('Username', validators=[DataRequired()] )
-    #password = PasswordField('Password', validators=[DataRequired()] )
-    #remember = BooleanField ('Remember Me')
+    narrator     = StringField  ('Narrator')
+    text         = TextAreaField('Text'    )
     
     sfUp         = SubmitField('Up')
     sfEdit       = SubmitField('Edit')
@@ -40,7 +38,7 @@ class FormForum(FormStruct):
     
 
 #==============================================================================
-print(f"forms {_VER}")
+print(f"formForum {_VER}")
 
 #==============================================================================
 #                              END OF FILE

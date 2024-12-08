@@ -26,7 +26,7 @@ class FormStruct(FlaskForm):
     lastPage = HiddenField(u'')
 
 #==============================================================================
-print(f"forms {_VER}")
+print(f"formStruct {_VER}")
 
 #==============================================================================
 #                              END OF FILE
