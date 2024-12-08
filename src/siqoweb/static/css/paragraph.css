@@ -94,6 +94,7 @@ b {
 }
 /*----------------------------------------------------------------------------*/
 label {
+  display          :inline-block;
   color            :#003366;
   background       :transparent;
 
@@ -102,6 +103,8 @@ label {
 
   font-family      :verdana,arial,sans-serif;
   font-size        :0.9em;
+  
+  width            :7em;           
 }
 /*----------------------------------------------------------------------------*/
 li {

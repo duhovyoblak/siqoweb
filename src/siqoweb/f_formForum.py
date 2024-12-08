@@ -11,7 +11,7 @@ from f_form             import FormStruct
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.01'
+_VER      = '1.02'
 _CWD      = os.getcwd()
 
 #==============================================================================
@@ -23,8 +23,11 @@ _CWD      = os.getcwd()
 #------------------------------------------------------------------------------
 class FormForum(FormStruct):
     
+    parent_id    = StringField  ('Parent ID')
+    user_id      = StringField  ('User ID') 
+    title        = StringField  ('Title')
     narrator     = StringField  ('Narrator')
-    text         = TextAreaField('Text'    )
+    item         = TextAreaField('Item'    )
     
     sfUp         = SubmitField('Up')
     sfEdit       = SubmitField('Edit')

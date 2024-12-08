@@ -18,11 +18,12 @@ from   database            import Database
 from   app_user            import User
 from   app_dms             import DMS
 from   p_page              import Page
+from   f_formForum         import FormForum
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.02'
+_VER           = '1.03'
 
 _DAY_CHANGES   = 32       # Pocet dni, pocas ktorych sa item povazuje za cerstvo zmeneny
 _TITLE_MAX     = 36       # Maximalny pocet zobrazenych znakov TITLE v selectore
@@ -47,9 +48,10 @@ class PageForum(Page):
         #----------------------------------------------------------------------
         # Forum premenne
         #----------------------------------------------------------------------
-        self.target    = target        # Nazov route metody pre zvolene forum
-        self.idx       = idx           # Cislo itemu, default = 0 pre root
-        self.forumItem = None          # Forum item nacitany z DB vo forme dict
+        self.target      = target        # Nazov route metody pre zvolene forum
+        self.idx         = idx           # Cislo itemu, default = 0 pre root
+        self.forumItem   = None          # Forum item nacitany z DB vo forme dict
+        self.form        = FormForum()   # Formular pre Forum 
 
         #----------------------------------------------------------------------
         # Konstruktor Structure
@@ -59,7 +61,8 @@ class PageForum(Page):
         #----------------------------------------------------------------------
         # Doplnenie dynamickych odkazov pre html_renderer
         #----------------------------------------------------------------------
-        self.html.idx = idx
+        self.html.dynIdx  = self.idx
+        self.html.dynForms.append(self.form)
 
 
         self.journal.O()
@@ -102,7 +105,7 @@ if __name__ == '__main__':
     ,loader     = FileSystemLoader(['templates'])
     )
 
-    page = PageForum(journal, env, classId='OHISTORY', target='pgOhistory', idx=154, height=700)
+    page = PageForum(journal, env, classId='OHISTORY', target='pgOhistory', idx=68, height=700)
     rec  = page.context
 
 #==============================================================================

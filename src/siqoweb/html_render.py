@@ -13,7 +13,7 @@ from   flask                    import request, url_for
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.08'
+_VER           = '1.10'
 
 #==============================================================================
 # package's variables
@@ -31,18 +31,19 @@ class HTML:
     #--------------------------------------------------------------------------
     def __init__(self, journal, who, dms=None, classId='noClass'):
         
-        self.journal = journal
-        self.who     = who   
-        self.dms     = dms       # DMS manager
-        self.classId = classId   # OBJECT_ID v pagman db
+        self.journal   = journal
+        self.who       = who   
+        self.dms       = dms       # DMS manager
+        self.classId   = classId   # OBJECT_ID v pagman db
         
         #----------------------------------------------------------------------
         # Dynamicky prenasane parametre
         #----------------------------------------------------------------------
-        self.idx     = 0
+        self.dynIdx    = 0
+        self.dynForms  = []
 
     #--------------------------------------------------------------------------
-    def itemDrop(self, item, key, pop=True):
+    def itemDrop(self, item, key, pop=False):
         
         if key in item.keys(): 
             
@@ -143,10 +144,10 @@ class HTML:
         # Priprava
         #----------------------------------------------------------------------
         try:
-            item['objId'] = f"{self.classId}.{objId}"
+            #item['objId'] = f"{self.classId}.{objId}"
             copyItem = dict(item)
         
-            (item, typ) = self.itemDrop(item, 'TYPE')
+            (item, typ) = self.itemDrop(item, 'TYPE', pop=True)
             if typ == '': typ = 'P'
 
         except Exception as err:
@@ -566,6 +567,8 @@ class HTML:
         item[lang] = ''
         
         atts = {"for": item['id']}
+
+        print(item)
         
         #----------------------------------------------------------------------
         # html
@@ -628,7 +631,7 @@ class HTML:
         # Define parameters of an object
         #----------------------------------------------------------------------
         (item, objClass ) = self.itemDrop(item, 'CLASS' )
-        (item, target   ) = self.itemDrop(item, 'target', False)
+        (item, target   ) = self.itemDrop(item, 'target')
         (item, crForm   ) = self.itemDrop(item, 'crForm')
         
         (item, objId    ) = self.itemDrop(item, 'objId' )
@@ -648,6 +651,8 @@ class HTML:
             self.journal.M(f"HTML_{self.who}.dbObject: No dbItem for class={objClass} and item={item}", True)
             return toRet
 
+        print(dbItem)
+        print()
         #----------------------------------------------------------------------
         # Object space
         #----------------------------------------------------------------------
@@ -662,6 +667,7 @@ class HTML:
         toRet += self.objectHead(objClass, item=item, dbItem=dbItem, lang=lang)
         toRet += self.divStop()
 
+        print(dbItem)
         #----------------------------------------------------------------------
         # Back space
         #----------------------------------------------------------------------
@@ -704,15 +710,21 @@ class HTML:
         #----------------------------------------------------------------------
         if objClass == 'FORUM':
             
-            (item, forumId) = self.itemDrop(item, 'FORUM',  False)
-            (item, target ) = self.itemDrop(item, 'target', False)
+            (item, forumId) = self.itemDrop(item, 'FORUM' )
+            (item, target ) = self.itemDrop(item, 'target')
             
-            toRet = self.dms.loadForumItem(who, forumId=forumId, idx=self.idx, target=target)
-            
+            toRet = self.dms.loadForumItem(who, forumId=forumId, idx=self.dynIdx, target=target)
        
         #----------------------------------------------------------------------
-#        print('dbItem > ', toRet)
+        #print('dbItem > ', toRet)
         return toRet
+    
+    #--------------------------------------------------------------------------
+    def saveDbItem(self, who, dbItem):
+        
+       
+        #----------------------------------------------------------------------
+        print('dbItem > ', dbItem)
     
     #--------------------------------------------------------------------------
     def objectHead(self, objClass, item, dbItem, lang):
@@ -744,24 +756,50 @@ class HTML:
         #----------------------------------------------------------------------
         if objClass == 'FORUM':
             
-            (item, target      ) = self.itemDrop(  item, 'target' , False)
-            (dbItem, objId     ) = self.itemDrop(dbItem, 'ITEM_ID', False)
+            (item, target ) = self.itemDrop(  item, 'target'   )
 
+            (dbItem, title) = self.itemDrop(dbItem, 'TITLE'    )
+            print(title)
+            
+            
+            (dbItem, objId) = self.itemDrop(dbItem, 'ITEM_ID'  )
+            (dbItem, parId) = self.itemDrop(dbItem, 'PARENT_ID')
+            (dbItem, narr ) = self.itemDrop(dbItem, 'NARR'     )
+            (dbItem, d_crt) = self.itemDrop(dbItem, 'D_CRT'    )
+            (dbItem, d_chg) = self.itemDrop(dbItem, 'D_CHG'    )
+            (dbItem, text ) = self.itemDrop(dbItem, 'TEXT'     )
+            
             #------------------------------------------------------------------
             # Render the object formular
             #------------------------------------------------------------------
             method = 'POST'
             action = url_for(target)
     
-            atts = {"name":objId, "id":objId, "method":method, "action":action, "enctype":"multipart/form-data"}
+            atts = {"method":method, "action":action, "enctype":"multipart/form-data"}
             toRet += self.formStart(atts)
+            
 
+            toRet += str(self.dynForms[0].title.label())
+            toRet += str(self.dynForms[0].title(class_="ObjectInputString", value=title))
+            toRet += self.breakLine()
 
+            toRet += str(self.dynForms[0].parent_id.label())
+            toRet += str(self.dynForms[0].parent_id(class_="ObjectInputString"))
+            toRet += self.breakLine()
 
+            toRet += str(self.dynForms[0].user_id.label())
+            toRet += str(self.dynForms[0].user_id(class_="ObjectInputString", size=35))
+            toRet += self.breakLine()
 
+            toRet += str(self.dynForms[0].narrator.label())
+            toRet += str(self.dynForms[0].narrator(class_="ObjectInputString", size=35))
+            toRet += self.breakLine()
 
-            #------------------------------------------------------------------
+            toRet += str(self.dynForms[0].item.label())
+            toRet += str(self.dynForms[0].item(class_="ObjectInputText"))
+
             self.formStop()
+            #------------------------------------------------------------------
             
         else: 
             (dbItem, objName) = self.itemDrop(dbItem, lang)
@@ -780,10 +818,10 @@ class HTML:
         #----------------------------------------------------------------------
         if objClass == 'FORUM':
             
-            (item, forumId) = self.itemDrop(  item, 'FORUM'  , False)
-            (item, target ) = self.itemDrop(  item, 'target' , False)
+            (item, forumId) = self.itemDrop(  item, 'FORUM'    )
+            (item, target ) = self.itemDrop(  item, 'target'   )
 
-            (dbItem, objId) = self.itemDrop(dbItem, 'ITEM_ID', False)
+            (dbItem, objId) = self.itemDrop(dbItem, 'ITEM_ID'  )
             (dbItem, parId) = self.itemDrop(dbItem, 'PARENT_ID')
             (dbItem, narr ) = self.itemDrop(dbItem, 'NARR'     )
             (dbItem, d_crt) = self.itemDrop(dbItem, 'D_CRT'    )
@@ -897,11 +935,10 @@ class HTML:
         #----------------------------------------------------------------------
         # Pripravim atributy do itemu
         #----------------------------------------------------------------------
-        (item, pos) = self.itemDrop(item, 'POS')
+        (item, pos) = self.itemDrop(item, 'POS', True)
         
         item['name'   ] = 'SSB'
         item['id'     ] = f"SSB_{pos}"
-        item['value'  ] = pos
         item['onclick'] = f"ShowStage('{pos}')"
         
         if pos == 1: item['checked'] = 'checked'

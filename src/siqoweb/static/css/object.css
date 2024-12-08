@@ -122,6 +122,8 @@ input.ObjectControlBtn {
 input.ObjectInputString {
   background       :#FFFFEB;
 
+  width            :80%;
+
   margin           :2px;
   padding          :2px 4px 2px 4px;
   border           :1px solid #596380;
@@ -135,6 +137,8 @@ textarea.ObjectInputText {
   background       :#FFFFEB;
 
   width            :99%;
+  height           :10em;
+  
   margin           :2px;
   padding          :2px;
   border           :1px solid #596380;
