@@ -647,10 +647,6 @@ class HTML:
         #----------------------------------------------------------------------
         dbData, dbItem = self.loadDbItem(who='ja', objClass=objClass, item=item)
         
-        print(dbData)
-        print()
-        print(dbItem)
-        
         if dbItem is None:
             
             self.journal.M(f"HTML_{self.who}.dbObject: No dbItem for class={objClass} and item={item}", True)
@@ -675,7 +671,7 @@ class HTML:
         #----------------------------------------------------------------------
         atts = {"name":objId, "id":f"{objId}_BS", "class":"ObjectBackSpace", "style":"height:0px;"}
         toRet += self.divStart(atts);
-        toRet += self.objectBack(objClass, item=item, dbItem=dbItem, lang=lang)
+        toRet += self.objectBack(objClass, item=item, dbItem=dbItem, dbData=dbData, lang=lang)
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -719,7 +715,6 @@ class HTML:
             dbData, dbItem = self.dms.loadForumItem(who, forumId=forumId, idx=self.dynIdx, target=target)
       
         #----------------------------------------------------------------------
-        #print('dbItem > ', toRet)
         return (dbData, dbItem)
     
     #--------------------------------------------------------------------------
@@ -750,7 +745,7 @@ class HTML:
         return toRet
 
     #--------------------------------------------------------------------------
-    def objectBack(self, objClass, item, dbItem, lang):
+    def objectBack(self, objClass, item, dbItem, dbData, lang):
 
         toRet = ''
 
@@ -759,18 +754,7 @@ class HTML:
         #----------------------------------------------------------------------
         if objClass == 'FORUM':
             
-            (item, target ) = self.itemDrop(  item, 'target'   )
-
-            (dbItem, title) = self.itemDrop(dbItem, 'TITLE'    )
-            
-            (dbItem, objId) = self.itemDrop(dbItem, 'ITEM_ID'  )
-            (dbItem, parId) = self.itemDrop(dbItem, 'PARENT_ID')
-            (dbItem, narr ) = self.itemDrop(dbItem, 'NARR'     )
-            (dbItem, d_crt) = self.itemDrop(dbItem, 'D_CRT'    )
-            (dbItem, d_chg) = self.itemDrop(dbItem, 'D_CHG'    )
-            (dbItem, text ) = self.itemDrop(dbItem, 'TEXT'     )
-            
-            print(title)
+            (item, target ) = self.itemDrop(item, 'target')
             
             #------------------------------------------------------------------
             # Render the object formular
@@ -781,25 +765,28 @@ class HTML:
             atts = {"method":method, "action":action, "enctype":"multipart/form-data"}
             toRet += self.formStart(atts)
             
+            toRet += str(self.dynForms[0].hidden_tag())
 
             toRet += str(self.dynForms[0].title.label())
-            toRet += str(self.dynForms[0].title(class_="ObjectInputString", value=title))
+            toRet += str(self.dynForms[0].title(class_="ObjectInputString", value=dbData['TITLE']))
             toRet += self.breakLine()
 
             toRet += str(self.dynForms[0].parent_id.label())
-            toRet += str(self.dynForms[0].parent_id(class_="ObjectInputString"))
+            toRet += str(self.dynForms[0].parent_id(class_="ObjectInputString", value=dbData['PARENT_ID']))
             toRet += self.breakLine()
 
             toRet += str(self.dynForms[0].user_id.label())
-            toRet += str(self.dynForms[0].user_id(class_="ObjectInputString", size=35))
+            toRet += str(self.dynForms[0].user_id(class_="ObjectInputString", value=dbData['USER_ID'], size=35))
             toRet += self.breakLine()
 
             toRet += str(self.dynForms[0].narrator.label())
-            toRet += str(self.dynForms[0].narrator(class_="ObjectInputString", size=35))
+            toRet += str(self.dynForms[0].narrator(class_="ObjectInputString", value=dbData['NARRATOR'], size=35))
             toRet += self.breakLine()
 
+          
             toRet += str(self.dynForms[0].item.label())
-            toRet += str(self.dynForms[0].item(class_="ObjectInputText"))
+            self.dynForms[0].item.data = dbData['ITEM']
+            toRet += str(self.dynForms[0].item(class_="ObjectInputText", rows="20"))
 
             self.formStop()
             #------------------------------------------------------------------
@@ -879,7 +866,15 @@ class HTML:
 
         if objClass == 'FORUM':
             
-            pass
+            toRet += str(self.dynForms[0].sfUp        (class_="ObjectControlBtn"))
+            toRet += str(self.dynForms[0].sfEdit      (class_="ObjectControlBtn"))
+            toRet += str(self.dynForms[0].sfAddChapter(class_="ObjectControlBtn"))
+            toRet += str(self.dynForms[0].afAddChild  (class_="ObjectControlBtn"))
+            toRet += str(self.dynForms[0].sfApply     (class_="ObjectControlBtn"))
+            toRet += str(self.dynForms[0].sfCancel    (class_="ObjectControlBtn"))
+            toRet += str(self.dynForms[0].sfPublish   (class_="ObjectControlBtn"))
+            toRet += str(self.dynForms[0].sfDelete    (class_="ObjectControlBtn"))
+            toRet += str(self.dynForms[0].sfMove      (class_="ObjectControlBtn"))
 
         else: 
             (dbItem, objName) = self.itemDrop(dbItem, lang)

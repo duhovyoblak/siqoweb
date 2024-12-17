@@ -74,18 +74,23 @@ class PageForum(Page):
      
         self.journal.I(f"{self.name}.respPost:")
         
+        #print(self.form.data)
+        
         #----------------------------------------------------------------------
         # Ak je POST, najprv vyhodnotim formular formLogin
         #----------------------------------------------------------------------
-        if self.formLogin.validate_on_submit():
+        if self.form.validate():
             
-            self.journal.M(f"{self.name}.resp: User logged in")
+            self.journal.M(f"{self.name}.respPost: form validated", True)
             self.journal.O()
             return redirect(url_for('pgHomepage'))
  
         #----------------------------------------------------------------------
         # Nie je POST
         #----------------------------------------------------------------------
+        print()
+        print(self.form.errors)
+        self.journal.M(f"{self.name}.respPost: form NOT validated", True)
         self.journal.O()
         return None
 

@@ -7,7 +7,9 @@ import flask
 from   flask              import url_for, get_flashed_messages, flash, render_template, make_response
 from   flask              import request, session, abort, redirect
 from   flask_login        import login_user, logout_user, current_user
+
 from   markupsafe         import escape
+from   wtforms.validators import ValidationError
 
 import jinja2             as j2
 from   jinja2             import Environment, FileSystemLoader, PackageLoader, select_autoescape
@@ -106,7 +108,8 @@ class Page(Structure):
         #----------------------------------------------------------------------
         if request.method == 'POST':
             
-            resp = self.respPost()
+            try: resp = self.respPost()
+            except ValidationError as err: print(str(err))
             
             #------------------------------------------------------------------
             # Ak je POST response validna

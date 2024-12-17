@@ -137,7 +137,7 @@ textarea.ObjectInputText {
   background       :#FFFFEB;
 
   width            :99%;
-  height           :10em;
+  /* height           :10em; */
   
   margin           :2px;
   padding          :2px;

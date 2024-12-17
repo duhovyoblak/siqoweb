@@ -4,7 +4,7 @@
 import os
 
 from wtforms            import StringField, TextAreaField, BooleanField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms            import validators
 
 from f_form             import FormStruct
 
@@ -23,11 +23,11 @@ _CWD      = os.getcwd()
 #------------------------------------------------------------------------------
 class FormForum(FormStruct):
     
-    parent_id    = StringField  ('Parent ID')
-    user_id      = StringField  ('User ID') 
-    title        = StringField  ('Title')
-    narrator     = StringField  ('Narrator')
-    item         = TextAreaField('Item'    )
+    parent_id    = StringField  ('Parent ID', validators=[validators.DataRequired()])
+    user_id      = StringField  ('User ID',   validators=[validators.DataRequired()]) 
+    title        = StringField  ('Title',     validators=[validators.DataRequired()])
+    narrator     = StringField  ('Narrator',  validators=[validators.DataRequired()])
+    item         = TextAreaField('Item',      validators=[validators.DataRequired()])
     
     sfUp         = SubmitField('Up')
     sfEdit       = SubmitField('Edit')

@@ -5,7 +5,7 @@ import os
 
 from flask_wtf          import FlaskForm
 from wtforms            import HiddenField, StringField, TextAreaField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms            import validators
 
 #==============================================================================
 # package's constants
@@ -22,8 +22,7 @@ _CWD      = os.getcwd()
 #------------------------------------------------------------------------------
 class FormStruct(FlaskForm):
     
-    pgXver   = HiddenField(u'pgXver')
-    lastPage = HiddenField(u'')
+    lastPage   = HiddenField(u'',              validators=[validators.Optional()])
 
 #==============================================================================
 print(f"formStruct {_VER}")
