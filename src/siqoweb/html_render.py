@@ -754,39 +754,41 @@ class HTML:
         #----------------------------------------------------------------------
         if objClass == 'FORUM':
             
-            (item, target ) = self.itemDrop(item, 'target')
+            (item,   target) = self.itemDrop(  item, 'target'   )
             
             #------------------------------------------------------------------
             # Render the object formular
             #------------------------------------------------------------------
             method = 'POST'
             action = url_for(target)
-    
-            atts = {"method":method, "action":action, "enctype":"multipart/form-data"}
-            toRet += self.formStart(atts)
+            toRet += self.formStart({"method":method, "action":action, "enctype":"multipart/form-data"})
             
-            toRet += str(self.dynForms[0].hidden_tag())
+            #toRet += str(self.dynForms[0].parentId.label())
+            #toRet += str(self.dynForms[0].parentId( value=dbData['PARENT_ID']))
+            #toRet += self.breakLine()
 
-            toRet += str(self.dynForms[0].title.label())
-            toRet += str(self.dynForms[0].title(class_="ObjectInputString", value=dbData['TITLE']))
+            toRet += str(self.dynForms[0].itemId.label())
+            toRet += str(self.dynForms[0].itemId( value=dbData['ITEM_ID']))
             toRet += self.breakLine()
 
-            toRet += str(self.dynForms[0].parent_id.label())
-            toRet += str(self.dynForms[0].parent_id(class_="ObjectInputString", value=dbData['PARENT_ID']))
+            toRet += str(self.dynForms[0].title.label())
+            toRet += str(self.dynForms[0].title(    class_="ObjectInputString", value=dbData['TITLE']))
             toRet += self.breakLine()
 
             toRet += str(self.dynForms[0].user_id.label())
-            toRet += str(self.dynForms[0].user_id(class_="ObjectInputString", value=dbData['USER_ID'], size=35))
+            toRet += str(self.dynForms[0].user_id(  class_="ObjectInputString", value=dbData['USER_ID'], size=35))
             toRet += self.breakLine()
 
             toRet += str(self.dynForms[0].narrator.label())
-            toRet += str(self.dynForms[0].narrator(class_="ObjectInputString", value=dbData['NARRATOR'], size=35))
+            toRet += str(self.dynForms[0].narrator( class_="ObjectInputString", value=dbData['NARRATOR'], size=35))
             toRet += self.breakLine()
 
           
             toRet += str(self.dynForms[0].item.label())
             self.dynForms[0].item.data = dbData['ITEM']
             toRet += str(self.dynForms[0].item(class_="ObjectInputText", rows="20"))
+
+            toRet += str(self.dynForms[0].hidden_tag())
 
             self.formStop()
             #------------------------------------------------------------------
@@ -867,11 +869,10 @@ class HTML:
         if objClass == 'FORUM':
             
             toRet += str(self.dynForms[0].sfUp        (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfEdit      (class_="ObjectControlBtn"))
             toRet += str(self.dynForms[0].sfAddChapter(class_="ObjectControlBtn"))
             toRet += str(self.dynForms[0].afAddChild  (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfApply     (class_="ObjectControlBtn"))
             toRet += str(self.dynForms[0].sfCancel    (class_="ObjectControlBtn"))
+            toRet += str(self.dynForms[0].sfApply     (class_="ObjectControlBtn"))
             toRet += str(self.dynForms[0].sfPublish   (class_="ObjectControlBtn"))
             toRet += str(self.dynForms[0].sfDelete    (class_="ObjectControlBtn"))
             toRet += str(self.dynForms[0].sfMove      (class_="ObjectControlBtn"))

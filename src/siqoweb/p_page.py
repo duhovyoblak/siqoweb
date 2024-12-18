@@ -39,7 +39,7 @@ class Page(Structure):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, classId, height, template="1 structure.html"):
+    def __init__(self, journal, env, classId, target, height, template="1 structure.html"):
         "Call constructor of Page and initialise it"
         
         journal.I(f"Page({classId}).init:")
@@ -64,7 +64,9 @@ class Page(Structure):
         # Konstruktor DataStructure,
         #----------------------------------------------------------------------
         super().__init__(journal, env, self.userId, classId, height, template)
+        
         self.name   = f"Page({self.name})"
+        self.target = target                  # Nazov route metody pre page
 
         #----------------------------------------------------------------------
         # Aktualny user a jazyk
@@ -73,6 +75,17 @@ class Page(Structure):
         journal.M(f"{self.name}).init: lang = '{self.lang}'")
 
         self.journal.O()
+       
+    #==========================================================================
+    # Content methods
+    #--------------------------------------------------------------------------
+    def loadContent(self):
+        "This method should return page specific content like forms, objects etc."
+        
+        self.journal.I(f"{self.classId}.loadContent:")
+        
+        self.journal.O()
+        return {}
 
     #==========================================================================
     # Response generators
@@ -87,7 +100,7 @@ class Page(Structure):
 #        self.journal.M(f"{self.name}.resp: user_agent       {request.user_agent}", True)
         self.journal.M(f"{self.name}.resp: remote_addr      {request.remote_addr}", True)
         self.journal.M(f"{self.name}.resp: is_secure        {request.is_secure}", True)
-        self.journal.M(f"{self.name}.resp: form             {request.form}", True)
+#        self.journal.M(f"{self.name}.resp: form             {request.form}", True)
         self.journal.M(f"{self.name}.resp: data             {request.data}", True)
         self.journal.M(f"{self.name}.resp: args             {request.args}", True)
         self.journal.M(f"{self.name}.resp: access_route     {request.access_route}", True)
@@ -141,6 +154,15 @@ class Page(Structure):
      
         self.journal.I(f"{self.name}.respGet: Default html get response from template='{self.template}'")
         
+        #----------------------------------------------------------------------
+        # Doplnenie dynamickeho contextu idx
+        #----------------------------------------------------------------------
+        self.idContext = self.loadContent()
+        self.addContext(self.idContext)
+
+        #----------------------------------------------------------------------
+        # Vytvorenie template
+        #----------------------------------------------------------------------
         template = self.env.get_template(self.template)
         self.journal.M(f"{self.name}.respGet: template loaded")
 
@@ -154,6 +176,18 @@ class Page(Structure):
         
         self.journal.O()
         return resp
+
+    #--------------------------------------------------------------------------
+    # Default and emergency redirects
+    #--------------------------------------------------------------------------
+    def toLogin(self):
+     
+        return redirect(url_for('pgLogin'))
+
+    #--------------------------------------------------------------------------
+    def toHomepage(self):
+     
+        return redirect(url_for('pgHomepage'))
 
 #==============================================================================
 # Test cases

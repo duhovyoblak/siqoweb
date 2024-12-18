@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 import os
 
-from wtforms            import StringField, TextAreaField, BooleanField, SubmitField
+from wtforms            import HiddenField, StringField, TextAreaField, IntegerField, SubmitField
 from wtforms            import validators
 
 from f_form             import FormStruct
@@ -23,21 +23,22 @@ _CWD      = os.getcwd()
 #------------------------------------------------------------------------------
 class FormForum(FormStruct):
     
-    parent_id    = StringField  ('Parent ID', validators=[validators.DataRequired()])
-    user_id      = StringField  ('User ID',   validators=[validators.DataRequired()]) 
-    title        = StringField  ('Title',     validators=[validators.DataRequired()])
-    narrator     = StringField  ('Narrator',  validators=[validators.DataRequired()])
-    item         = TextAreaField('Item',      validators=[validators.DataRequired()])
+    itemId       = StringField  ('Item ID',             validators=[validators.ReadOnly() ])
+
+    title        = StringField  ('Title',               validators=[validators.DataRequired()])
+    user_id      = StringField  ('User ID',             validators=[validators.DataRequired()]) 
+    narrator     = StringField  ('Narrator',            validators=[validators.DataRequired()])
     
-    sfUp         = SubmitField('Up')
-    sfEdit       = SubmitField('Edit')
-    sfAddChapter = SubmitField('Add Chapter')
-    afAddChild   = SubmitField('Add Child')
-    sfApply      = SubmitField('Apply')
-    sfCancel     = SubmitField('Cancel')
-    sfPublish    = SubmitField('Publish')
-    sfDelete     = SubmitField('Delete')
-    sfMove       = SubmitField('Move To')
+    item         = TextAreaField('Text',                validators=[validators.DataRequired()])
+    
+    sfUp         = SubmitField  ('Up'                       )
+    sfAddChapter = SubmitField  ('Add new Chapter'          )
+    afAddChild   = SubmitField  ('Add Child to this Chapter')
+    sfCancel     = SubmitField  ('Cancel any changes'       )
+    sfApply      = SubmitField  ('Apply changes'            )
+    sfPublish    = SubmitField  ('Publish this Chapter'     )
+    sfDelete     = SubmitField  ('Delete this Chapter'      )
+    sfMove       = SubmitField  ('Move this Chapter'        )
     
 
 #==============================================================================

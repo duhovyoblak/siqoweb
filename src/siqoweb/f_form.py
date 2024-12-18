@@ -22,7 +22,7 @@ _CWD      = os.getcwd()
 #------------------------------------------------------------------------------
 class FormStruct(FlaskForm):
     
-    lastPage   = HiddenField(u'',              validators=[validators.Optional()])
+    target = HiddenField(u'',              validators=[validators.Optional()])
 
 #==============================================================================
 print(f"formStruct {_VER}")

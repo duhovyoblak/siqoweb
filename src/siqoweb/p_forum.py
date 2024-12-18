@@ -48,24 +48,38 @@ class PageForum(Page):
         #----------------------------------------------------------------------
         # Forum premenne
         #----------------------------------------------------------------------
-        self.target      = target        # Nazov route metody pre zvolene forum
+        self.post        = None
         self.idx         = idx           # Cislo itemu, default = 0 pre root
         self.forumItem   = None          # Forum item nacitany z DB vo forme dict
-        self.form        = FormForum()   # Formular pre Forum 
 
         #----------------------------------------------------------------------
         # Konstruktor Structure
         #----------------------------------------------------------------------
-        super().__init__(journal, env, classId=classId, height=height, template=template)
+        super().__init__(journal, env, target=target, classId=classId, height=height, template=template)
+
+        self.journal.O()
+
+    #==========================================================================
+    # Content methods
+    #--------------------------------------------------------------------------
+    def loadContent(self):
+        "This method should return page specific content like forms, objects etc."
         
+        self.journal.I(f"{self.name}.loadContent:")
+        
+        #----------------------------------------------------------------------
+        # Vytvorenie formularov
+        #----------------------------------------------------------------------
+        self.form = FormForum(formdata=self.post, target=self.target, itemId=self.idx)   # Formular pre Forum 
+
         #----------------------------------------------------------------------
         # Doplnenie dynamickych odkazov pre html_renderer
         #----------------------------------------------------------------------
         self.html.dynIdx  = self.idx
         self.html.dynForms.append(self.form)
 
-
         self.journal.O()
+        return {}
 
     #==========================================================================
     # Response generators
@@ -74,6 +88,17 @@ class PageForum(Page):
      
         self.journal.I(f"{self.name}.respPost:")
         
+        self.post = request.form
+        self.idx  = request.form['itemId']
+
+        #----------------------------------------------------------------------
+        # Doplnenie dynamickeho contextu idx
+        #----------------------------------------------------------------------
+        self.idContext = self.loadContent()
+        self.addContext(self.idContext)
+
+        #print(self.post)
+        #print()
         #print(self.form.data)
         
         #----------------------------------------------------------------------
@@ -81,18 +106,30 @@ class PageForum(Page):
         #----------------------------------------------------------------------
         if self.form.validate():
             
-            self.journal.M(f"{self.name}.respPost: form validated", True)
-            self.journal.O()
-            return redirect(url_for('pgHomepage'))
+            #------------------------------------------------------------------
+            # Cancel
+            #------------------------------------------------------------------
+            if self.form.sfCancel.data:
+                
+                self.journal.M(f"{self.name}.respPost: Cancel by user")
+                self.journal.O()
+                return redirect(f"{url_for(self.target)}/{self.idx}")
+            
+            #------------------------------------------------------------------
+            # Unknown user's action
+            #------------------------------------------------------------------
+            else:
+                self.journal.O()
+                return self.toHomepage()
  
         #----------------------------------------------------------------------
         # Nie je POST
         #----------------------------------------------------------------------
-        print()
-        print(self.form.errors)
-        self.journal.M(f"{self.name}.respPost: form NOT validated", True)
+        self.journal.M(f"{self.name}.respPost: form NOT validated with errors:", True)
+        self.journal.M(f"{self.name}.respPost: {self.form.errors}", True)
+
         self.journal.O()
-        return None
+        return self.toHomepage()
 
     #==========================================================================
     # Private methods

@@ -74,32 +74,15 @@ class Structure(Object):
         self.initContext()
 
         #----------------------------------------------------------------------
-        # Doplnenie dynamickeho contextu z DB
+        # Doplnenie statickeho contextu z DB
         #----------------------------------------------------------------------
         self.dbContext = self.loadPageResource()
         self.addContext(self.dbContext)
 
         #----------------------------------------------------------------------
-        # Doplnenie specifickeho contextu z DB podla id
-        #----------------------------------------------------------------------
-        self.idContext = self.loadContent()
-        self.addContext(self.idContext)
-       
-        #----------------------------------------------------------------------
         #gen.dictPrint(dct=self.context)
         self.journal.O(f"{self.name}.init")
         
-    #==========================================================================
-    # Content methods
-    #--------------------------------------------------------------------------
-    def loadContent(self):
-        "This method should return page specific content like forms, objects etc."
-        
-        self.journal.I(f"{self.classId}.loadContent:")
-        
-        self.journal.O()
-        return {}
-
     #--------------------------------------------------------------------------
 #!!!! znacka
     def loadPageResource(self):
