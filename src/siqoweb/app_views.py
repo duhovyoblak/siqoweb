@@ -9,8 +9,8 @@ from   markupsafe         import escape
 
 from   jinja2             import Environment, FileSystemLoader, select_autoescape
 
+from   p__page            import Page
 from   p_login            import PageLogin
-from   p_page             import Page
 from   p_forum            import PageForum
 
 #==============================================================================

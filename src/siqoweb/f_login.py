@@ -6,7 +6,7 @@ import os
 from wtforms            import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 
-from f_form             import FormStruct
+from f__form            import FormStruct
 
 #==============================================================================
 # package's constants

@@ -3,18 +3,19 @@
 #------------------------------------------------------------------------------
 import os
 
-from   werkzeug.security        import generate_password_hash, check_password_hash
-from   flask_login              import UserMixin
+from   werkzeug.security       import generate_password_hash, check_password_hash
+from   flask_login             import UserMixin
 
 import siqolib.general         as gen
 from   config                  import Config
 from   database                import Database
 from   app_dms                 import DMS
+from   html_render             import HTML
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.05'
+_VER      = '1.06'
 
 _LANG_DEF = 'SK'       # Default language
 _SYSUSER  = 'SIQO'     # System superuser
@@ -39,7 +40,7 @@ class Object(Database):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, user, classId, objPar='__PAGE__', rMode= 'STRICT', crForm='N'):
+    def __init__(self, journal, userId, classId, height=20, width=20, rMode= 'STRICT', crForm='N'):
         "Call constructor of Object"
 
         journal.I("Object.init:")
@@ -52,17 +53,15 @@ class Object(Database):
         #----------------------------------------------------------------------
         # Identifikacia objektu
         #----------------------------------------------------------------------
-        self.name    = f"{classId}.{objPar}"
-        self.user    = user      # User, ku ktoremu patri objekt
+        self.name    = f"{classId}"
+        self.userId  = userId    # User, ku ktoremu patri objekt
         
-        self.classId = classId   # Typ objektu/Page, ku ktoremu patri objekt
-        self.objPar  = objPar    # Identifikacia parent objektu vramci page
+        self.classId = classId   # Typ objektu
+        self.height  = height    # vyska content space
+        self.width   = width     # vyska content space
 
         self.items   = []        # zoznam zobrazitelnych poloziek 
         self.btns    = []        # zoznam buttonov
-
-
-
 
         self.rMode   = rMode     # uroven kontroly privilegii, STRICT, ROOT
         if self.rMode == 'ROOT': self.objLog = gen.words(self.obj)[0] 
@@ -71,8 +70,13 @@ class Object(Database):
  
         self.uRole   = "Unknown" # Rola usera, priradena k tomuto objektu
         self.crForm  = crForm    # vytvaranie formulara, Y, N
-        self.height  = 10        # vyska content space
-        self.width   = 10        # vyska content space
+
+        #----------------------------------------------------------------------
+        # Vytvorenie DMS a HTM renderera
+        #----------------------------------------------------------------------
+        self.dms  = DMS (self.journal, self)
+        self.html = HTML(self.journal, who=self.name, dms=self.dms, classId=classId)
+
 
         #----------------------------------------------------------------------
         # Verifikujem/registrujem logicky Objekt v databaze
@@ -99,41 +103,6 @@ class Object(Database):
 
     #==========================================================================
     # Praca s objektom (page-obj)
-    #--------------------------------------------------------------------------
-    def pageGet(self, who):
-        """"Returns dict of default objects {'objDefId': { 'objId':[<items>] } }"""
-        
-        self.journal.I(f"{self.name}.pageGet: For page '{self.classId}'")
-
-        #----------------------------------------------------------------------
-        # Inicializacia default objektov
-        #----------------------------------------------------------------------
-        toRet = {'__HEAD__': {}
-                ,'__NAVB__': {}
-                ,'__STAG__': {}
-                ,'__CONT__': {}
-                }
-        
-        #----------------------------------------------------------------------
-        # Prehladanie objektov pre parenta parId a objektu objId
-        #----------------------------------------------------------------------
-        for parId in toRet.keys():
-
-            #------------------------------------------------------------------
-            # Pokusim sa ziskat vnorene objekty
-            #------------------------------------------------------------------
-            inObjs = self.objectGet(who, objPar=parId)
-                
-            #------------------------------------------------------------------
-            # Ak existuju vnorene objekty, tak ich vlozim
-            #------------------------------------------------------------------
-            if len(inObjs) > 0: toRet[parId] = inObjs
-            else              : self.journal.M(f"{self.name}.pageGet: '{parId}' has no children objects")
-
-        #----------------------------------------------------------------------
-        self.journal.O()
-        return toRet
-
     #--------------------------------------------------------------------------
 #!!!! znacka
     def objectGet(self, who, objPar):
@@ -271,10 +240,10 @@ class Object(Database):
          
         if self.sSql(who, sql) > 0:
             
-            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'objectRegister()', 'NO_ACT', 'OK', 
+            self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'objectRegister()', 'NO_ACT', 'OK', 
                          stat="automatic object registration" )
         else:
-            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'objectRegister()', 'NO_ACT', 'ER', 
+            self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'objectRegister()', 'NO_ACT', 'ER', 
                          stat="Object registration failed for pag/obj" )
 
         #----------------------------------------------------------------------
@@ -381,7 +350,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         if self.sSQL(who, sql) > 0:
   
-            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'resourceRegister()', 'OK', 
+            self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'resourceRegister()', 'OK', 
                          23, "automatic resource registration" )  
 
         #----------------------------------------------------------------------
@@ -398,9 +367,9 @@ class Object(Database):
         #----------------------------------------------------------------------
         # Ak je user SIQO, je automaticky Admin
         #----------------------------------------------------------------------
-        if self.user == 'SIQO':
+        if self.userId == 'SIQO':
 
-            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleGet()', 'OK', 
+            self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'roleGet()', 'OK', 
                          22, "user usr role for pag.obj is Admin" ) 
             self.journal.O()
             return 'Admin'
@@ -418,14 +387,14 @@ class Object(Database):
                   and   OBJ_ID  = {obj}
                   and   C_FUNC  = 'A'"""
   
-        role = self.selectItem(self.user, sql)
+        role = self.selectItem(self.userId, sql)
 
         #----------------------------------------------------------------------
         # Kontrola existencie role
         #----------------------------------------------------------------------
         if role is not None:
 
-            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleGet()', 'OK', 
+            self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'roleGet()', 'OK', 
                          22, "user usr role for pag.obj is role" ) 
             self.journal.O()
             return role
@@ -436,7 +405,7 @@ class Object(Database):
             #------------------------------------------------------------------
             role = self.roleRegister(who)
 
-            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleGet()', 'OK', 
+            self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'roleGet()', 'OK', 
                          22, "user usr role for pag.obj was setted to toRet" ) 
 
             self.journal.O()
@@ -469,9 +438,9 @@ class Object(Database):
         #----------------------------------------------------------------------
         # Kontrola zapisu do DB
         #----------------------------------------------------------------------
-        if self.sSQL(self.user, sql ) > 0:
+        if self.sSQL(self.userId, sql ) > 0:
 
-            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleRegister()', 'OK', 
+            self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'roleRegister()', 'OK', 
                          20, "automatic role registration" )
 
         #----------------------------------------------------------------------
@@ -496,14 +465,14 @@ class Object(Database):
                   and   OBJ_ID  = {obj}
                   and   C_FUNC  = 'A'"""
   
-        role = self.selectItem(self.user, sql)
+        role = self.selectItem(self.userId, sql)
 
         #----------------------------------------------------------------------
         # Kontrola existencie role
         #----------------------------------------------------------------------
         if role is not None:
 
-            self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleAnonymGet()', 'NO_ACT', 'OK', stat="Anonymous role for pag.obj is role" )
+            self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'roleAnonymGet()', 'NO_ACT', 'OK', stat="Anonymous role for pag.obj is role" )
             self.journal.O()
             return role
     
@@ -541,7 +510,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         cnt = self.sSQL(who, sql)
 
-        self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'roleSet()', 'OK', 
+        self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'roleSet()', 'OK', 
                        21, f"Role roi was set for usi and page pai {cnt}" )
 
         #----------------------------------------------------------------------
@@ -622,13 +591,13 @@ class Object(Database):
             #------------------------------------------------------------------
             if self.sSQL(who, sql) < 1:
 
-                self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'cacheSet()', 'ER', 3, 
+                self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'cacheSet()', 'ER', 3, 
                            "key is NOT setted to val" )  
                 self.journal.O()
                 return
 
         #----------------------------------------------------------------------
-        self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'cacheSet()', 'OK', 
+        self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'cacheSet()', 'OK', 
                        38, "key is val" )  
 
         #----------------------------------------------------------------------
@@ -657,7 +626,7 @@ class Object(Database):
         #----------------------------------------------------------------------
         cnt = self.sSQL(who, sql)
 
-        self.sJournal(self.user, 'NO_SESS', self.classId, self.name, 'cacheClear()', 'OK', 
+        self.sJournal(self.userId, 'NO_SESS', self.classId, self.name, 'cacheClear()', 'OK', 
                        38, f"Cleared {cnt} row(s)"       )  
 
         #----------------------------------------------------------------------
@@ -697,11 +666,11 @@ if __name__ == '__main__':
     from   siqolib.journal                 import SiqoJournal
     journal = SiqoJournal('test-object', debug=3)
     
-#    obj = Object(journal, 'palo4', 'PagManLogin')
-#    obj = Object(journal, 'palo4', 'PagManHomepage')
-    obj = Object(journal, 'palo4', 'PagManContact')
+#    obj = Object(journal, 'palo4', classId='PagManLogin')
+    obj = Object(journal, 'palo4', classId='PagManHomepage')
+    
+    rec = obj.objectGet('who', '__STAG__')
 
-    rec = obj.pageGet('ja')
 
 #==============================================================================
 print(f"Object {_VER}")

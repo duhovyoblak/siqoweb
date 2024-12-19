@@ -6,7 +6,7 @@ import os
 from wtforms            import HiddenField, StringField, TextAreaField, IntegerField, SubmitField
 from wtforms            import validators
 
-from f_form             import FormStruct
+from f__form            import FormStruct
 
 #==============================================================================
 # package's constants

@@ -3,7 +3,6 @@
 #------------------------------------------------------------------------------
 import os
 
-import flask
 from   flask             import url_for, get_flashed_messages, flash, render_template, make_response
 from   flask             import request, session, abort, redirect
 from   flask_login       import login_user, logout_user, current_user
@@ -14,15 +13,13 @@ from   jinja2            import Environment, FileSystemLoader, select_autoescape
 
 import siqolib.general   as gen
 
-from   app_dms           import DMS
-from   html_render       import HTML
-from   object            import Object
-from   f_form            import FormStruct
+from   o__object         import Object
+from   f__form           import FormStruct
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.06'
+_VER      = '1.07'
 
 #==============================================================================
 # package's variables
@@ -39,7 +36,7 @@ class Structure(Object):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, userId, classId, height, template="1 structure.html"):
+    def __init__(self, journal, env, userId, userName, lang, classId, height, template="1 structure.html"):
         "Call constructor of Structure and initialise it"
         
         journal.I(f"Structure({classId}).init:")
@@ -47,26 +44,22 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Konstruktor DataStructure
         #----------------------------------------------------------------------
-        super().__init__(journal, userId, classId, objPar='__ROOT__', rMode= 'STRICT')
+        super().__init__(journal, userId, classId, height=height, rMode= 'STRICT')
 
         #----------------------------------------------------------------------
         # Definicia stranky
         #----------------------------------------------------------------------
         self.name          = f"Struct({self.name})"
-        self.loaded        = False
-        self.env           = env
-        
         self.template      = template
-        self.height        = height
+        self.env           = env
+        self.loaded        = False
+
+        self.userName      = userName
+        self.lang          = lang
         
         self.initId        = "Content"
         self.context       = {}
         
-        #----------------------------------------------------------------------
-        # Vytvorenie DMS a HTM renderera
-        #----------------------------------------------------------------------
-        self.dms  = DMS (self.journal, self)
-        self.html = HTML(self.journal, who=self.name, dms=self.dms, classId=classId)
 
         #----------------------------------------------------------------------
         # Inicializacia statickeho contextu
@@ -83,6 +76,8 @@ class Structure(Object):
         #gen.dictPrint(dct=self.context)
         self.journal.O(f"{self.name}.init")
         
+    #==========================================================================
+    # Vytvorenie page
     #--------------------------------------------------------------------------
 #!!!! znacka
     def loadPageResource(self):
@@ -93,7 +88,7 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Nacitanie objektov PAGE {'__HEAD__': {},'__NAVB__': {},'__STAG__': {},'__CONT__': {}}
         #----------------------------------------------------------------------
-        res = self.pageGet(self.user)
+        res = self.pageGet(self.userId)
         
         #----------------------------------------------------------------------
         # NavBar objects
@@ -260,6 +255,41 @@ class Structure(Object):
     #==========================================================================
     # Internal methods
     #--------------------------------------------------------------------------
+    def pageGet(self, who):
+        """"Returns dict of default objects {'objDefId': { 'objId':[<items>] } }"""
+        
+        self.journal.I(f"{self.name}.pageGet: For page '{self.classId}'")
+
+        #----------------------------------------------------------------------
+        # Inicializacia default objektov
+        #----------------------------------------------------------------------
+        toRet = {'__HEAD__': {}
+                ,'__NAVB__': {}
+                ,'__STAG__': {}
+                ,'__CONT__': {}
+                }
+        
+        #----------------------------------------------------------------------
+        # Prehladanie objektov pre parenta parId a objektu objId
+        #----------------------------------------------------------------------
+        for parId in toRet.keys():
+
+            #------------------------------------------------------------------
+            # Pokusim sa ziskat vnorene objekty
+            #------------------------------------------------------------------
+            inObjs = self.objectGet(who, objPar=parId)
+                
+            #------------------------------------------------------------------
+            # Ak existuju vnorene objekty, tak ich vlozim
+            #------------------------------------------------------------------
+            if len(inObjs) > 0: toRet[parId] = inObjs
+            else              : self.journal.M(f"{self.name}.pageGet: '{parId}' has no children objects")
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
     # Context methods
     #--------------------------------------------------------------------------
     def initContext(self):
@@ -283,12 +313,6 @@ class Structure(Object):
         self.context["initId"              ] = self.initId
         self.context["lang"                ] = self.lang
 
-        #----------------------------------------------------------------------
-        # Navigation Bar
-        #----------------------------------------------------------------------
-        if str(self.user).startswith("User>"): self.context["userName"]= self.user.userName()
-        else                                 : self.context["userName"]= 'Guest User'
-        
         #----------------------------------------------------------------------
         self.journal.M(f"{self.name}.initContext: Context initialised")
         self.journal.O()
@@ -329,13 +353,14 @@ if __name__ == '__main__':
     env = Environment(
      autoescape = select_autoescape()
     ,loader     = FileSystemLoader(['templates'])
-    )
 
-    page = Structure(journal, env, 'PagManLogin', 700)
-#    page = Structure(journal, env, 'PagManHomepage', 700)
-#    page = Structure(journal, env, 'FAQ', 700)
-#    page = Structure(journal, env, 'OHISTORY', 700)
-#    page = Structure(journal, env, 'PagManContact', 700)
+    )
+    
+#    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'PagManLogin', 700)
+    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'PagManHomepage', 700)
+#    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'FAQ', 700)
+#    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'OHISTORY', 700)
+#    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'PagManContact', 700)
  
     rec = page.context
 

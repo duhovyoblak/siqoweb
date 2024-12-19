@@ -17,8 +17,9 @@ from   config              import Config
 from   database            import Database
 from   app_user            import User
 from   app_dms             import DMS
-from   p_page              import Page
-from   f_formForum         import FormForum
+
+from   p__page             import Page
+from   o_forum             import Forum
 
 #==============================================================================
 # package's constants
@@ -48,14 +49,13 @@ class PageForum(Page):
         #----------------------------------------------------------------------
         # Forum premenne
         #----------------------------------------------------------------------
-        self.post        = None
         self.idx         = idx           # Cislo itemu, default = 0 pre root
         self.forumItem   = None          # Forum item nacitany z DB vo forme dict
 
         #----------------------------------------------------------------------
         # Konstruktor Structure
         #----------------------------------------------------------------------
-        super().__init__(journal, env, target=target, classId=classId, height=height, template=template)
+        super().__init__(journal, env, classId=classId, height=height, template=template)
 
         self.journal.O()
 

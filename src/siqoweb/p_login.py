@@ -15,14 +15,14 @@ from   jinja2              import Environment, FileSystemLoader, PackageLoader, 
 import siqolib.general     as gen
 from   config              import Config
 from   app_user            import User, _ANONYM
-from   p_page              import Page
-from   f_formLogin         import FormLogin
+from   p__page             import Page
+from   f_login             import FormLogin
 
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.03'
+_VER      = '1.04'
 
 #==============================================================================
 # package's variables
@@ -44,7 +44,7 @@ class PageLogin(Page):
         #----------------------------------------------------------------------
         # Doplnenie formLogin
         #----------------------------------------------------------------------
-        self.formLogin = FormLogin()
+        self.formLogin = FormLogin(self.postForm)
 
         self.journal.O()
         return {"formLogin":self.formLogin}
@@ -56,6 +56,11 @@ class PageLogin(Page):
      
         self.journal.I(f"{self.name}.respPost:")
         
+        #----------------------------------------------------------------------
+        # Ziskanie request.POST data volanie self.loadContent()
+        #----------------------------------------------------------------------
+        super().respPost()
+
         #----------------------------------------------------------------------
         # Continue as Guest User
         #----------------------------------------------------------------------

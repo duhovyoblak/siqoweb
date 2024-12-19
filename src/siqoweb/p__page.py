@@ -19,13 +19,13 @@ import siqolib.general    as gen
 from   database           import Database
 from   config             import Config
 from   app_user           import User
-from   p_structure        import Structure
+from   p__structure       import Structure
 
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.01'
+_VER      = '1.02'
 
 #==============================================================================
 # package's variables
@@ -39,7 +39,7 @@ class Page(Structure):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, classId, target, height, template="1 structure.html"):
+    def __init__(self, journal, env, classId, height, template="1 structure.html"):
         "Call constructor of Page and initialise it"
         
         journal.I(f"Page({classId}).init:")
@@ -51,28 +51,36 @@ class Page(Structure):
         
         if user is not None and str(user)[:5]=='User>': 
             
-            self.userId   = user.user_id
-            self.userName = user.userName()
-            self.lang     = user.lang_id
+            userId   = user.user_id
+            userName = user.userName()
+            lang     = user.lang_id
             
         else: 
-            self.userId   = 'Anonymous'
-            self.userName = 'Guest User'
-            self.lang     = 'SK'
+            userId   = 'Anonymous'
+            userName = 'Guest User'
+            lang     = 'SK'
 
         #----------------------------------------------------------------------
         # Konstruktor DataStructure,
         #----------------------------------------------------------------------
-        super().__init__(journal, env, self.userId, classId, height, template)
+        super().__init__(journal, env, userId, userName, lang, classId, height, template)
         
-        self.name   = f"Page({self.name})"
-        self.target = target                  # Nazov route metody pre page
+        self.name     = f"Page({self.name})"
+        self.postForm = None                   # Data from POST request.form
+        self.postForm = request.form
 
         #----------------------------------------------------------------------
         # Aktualny user a jazyk
         #----------------------------------------------------------------------
         journal.M(f"{self.name}).init: user = '{self.userName}'")
         journal.M(f"{self.name}).init: lang = '{self.lang}'")
+
+        #----------------------------------------------------------------------
+        # Doplnenie dynamickeho contextu idx
+        #----------------------------------------------------------------------
+        self.idContext = self.loadContent()
+        self.addContext(self.idContext)
+
 
         self.journal.O()
        
@@ -144,8 +152,6 @@ class Page(Structure):
         self.journal.I(f"{self.name}.respPost: Default None post response")
         
         
-        
-        
         self.journal.O()
         return None
 
@@ -154,12 +160,6 @@ class Page(Structure):
      
         self.journal.I(f"{self.name}.respGet: Default html get response from template='{self.template}'")
         
-        #----------------------------------------------------------------------
-        # Doplnenie dynamickeho contextu idx
-        #----------------------------------------------------------------------
-        self.idContext = self.loadContent()
-        self.addContext(self.idContext)
-
         #----------------------------------------------------------------------
         # Vytvorenie template
         #----------------------------------------------------------------------
@@ -201,6 +201,7 @@ if __name__ == '__main__':
     
      autoescape = select_autoescape()
     ,loader     = FileSystemLoader(['templates'])
+
     )
 
     page = Page(journal, env, 'Homepage', 700)
