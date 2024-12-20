@@ -29,11 +29,12 @@ class HTML:
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, userId, classId='noClass'):
+    def __init__(self, journal, userId, lang, classId='noClass'):
         
         self.name      = f"HTML_{userId}"
         self.journal   = journal
         self.userId    = userId   
+        self.lang      = lang
         self.classId   = classId   # OBJECT_ID v pagman db
         
         #----------------------------------------------------------------------
@@ -55,18 +56,16 @@ class HTML:
         return (item, val)
         
     #--------------------------------------------------------------------------
-    def itemTxt(self, item, lang):
+    def itemTxt(self, item):
         
-        (item, txt) = self.itemDrop(item, lang, pop=True)
-        
-        #if txt == '': txt = f"No resource for lang='{lang}'"
+        (item, txt) = self.itemDrop(item, self.lang, pop=True)
         
         return (item, txt)
         
     #==========================================================================
     # Rendering API for templates
     #--------------------------------------------------------------------------
-    def objectsRender(self, objDic, lang):
+    def objectsRender(self, objDic):
         "Returns HTML for json-encoded item"
         
         self.journal.I(f"{self.name}.objectsRender: Going to render an object dictionary...")
@@ -85,7 +84,7 @@ class HTML:
                 #--------------------------------------------------------------
                 # Rekurzivne zavolam objectsRender
                 #--------------------------------------------------------------
-                toRet += self.objectsRender(rec, lang)
+                toRet += self.objectsRender(rec)
                 
             #------------------------------------------------------------------
             # Ak je rec typu list, ide o zoznam itemov
@@ -95,7 +94,7 @@ class HTML:
                 #--------------------------------------------------------------
                 # Zavolam itemListRender
                 #--------------------------------------------------------------
-                toRet += self.itemListRender(rec, lang, objId)
+                toRet += self.itemListRender(rec, objId)
             
             #------------------------------------------------------------------
             # Inak je to neznamy udaj
@@ -108,7 +107,7 @@ class HTML:
         return toRet
         
     #--------------------------------------------------------------------------
-    def itemListRender(self, itemLst, lang, objId='noObjId'):
+    def itemListRender(self, itemLst, objId='noObjId'):
         "Returns HTML for json-encoded item"
         
         self.journal.I(f"{self.name}.itemListRender: Going to render a list of items...")
@@ -127,17 +126,17 @@ class HTML:
                 #--------------------------------------------------------------
                 # Zavolam itemRender pre itemDic
                 #--------------------------------------------------------------
-                toRet += self.itemRender(itemDic, lang, objId)
+                toRet += self.itemRender(itemDic, objId)
             
         self.journal.O()
         return toRet
         
     #--------------------------------------------------------------------------
 #!!!!
-    def itemRender(self, item, lang, objId='noObjId'):
+    def itemRender(self, item, objId='noObjId'):
         "Returns HTML for json-encoded item"
         
-        self.journal.I(f"{self.name}.itemRender: I will render item {objId} for lang = '{lang}'")
+        self.journal.I(f"{self.name}.itemRender: I will render item {objId} for lang = '{self.lang}'")
         toRet = ''
 
         #----------------------------------------------------------------------
@@ -157,40 +156,43 @@ class HTML:
             return f'<p>{str(err)}</p><br><p>{item}</p>'
 
         #----------------------------------------------------------------------
+        self.journal.M(f"{self.name}.itemRender: {typ} for def {item}")
+
+        #----------------------------------------------------------------------
         # Skusim vsetky zname typy
         #----------------------------------------------------------------------
         try:
-            if   typ == 'CHECKBOX'      : toRet = self.inputCheckBox(item, lang)
-            elif typ == 'RADIO'         : toRet = self.inputRadio(item, lang)
-            elif typ == 'BUTTON'        : toRet = self.inputButton(item, lang)
-            elif typ == 'TEXT'          : toRet = self.inputText(item, lang)
+            if   typ == 'CHECKBOX'      : toRet = self.inputCheckBox(item  )
+            elif typ == 'RADIO'         : toRet = self.inputRadio(item     )
+            elif typ == 'BUTTON'        : toRet = self.inputButton(item    )
+            elif typ == 'TEXT'          : toRet = self.inputText(item      )
             
-            elif typ == 'OBJECT'        : toRet = self.dbObject(item, lang)
+            elif typ == 'OBJECT'        : toRet = self.dbObject(item       )
 
-            elif typ == 'LABEL'         : toRet = self.label(item, lang)
-            elif typ == 'H1'            : toRet = self.h(item, lang, 1)
-            elif typ == 'H2'            : toRet = self.h(item, lang, 2)
-            elif typ == 'H3'            : toRet = self.h(item, lang, 3)
-            elif typ == 'H4'            : toRet = self.h(item, lang, 4)
-            elif typ == 'P'             : toRet = self.p(item, lang)
-            elif typ == 'P_START'       : toRet = self.pStart(item, lang)
-            elif typ == 'P_CONT'        : toRet = self.pCont(item, lang)
-            elif typ == 'P_STOP'        : toRet = self.pStop(item, lang)
-            elif typ == 'A'             : toRet = self.a(item, lang)
-            elif typ == 'IMAGE'         : toRet = self.image(item, lang)
-            elif typ == 'DATE'          : toRet = self.datePar(item, lang)
-            elif typ == 'TEXT_ITEM'     : toRet = self.textItem(item, lang)
+            elif typ == 'LABEL'         : toRet = self.label(item)
+            elif typ == 'H1'            : toRet = self.h(item,  1)
+            elif typ == 'H2'            : toRet = self.h(item,  2)
+            elif typ == 'H3'            : toRet = self.h(item,  3)
+            elif typ == 'H4'            : toRet = self.h(item,  4)
+            elif typ == 'P'             : toRet = self.p(item    )
+            elif typ == 'P_START'       : toRet = self.pStart(item )
+            elif typ == 'P_CONT'        : toRet = self.pCont(item  )
+            elif typ == 'P_STOP'        : toRet = self.pStop(item  )
+            elif typ == 'A'             : toRet = self.a(item      )
+            elif typ == 'IMAGE'         : toRet = self.image(item  )
+            elif typ == 'DATE'          : toRet = self.datePar(item)
+            elif typ == 'TEXT_ITEM'     : toRet = self.textItem(item)
     
-            elif typ == 'HEADTITLE'     : toRet = self.headTtile(item, lang)
-            elif typ == 'HEADSUBTIT'    : toRet = self.headSubTitle(item, lang)
-            elif typ == 'HEADCOMMENT'   : toRet = self.headComment(item, lang)
+            elif typ == 'HEADTITLE'     : toRet = self.headTtile(item   )
+            elif typ == 'HEADSUBTIT'    : toRet = self.headSubTitle(item)
+            elif typ == 'HEADCOMMENT'   : toRet = self.headComment(item )
     
-            elif typ == 'BARMENUITEM'   : toRet = self.barMenuItem(item, lang)
+            elif typ == 'BARMENUITEM'   : toRet = self.barMenuItem(item )
     
-            elif typ == 'STAGESELECTOR' : toRet = self.stageSelector(item, lang)
-            elif typ == 'STAGEBOTH'     : toRet = self.stageBoth(item, lang)
-            elif typ == 'STAGESTART'    : toRet = self.stageStart(item, lang)
-            elif typ == 'STAGESTOP'     : toRet = self.stageStop(item, lang)
+            elif typ == 'STAGESELECTOR' : toRet = self.stageSelector(item)
+            elif typ == 'STAGEBOTH'     : toRet = self.stageBoth(item   )
+            elif typ == 'STAGESTART'    : toRet = self.stageStart(item  )
+            elif typ == 'STAGESTOP'     : toRet = self.stageStop(item   )
     
             elif typ == 'NEWLINE'       : toRet = self.newLine()
             elif typ == 'BREAK'         : toRet = self.breakLine()
@@ -229,16 +231,16 @@ class HTML:
     #--------------------------------------------------------------------------
     # Headers
     #--------------------------------------------------------------------------
-    def h(self, item, lang, deg):
+    def h(self, item, deg):
         
-        (item, txt) = self.itemTxt(item, lang)
+        (item, txt) = self.itemTxt(item)
     
         return f'<h{deg} {self.html_atts(item)}>{txt}</h1> \n'
     
     #--------------------------------------------------------------------------
     # Link <a href="url"/idx=idx?args>txt</a>
     #--------------------------------------------------------------------------
-    def a(self, item, lang):
+    def a(self, item):
 
         (item, uri) = self.itemDrop(item, 'URI'  )
         (item, url) = self.itemDrop(item, 'URL'  )
@@ -246,7 +248,7 @@ class HTML:
         (item, arg) = self.itemDrop(item, 'ARG'  )
         (item, brk) = self.itemDrop(item, 'BREAK')
         
-        (item, txt) = self.itemTxt(item, lang   )
+        (item, txt) = self.itemTxt(item)
     
         #----------------------------------------------------------------------
         # Vytvorenie href - prednost ma uri
@@ -271,37 +273,37 @@ class HTML:
     #--------------------------------------------------------------------------
     # Paragraph
     #--------------------------------------------------------------------------
-    def p(self, item, lang):
+    def p(self, item):
         
-        toRet  = self.pStart(item, lang)
+        toRet  = self.pStart(item)
         toRet += self.pStop()
     
         return toRet
     
     #--------------------------------------------------------------------------
-    def pStart(self, item={}, lang='SK'):
+    def pStart(self, item={}):
     
         
-        (item, txt   ) = self.itemTxt (item, lang    )
+        (item, txt   ) = self.itemTxt (item)
         (item, hid   ) = self.itemDrop(item, 'hidden')
 
         #----------------------------------------------------------------------
         # If paragraph is/is not hidden
         #----------------------------------------------------------------------
-        if hid == '_none_' or not hid: return f'<p        {self.html_atts(item)}>{txt}'
+        if hid == '_none_' or not hid: return f'<p {self.html_atts(item)}>{txt}'
         else                         : return f'<p hidden {self.html_atts(item)}>{txt}'
     
     #--------------------------------------------------------------------------
-    def pCont(self, item={}, lang='SK'):
+    def pCont(self, item={}):
     
-        (item, txt   ) = self.itemTxt(item, lang    )
+        (item, txt   ) = self.itemTxt(item)
     
         return txt
     
     #--------------------------------------------------------------------------
-    def pStop(self, item={}, lang='SK'):
+    def pStop(self, item={}):
     
-        (item, txt   ) = self.itemTxt(item, lang    )
+        (item, txt   ) = self.itemTxt(item)
         
         return f'{txt}</p>\n'
     
@@ -312,35 +314,35 @@ class HTML:
         return self.p(atts, 'SK')
     
     #--------------------------------------------------------------------------
-    def html(self, item, lang):
+    def html(self, item):
     
         (item, code) = self.itemDrop(item, 'html')
         return f'{code}\n'
     
     #--------------------------------------------------------------------------
-    def ftion(self, item, lang):
+    def ftion(self, item):
     
         (item, ftion) = self.itemDrop(item, 'func')
         return f'{ftion}\n'
     
     #--------------------------------------------------------------------------
-    def pre(self, item, lang):
+    def pre(self, item):
     
-        (item, txt) = self.itemTxt(item, lang)
+        (item, txt) = self.itemTxt(item)
         return f'<pre {self.html_atts(item)}>{txt}</pre>\n'
     
     #--------------------------------------------------------------------------
-    def label(self, item, lang):
+    def label(self, item):
     
-        (item, txt) = self.itemTxt(item, lang)
+        (item, txt) = self.itemTxt(item)
         return f'<label {self.html_atts(item)}>{txt}</label>\n'
     
     #--------------------------------------------------------------------------
     # Text item
     #--------------------------------------------------------------------------
-    def textItem(self, item, lang):
+    def textItem(self, item):
 
-        (item, txt   ) = self.itemTxt(item, lang)
+        (item, txt   ) = self.itemTxt(item)
         (item, target) = self.itemDrop(item, 'target')
 
         self.journal.I(f"{self.name}.textItem: {txt[:32]}...")
@@ -348,8 +350,7 @@ class HTML:
         #----------------------------------------------------------------------
         # Vlozenie zdrojoveho textu
         #----------------------------------------------------------------------
-        args   = {lang:txt}
-        toRet  = self.pStart(args, lang)
+        toRet  = self.pStart( {self.lang:txt} )
         toRet += self.pStop()
 
         #----------------------------------------------------------------------
@@ -378,9 +379,9 @@ class HTML:
             idx  = parts[1]
             aTxt = parts[2]
             
-            args  = {'URL':target, 'IDX':idx, lang:aTxt}
+            args  = {'URL':target, 'IDX':idx, self.lang:aTxt}
 
-            repl  = self.a(args, lang)
+            repl  = self.a(args)
             toRet = re.sub(link, repl, toRet)
         
         #----------------------------------------------------------------------
@@ -406,7 +407,7 @@ class HTML:
             if len(parts)>4: args['float' ] = parts[4].strip()
             else           : args['float' ] = 'left'
 
-            repl  = self.pStop() + self.imageThumb(args, lang) + self.pStart()
+            repl  = self.pStop() + self.imageThumb(args) + self.pStart()
             toRet = re.sub(image, repl, toRet)
             
         #----------------------------------------------------------------------
@@ -443,7 +444,7 @@ class HTML:
         return "</form> \n"
         
     #--------------------------------------------------------------------------
-    def textThumb(self, item, lang):
+    def textThumb(self, item):
      
     #    toRet = divStart("ObjectText", idx, idx, h, w, '', '', '', flt)
         toRet = self.divStart(item)
@@ -458,23 +459,23 @@ class HTML:
         return toRet
     
     #--------------------------------------------------------------------------
-    def datePar(self, item, lang):
+    def datePar(self, item):
         
-        (item, dat) = self.itemDrop(item, lang)
+        (item, dat) = self.itemTxt(item)
         
         day = date.fromisoformat(dat[:10]) 
         
-        item[lang] = day.strftime('%d.%m. %Y')
+        item[self.lang] = day.strftime('%d.%m. %Y')
 
-        return self.p(item, lang)
+        return self.p(item)
         
     #--------------------------------------------------------------------------
-    def image(self, item, lang):
+    def image(self, item):
         
         return f'<img {self.html_atts(item)}>' 
         
     #--------------------------------------------------------------------------
-    def imageThumb(self, item, lang):
+    def imageThumb(self, item):
      
         #----------------------------------------------------------------------
         # Informacie v iteme
@@ -507,16 +508,16 @@ class HTML:
                ,"alt"    :"SIQO DMS is loading image..."
                }
     
-        linkTxt = self.image(args, lang)
+        linkTxt = self.image(args)
        
-        args = {"URI":uri, "target":"_blank", lang:linkTxt}
-        toRet += self.a(args, lang)
+        args = {"URI":uri, "target":"_blank", self.lang:linkTxt}
+        toRet += self.a(args)
         
         #----------------------------------------------------------------------
         # Titul
         #----------------------------------------------------------------------
-        args = {"class":"foto", lang:title}
-        toRet += self.p(args, lang)
+        args = {"class":"foto", self.lang:title}
+        toRet += self.p(args)
     
         #----------------------------------------------------------------------
         # Div Stop
@@ -529,7 +530,7 @@ class HTML:
     #--------------------------------------------------------------------------
     # Input items
     #--------------------------------------------------------------------------
-    def inputCheckBox(self, item, lang):
+    def inputCheckBox(self, item):
     
         """
         atts = { "type"    : "checkbox"
@@ -547,7 +548,7 @@ class HTML:
         return f'<input {self.html_atts(item)} {editType}/>\n'
     
     #--------------------------------------------------------------------------
-    def inputRadio(self, item, lang):
+    def inputRadio(self, item):
     
         item["type"] = "radio"
         
@@ -566,8 +567,8 @@ class HTML:
         #----------------------------------------------------------------------
         # Label
         #----------------------------------------------------------------------
-        txt = item[lang]
-        item[lang] = ''
+        txt = item[self.lang]
+        item[self.lang] = ''
         
         atts = {"for": item['id']}
 
@@ -580,7 +581,7 @@ class HTML:
         return toRet
     
     #--------------------------------------------------------------------------
-    def inputButton(self, item, lang, enabled=True):
+    def inputButton(self, item, enabled=True):
 
         atts = { "type"       : "text"
                 ,"name"       : name
@@ -600,7 +601,7 @@ class HTML:
         if enabled: return f'<input {self.html_atts(item)} disabled />\n'
 
     #--------------------------------------------------------------------------
-    def inputText(self, item, lang):
+    def inputText(self, item):
     
         """
         atts = { "type"     : "text"
@@ -623,7 +624,7 @@ class HTML:
     # DB Objects block
     #--------------------------------------------------------------------------
 #!!!!
-    def dbObject(self, item, lang):
+    def dbObject(self, item):
         """Renders objects based on parameters"""
         
         toRet = ''
@@ -663,7 +664,7 @@ class HTML:
         #----------------------------------------------------------------------
         atts = {"name":objId, "id":f"{objId}_HS", "class":"ObjectHeaderSpace", "onclick":f"ObjectContentControl('{objId}', '20')"}
         toRet += self.divStart(atts);
-        toRet += self.objectHead(objClass, item=item, dbItem=dbItem, lang=lang)
+        toRet += self.objectHead(objClass, item=item, dbItem=dbItem)
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -671,7 +672,7 @@ class HTML:
         #----------------------------------------------------------------------
         atts = {"name":objId, "id":f"{objId}_BS", "class":"ObjectBackSpace", "style":"height:0px;"}
         toRet += self.divStart(atts);
-        toRet += self.objectBack(objClass, item=item, dbItem=dbItem, dbData=dbData, lang=lang)
+        toRet += self.objectBack(objClass, item=item, dbItem=dbItem, dbData=dbData)
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -679,7 +680,7 @@ class HTML:
         #----------------------------------------------------------------------
         atts = {"name":objId, "id":f"{objId}_FS", "class":"ObjectFrontSpace", "style":f"height:{height};"}
         toRet += self.divStart(atts);
-        toRet += self.objectFront(objClass, item=item, dbItem=dbItem, lang=lang)
+        toRet += self.objectFront(objClass, item=item, dbItem=dbItem)
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -687,7 +688,7 @@ class HTML:
         #----------------------------------------------------------------------
         atts = {"name":objId, "id":f"{objId}_CS", "class":"ObjectControlSpace"}
         toRet += self.divStart(atts);
-        toRet += self.objectControll(objClass, item=item, dbItem=dbItem, lang=lang)
+        toRet += self.objectControll(objClass, item=item, dbItem=dbItem)
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -725,7 +726,7 @@ class HTML:
         print('dbItem > ', dbItem)
     
     #--------------------------------------------------------------------------
-    def objectHead(self, objClass, item, dbItem, lang):
+    def objectHead(self, objClass, item, dbItem):
         
         toRet = ''
         
@@ -735,17 +736,17 @@ class HTML:
         if objClass == 'FORUM':
             
             (dbItem, title) = self.itemDrop(dbItem, 'TITLE')
-            toRet += self.itemRender(title, lang)
+            toRet += self.itemRender(title)
 
         else: 
-            (dbItem, objName) = self.itemDrop(dbItem, lang)
-            toRet += self.p({lang:objName}, lang)
+            (dbItem, objName) = self.itemDrop(dbItem, self.lang)
+            toRet += self.p({self.lang:objName})
 
         #----------------------------------------------------------------------
         return toRet
 
     #--------------------------------------------------------------------------
-    def objectBack(self, objClass, item, dbItem, dbData, lang):
+    def objectBack(self, objClass, item, dbItem, dbData):
 
         toRet = ''
 
@@ -794,14 +795,14 @@ class HTML:
             #------------------------------------------------------------------
             
         else: 
-            (dbItem, objName) = self.itemDrop(dbItem, lang)
-            toRet += self.p({lang:objName}, lang)
+            (dbItem, objName) = self.itemDrop(dbItem, self.lang)
+            toRet += self.p({self.lang:objName})
 
         #----------------------------------------------------------------------
         return toRet
 
     #--------------------------------------------------------------------------
-    def objectFront(self, objClass, item, dbItem, lang):
+    def objectFront(self, objClass, item, dbItem):
 
         toRet = ''
 
@@ -832,18 +833,18 @@ class HTML:
             #------------------------------------------------------------------
             toRet += self.divStart({"class":"Selector", "style":"height:100%; width:20%; display:block"})
             sibs   = self.dms.loadForumSiblings(who='ja', forumId=forumId, parIdx=parIdx, idx=idx, target=target)
-            toRet += self.itemListRender(sibs, lang)
+            toRet += self.itemListRender(sibs)
             toRet += self.divStop()
             
             #------------------------------------------------------------------
             # Vykreslenie Vykreslenie Forum itemu
             #------------------------------------------------------------------
             toRet += self.divStart({"class":"ForumItem", "style":"height:100%; width:60%; display:block"})
-            toRet += self.itemRender(narr,  lang)
-            toRet += self.itemRender(d_chg, lang)
+            toRet += self.itemRender(narr)
+            toRet += self.itemRender(d_chg)
 
             # Finalne vykreslenie textu
-            toRet += self.itemRender(text,  lang)
+            toRet += self.itemRender(text)
             toRet += self.divStop()
             
             #------------------------------------------------------------------
@@ -851,18 +852,18 @@ class HTML:
             #------------------------------------------------------------------
             toRet += self.divStart({"class":"Selector", "style":"height:100%; width:20%; display:block"})
             child  = self.dms.loadForumChildren(who='ja', forumId=forumId, idx=idx, target=target)
-            toRet += self.itemListRender(child, lang)
+            toRet += self.itemListRender(child)
             toRet += self.divStop()
             
         else: 
-            (dbItem, objName) = self.itemDrop(dbItem, lang)
-            toRet += self.p({lang:objName}, lang)
+            (dbItem, objName) = self.itemDrop(dbItem, self.lang)
+            toRet += self.p({self.lang:objName})
 
         #----------------------------------------------------------------------
         return toRet
 
     #--------------------------------------------------------------------------
-    def objectControll(self, objClass, item, dbItem, lang):
+    def objectControll(self, objClass, item, dbItem):
 
         toRet = ''
 
@@ -878,8 +879,8 @@ class HTML:
             toRet += str(self.dynForms[0].sfMove      (class_="ObjectControlBtn"))
 
         else: 
-            (dbItem, objName) = self.itemDrop(dbItem, lang)
-            toRet += self.p({lang:objName}, lang)
+            (dbItem, objName) = self.itemDrop(dbItem, self.lang)
+            toRet += self.p({self.lang:objName})
 
         #----------------------------------------------------------------------
         return toRet
@@ -887,41 +888,41 @@ class HTML:
     #--------------------------------------------------------------------------
     # Head block
     #--------------------------------------------------------------------------
-    def headTtile(self, item, lang):
+    def headTtile(self, item):
       
         atts = {"class":"HeaderTitle", "name":"HeaderTitle", "id":"HeaderTitle"}
      
         toRet  = self.divStart(atts)
-        toRet += self.h(item, lang, 1)
+        toRet += self.h(item, 1)
         toRet += self.divStop()
         
         return toRet
     
     #--------------------------------------------------------------------------
-    def headComment(self, item, lang):
+    def headComment(self, item):
       
         atts = {"class":"HeaderComment", "name":"HeaderComment", "id":"HeaderComment"}
     
         toRet  = self.divStart(atts)
-        toRet += self.p(item, lang)
+        toRet += self.p(item)
         toRet += self.divStop()
     
         return toRet
     
     #--------------------------------------------------------------------------
-    def headSubTitle(self, item, lang):
+    def headSubTitle(self, item):
       
-        return self.h(item, lang, 4)
+        return self.h(item, 4)
     
     #--------------------------------------------------------------------------
     # NavBar block
     #--------------------------------------------------------------------------
-    def barMenuItem(self, item, lang):
+    def barMenuItem(self, item):
         
         atts = {"class":"BarMenuItem", "name":"BarMenuItem", "id":"BarMenuItem"}
         
         toRet  = self.divStart(atts)
-        toRet += self.a(item, lang)
+        toRet += self.a(item)
         toRet += self.divStop()
         
         return toRet
@@ -929,7 +930,7 @@ class HTML:
     #--------------------------------------------------------------------------
     # Stage block
     #--------------------------------------------------------------------------
-    def stageSelector(self, item, lang):
+    def stageSelector(self, item):
       
         #----------------------------------------------------------------------
         # Pripravim atributy do itemu
@@ -948,13 +949,13 @@ class HTML:
         # Render itemu
         #----------------------------------------------------------------------
         toRet  = self.divStart(atts)
-        toRet += self.inputRadio(item, lang)
+        toRet += self.inputRadio(item)
         toRet += self.divStop()
     
         return toRet
     
     #--------------------------------------------------------------------------
-    def stageBoth(self, item, lang):
+    def stageBoth(self, item):
       
         #----------------------------------------------------------------------
         # Pripravim atributy do itemu
@@ -974,13 +975,13 @@ class HTML:
         # Render itemu
         #----------------------------------------------------------------------
         toRet  = self.divStart(atts)
-        toRet += self.itemRender(item, lang)
+        toRet += self.itemRender(item)
         toRet += self.divStop()
     
         return toRet
     
     #--------------------------------------------------------------------------
-    def stageStart(self, item, lang):
+    def stageStart(self, item):
     
         #----------------------------------------------------------------------
         # Pripravim atributy do itemu
@@ -1000,12 +1001,12 @@ class HTML:
         # Render itemu
         #----------------------------------------------------------------------
         toRet  = self.divStart(atts)
-        toRet += self.itemRender(item, lang)
+        toRet += self.itemRender(item)
     
         return toRet
     
     #--------------------------------------------------------------------------
-    def stageStop(self, item, lang):
+    def stageStop(self, item):
     
         #----------------------------------------------------------------------
         # Pripravim atributy do itemu
@@ -1019,7 +1020,7 @@ class HTML:
         #----------------------------------------------------------------------
         # Render itemu
         #----------------------------------------------------------------------
-        toRet  = self.itemRender(item, lang)
+        toRet  = self.itemRender(item)
         toRet += self.divStop()
     
         return toRet

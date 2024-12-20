@@ -38,7 +38,7 @@ class Object(HTML):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dms, userId, classId, height=20, width=20):
+    def __init__(self, journal, dms, userId, lang, classId, objPar=None, height=20, width=20):
         "Call constructor of Object"
 
         journal.I("Object.init:")
@@ -46,7 +46,7 @@ class Object(HTML):
         #----------------------------------------------------------------------
         # Inicializacia HTML renderera
         #----------------------------------------------------------------------
-        super().__init__(journal, userId, classId)  # classId=OBJECT_ID v pagman db
+        super().__init__(journal, userId, lang, classId)  # classId=OBJECT_ID v pagman db
 
         #----------------------------------------------------------------------
         # Identifikacia objektu
@@ -54,10 +54,7 @@ class Object(HTML):
         self.name    = f"Obj({classId})"
 
         self.dms     = dms       # DMS/Database
-        self.height  = height    # vyska content space
-        self.width   = width     # vyska content space
-
-        self.objs    = []        # zoznam vnorenych objektov 
+        self.conts   = []        # obsah objektu [{item}, {item}, <Object>, {item}, ...] 
 
         self.rMode   = 'ROOT'    # uroven kontroly privilegii, STRICT, ROOT
 #        if self.rMode == 'ROOT': self.objLog = gen.words(self.obj)[0] 
@@ -70,6 +67,11 @@ class Object(HTML):
         # Verifikujem/registrujem logicky Objekt v databaze
         #----------------------------------------------------------------------
 #        self.objectRegister(_SYSUSER)
+
+        #----------------------------------------------------------------------
+        # Ak je zadany parent Id, automaticky nacitam content
+        #----------------------------------------------------------------------
+        if objPar is not None: self.objectGet(userId, objPar)
 
         #----------------------------------------------------------------------
         self.journal.M(f"{self.name}.init: Done")
@@ -93,25 +95,32 @@ class Object(HTML):
     def html(self):
         "This method should be overrided and return html code for this Object"
 
+        self.journal.I("{self.name}.html:")
         toRet = ''
-
+        
+        #----------------------------------------------------------------------
+        # Prejdem vsetky polozky v conts
+        #----------------------------------------------------------------------
+        for item in self.conts:
+            
+            #------------------------------------------------------------------
+            # Ak je polozka typu Object
+            #------------------------------------------------------------------
+            if type(item)==Object: toRet += item.html()
+            else                 : toRet += self.itemRender(item)
+        
+        #----------------------------------------------------------------------
+        self.journal.O()
         return toRet
 
     #==========================================================================
     # Praca s objektom (page-obj)
     #--------------------------------------------------------------------------
-#!!!! znacka
-    def objectGet(self, who, objPar):
-        """"Returns dict of objects { 'objId'   : [ {'itemId':{<item def>}} ] }
-                                or  { 'objParId': { 'objId':[<items>]         }
-        """
+    def readObjs(self, who, objPar):
+        "Reads and returns list of objects ownd by parent object <objPar>"
         
-        self.journal.I(f"{self.name}.objectGet: For parent '{objPar}'")
-
-        #----------------------------------------------------------------------
-        # Inicializacia odpovede
-        #----------------------------------------------------------------------
-        toRet = {}
+        self.journal.I(f"{self.name}.readObjs: For parent '{objPar}'")
+        toRet = []
         
         #----------------------------------------------------------------------
         # Priprava podmienky pre citanie db
@@ -126,84 +135,82 @@ class Object(HTML):
         cols = ('CLASS_ID', 'OBJ_ID', 'OBJ_PAR', 'C_FUNC', 'NOTES', 'D_CREATED', 'D_CHANGED', 'WHO')
         
         sql = f"""select {','.join(cols)} from {Config.tabObj} 
-                  where CLASS_ID = {pagStr} and OBJ_PAR = {parStr}
+                  where 
+                         CLASS_ID = {pagStr} 
+                     and OBJ_PAR  = {parStr}
+                     and C_FUNC   = 'A'
+                     
                   order by OBJ_PAR, OBJ_ID"""
         
         rows = self.dms.readDb(who, sql)
-        
+
         #----------------------------------------------------------------------
         # Kontrola existencie objektov
         #----------------------------------------------------------------------
         if type(rows)==int or len(rows)==0:
             
-            self.journal.M(f"{self.name}.objectGet: Parent '{objPar}' has no children objects")
+            self.journal.M(f"{self.name}.readObjs: Parent '{objPar}' has no children objects")
             self.journal.O()
             return toRet
 
+        #----------------------------------------------------------------------
         objStr = ','.join([row[1] for row in rows])
-        self.journal.M(f"{self.name}.objectGet: Parent '{objPar}' consits of objects [{objStr}]")
+        self.journal.M(f"{self.name}.readObjs: Parent '{objPar}' consits of objects [{objStr}]")
+        
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return rows
+        
+    #--------------------------------------------------------------------------
+#!!!! znacka
+    def objectGet(self, who, objPar):
+        """"Returns content of object as list [{item}, {item}, <Object>, {item}, ...] """
+        
+        self.journal.I(f"{self.name}.objectGet: For parent '{objPar}'")
 
         #----------------------------------------------------------------------
-        # Prehladanie objektov pre parenta parId a objektu objId
+        # Inicializacia odpovede
+        #----------------------------------------------------------------------
+        self.conts = []
+        
+        #----------------------------------------------------------------------
+        # Nacitanie zoznamu definicii vnorenych objektov
+        #----------------------------------------------------------------------
+        rows = self.readObjs(who, objPar)
+
+        #----------------------------------------------------------------------
+        # Prehladanie definicii vnorenych objektov pre parenta objPar
         #----------------------------------------------------------------------
         for row in rows:
 
             #------------------------------------------------------------------
-            # Ak je objekt funkcny
+            # Precitam definiciu vnoreneho objektu
             #------------------------------------------------------------------
-            if row[3] == 'A':
-                
-                #--------------------------------------------------------------
-                # Ziskam nazov a parenta objektu
-                #--------------------------------------------------------------
-                objId = row[1]
-                parId = row[2]
-                self.journal.M(f"{self.name}.objectGet: '{parId}.{objId}' is being analysed...")
+            objId = row[1]
+            self.journal.M(f"{self.name}.objectGet: '{objPar}.{objId}' is being analysed...")
 
-                #--------------------------------------------------------------
-                # Pokusim sa ziskat vnorene objekty
-                #--------------------------------------------------------------
-                inObjs = {}
+            #------------------------------------------------------------------
+            # Ak nie som sam sebe parentom
+            #------------------------------------------------------------------
+            if objId != objPar:
                 
                 #--------------------------------------------------------------
-                # Ak nie som sam sebe parentom
+                # Na zaklade definicie vytvorim vnoreny Object a vlozim ho do conts
                 #--------------------------------------------------------------
-                if objId != parId:
+                subObj = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar=objId)
+                self.conts.append(subObj)
+
+        #----------------------------------------------------------------------
+        # Doplnim zoznam itemov parent objektu
+        #----------------------------------------------------------------------
+        items = self.resourceGet(who, objId=objPar)
                     
-                    #----------------------------------------------------------
-                    # Pokusim sa ziskat objekty vnorene do objektu objId rekurziou
-                    #----------------------------------------------------------
-                    inObjs = self.objectGet(who, objPar=objId)
-                
-                #--------------------------------------------------------------
-                # Ak existuju vnorene objekty, tak ich vlozim
-                #--------------------------------------------------------------
-                if len(inObjs) > 0: 
-                    
-                    # Vytvorim dictionary pre vnorene objekty
-                    if objId not in toRet.keys(): toRet[objId] = {}
-                
-                    toRet[objId] = inObjs
-
-                #--------------------------------------------------------------
-                # Ak NEexistuju vnorene objekty, ziskam zoznam itemov tohoto objektu
-                #--------------------------------------------------------------
-                else:
-
-                    # Vytvorim list pre zoznam itemov objektu
-                    if objId not in toRet.keys(): toRet[objId] = []
-
-                    #----------------------------------------------------------
-                    # Pokusim sa ziskat resource k objektu objId
-                    #----------------------------------------------------------
-                    items = self.resourceGet(who, objId=objId)
-                    
-                    if len(items) > 0: toRet[objId].extend( items )
-                    else             : self.journal.M(f"{self.name}.objectGet: '{parId}.{objId}' has no resource")
+        if len(items) > 0: self.conts.extend( items )
+        else             : self.journal.M(f"{self.name}.objectGet: '{objPar}' has no resource")
 
         #----------------------------------------------------------------------
         self.journal.O()
-        return toRet
+        return self.conts
 
     #--------------------------------------------------------------------------
     def objectRegister(self, who):
@@ -276,12 +283,12 @@ class Object(HTML):
         #----------------------------------------------------------------------
         if type(rows)==int or len(rows)==0:
             
-            self.journal.M(f"{self.name}.resourceGet: '{self.classId}.{objId}' no resource was found ERROR", True)
+            self.journal.M(f"{self.name}.resourceGet: '{self.classId}.{objId}' no resource was found")
             self.journal.O()
             return toRet
     
         #----------------------------------------------------------------------
-        # Vlozim udaje do struktury [ {item:{}} ]
+        # Vlozim udaje do struktury [ {item} ]
         #----------------------------------------------------------------------
         prevItemId = ''
         itemId     = ''
@@ -305,12 +312,12 @@ class Object(HTML):
                     if prevItemId != '': toRet.append(item)
                     
                     prevItemId = itemId
-                    item = {itemId:{}}
+                    item = {}
                     
                 #--------------------------------------------------------------
                 # Akumulujem atributy aktualneho itemu
                 #--------------------------------------------------------------
-                item[itemId][key] = val
+                item[key] = val
 
             #------------------------------------------------------------------
 
@@ -662,12 +669,16 @@ if __name__ == '__main__':
     from   siqolib.journal       import SiqoJournal
     from   app_dms               import DMS
     
-    journal = SiqoJournal('test-object', debug=3)
+    journal = SiqoJournal('test-object', debug=7)
     dms     = DMS(journal, Config.dtbsName, Config.dtbsPath)
     
-    obj = Object(journal, dms, userId='palo4', classId='PagManHomepage')
+    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__HEAD__')
     
-    rec = obj.objectGet('who', '__STAG__')
+    print()
+    print(obj.html())
+    
+    #rows = obj.readObjs('ja', objPar='__HEAD__')
+    #rec = obj.objectGet('who', '__STAG__')
 
 
 #==============================================================================

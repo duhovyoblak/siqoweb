@@ -44,7 +44,7 @@ class Structure(Object):
         #----------------------------------------------------------------------
         # Konstruktor DataStructure
         #----------------------------------------------------------------------
-        super().__init__(journal, userId, classId, height=height, rMode= 'STRICT')
+        super().__init__(journal, userId, lang, classId, height=height, rMode= 'STRICT')
 
         #----------------------------------------------------------------------
         # Definicia stranky
@@ -55,7 +55,6 @@ class Structure(Object):
         self.loaded        = False
 
         self.userName      = userName
-        self.lang          = lang
         
         self.initId        = "Content"
         self.context       = {}
