@@ -7,13 +7,13 @@ import os
 import re
 import traceback
 
-from   datetime                 import date
-from   flask                    import request, url_for
+from   datetime              import date
+from   flask                 import request, url_for
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.10'
+_VER           = '1.11'
 
 #==============================================================================
 # package's variables
@@ -29,11 +29,11 @@ class HTML:
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, who, dms=None, classId='noClass'):
+    def __init__(self, journal, userId, classId='noClass'):
         
+        self.name      = f"HTML_{userId}"
         self.journal   = journal
-        self.who       = who   
-        self.dms       = dms       # DMS manager
+        self.userId    = userId   
         self.classId   = classId   # OBJECT_ID v pagman db
         
         #----------------------------------------------------------------------
@@ -69,7 +69,7 @@ class HTML:
     def objectsRender(self, objDic, lang):
         "Returns HTML for json-encoded item"
         
-        self.journal.I(f"HTML_{self.who}.objectsRender: Going to render an object dictionary...")
+        self.journal.I(f"{self.name}.objectsRender: Going to render an object dictionary...")
         toRet = ''
     
         #----------------------------------------------------------------------
@@ -101,7 +101,7 @@ class HTML:
             # Inak je to neznamy udaj
             #------------------------------------------------------------------
             else:
-                self.journal.M(f"HTML_{self.who}.objectsRender: UNKNOWN object '{objDic}'", True)
+                self.journal.M(f"{self.name}.objectsRender: UNKNOWN object '{objDic}'", True)
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -111,7 +111,7 @@ class HTML:
     def itemListRender(self, itemLst, lang, objId='noObjId'):
         "Returns HTML for json-encoded item"
         
-        self.journal.I(f"HTML_{self.who}.itemListRender: Going to render a list of items...")
+        self.journal.I(f"{self.name}.itemListRender: Going to render a list of items...")
         toRet = ''
     
         #----------------------------------------------------------------------
@@ -137,7 +137,7 @@ class HTML:
     def itemRender(self, item, lang, objId='noObjId'):
         "Returns HTML for json-encoded item"
         
-        self.journal.I(f"HTML_{self.who}.itemRender: I will render item {objId} for lang = '{lang}'")
+        self.journal.I(f"{self.name}.itemRender: I will render item {objId} for lang = '{lang}'")
         toRet = ''
 
         #----------------------------------------------------------------------
@@ -152,7 +152,7 @@ class HTML:
 
         except Exception as err:
             
-            self.journal.M(f"HTML_{self.who}.itemRender: {str(err)}", True)
+            self.journal.M(f"{self.name}.itemRender: {str(err)}", True)
             self.journal.O()
             return f'<p>{str(err)}</p><br><p>{item}</p>'
 
@@ -206,7 +206,7 @@ class HTML:
         #----------------------------------------------------------------------
         except Exception as err:
             
-            self.journal.M(f"HTML_{self.who}.itemRender: {str(err)}", True)
+            self.journal.M(f"{self.name}.itemRender: {str(err)}", True)
             self.journal.O()
             return f'<p>{str(err)}</p><br><p>{copyItem}</p><br><p>{traceback.format_exc()}</p>'
         
@@ -265,7 +265,7 @@ class HTML:
         toRet = f'<a {self.html_atts(item)}>{txt}</a>'
         if brk: toRet += self.breakLine()
         
-        self.journal.M(f"HTML_{self.who}.a:{toRet}")
+        self.journal.M(f"{self.name}.a:{toRet}")
         return toRet
     
     #--------------------------------------------------------------------------
@@ -343,7 +343,7 @@ class HTML:
         (item, txt   ) = self.itemTxt(item, lang)
         (item, target) = self.itemDrop(item, 'target')
 
-        self.journal.I(f"HTML_{self.who}.textItem: {txt[:32]}...")
+        self.journal.I(f"{self.name}.textItem: {txt[:32]}...")
 
         #----------------------------------------------------------------------
         # Vlozenie zdrojoveho textu
@@ -359,7 +359,7 @@ class HTML:
         
         for spl in splits:
             
-            self.journal.M(f"HTML_{self.who}.textItem: SPLIT {spl}")
+            self.journal.M(f"{self.name}.textItem: SPLIT {spl}")
 
             repl  = self.pStop() + self.split() + self.pStart()
             toRet = re.sub(spl, repl, toRet)
@@ -371,7 +371,7 @@ class HTML:
         
         for link in links:
             
-            self.journal.M(f"HTML_{self.who}.textItem: LINK {link}")
+            self.journal.M(f"{self.name}.textItem: LINK {link}")
 
             parts = link[1:-1].split(',')
             
@@ -390,7 +390,7 @@ class HTML:
 
         for image in images:
             
-            self.journal.M(f"HTML_{self.who}.textItem: IMAGE {image}")
+            self.journal.M(f"{self.name}.textItem: IMAGE {image}")
 
             parts = image[1:-1].split(',')
             # {IMAGE,  idx,  h, w, float}
@@ -497,7 +497,7 @@ class HTML:
         #----------------------------------------------------------------------
         # Link
         #----------------------------------------------------------------------
-        doc  = self.dms.docById(self.who, idx)
+        doc  = self.dms.docById(self.userId, idx)
         
         uri   = doc['URI'  ]
         title = doc['TITLE']
@@ -523,7 +523,7 @@ class HTML:
         #----------------------------------------------------------------------
         toRet += self.divStop()
         
-        self.journal.M(f"HTML_{self.who}.imageThumb: {toRet}")
+        self.journal.M(f"{self.name}.imageThumb: {toRet}")
         return toRet
     
     #--------------------------------------------------------------------------
@@ -649,7 +649,7 @@ class HTML:
         
         if dbItem is None:
             
-            self.journal.M(f"HTML_{self.who}.dbObject: No dbItem for class={objClass} and item={item}", True)
+            self.journal.M(f"{self.name}.dbObject: No dbItem for class={objClass} and item={item}", True)
             return toRet
 
         #----------------------------------------------------------------------

@@ -3,14 +3,12 @@
 #------------------------------------------------------------------------------
 import os
 
-from   werkzeug.security       import generate_password_hash, check_password_hash
-from   flask_login             import UserMixin
+from   werkzeug.security     import generate_password_hash, check_password_hash
+from   flask_login           import UserMixin
 
-import siqolib.general         as gen
-from   config                  import Config
-from   database                import Database
-from   app_dms                 import DMS
-from   html_render             import HTML
+import siqolib.general       as gen
+from   config                import Config
+from   html_render           import HTML
 
 #==============================================================================
 # package's constants
@@ -27,7 +25,7 @@ _SYSUSER  = 'SIQO'     # System superuser
 #==============================================================================
 # Class Object
 #------------------------------------------------------------------------------
-class Object(Database):
+class Object(HTML):
     
     roleValue = { "__ERRORR__" : 0
                  ,"Unknown"    : 0
@@ -40,43 +38,33 @@ class Object(Database):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, userId, classId, height=20, width=20, rMode= 'STRICT', crForm='N'):
+    def __init__(self, journal, dms, userId, classId, height=20, width=20):
         "Call constructor of Object"
 
         journal.I("Object.init:")
-        
+
         #----------------------------------------------------------------------
-        # Konstruktor Database
+        # Inicializacia HTML renderera
         #----------------------------------------------------------------------
-        super().__init__(journal, Config.dtbsName, Config.dtbsPath)
+        super().__init__(journal, userId, classId)  # classId=OBJECT_ID v pagman db
 
         #----------------------------------------------------------------------
         # Identifikacia objektu
         #----------------------------------------------------------------------
-        self.name    = f"{classId}"
-        self.userId  = userId    # User, ku ktoremu patri objekt
-        
-        self.classId = classId   # Typ objektu
+        self.name    = f"Obj({classId})"
+
+        self.dms     = dms       # DMS/Database
         self.height  = height    # vyska content space
         self.width   = width     # vyska content space
 
-        self.items   = []        # zoznam zobrazitelnych poloziek 
-        self.btns    = []        # zoznam buttonov
+        self.objs    = []        # zoznam vnorenych objektov 
 
-        self.rMode   = rMode     # uroven kontroly privilegii, STRICT, ROOT
-        if self.rMode == 'ROOT': self.objLog = gen.words(self.obj)[0] 
+        self.rMode   = 'ROOT'    # uroven kontroly privilegii, STRICT, ROOT
+#        if self.rMode == 'ROOT': self.objLog = gen.words(self.obj)[0] 
                                  # jednotliva identita (obj)                  pre rMode = 'STRICT'
                                  # skupinova identifikacia objektov word(obj) pre RMode = 'ROOT'
  
         self.uRole   = "Unknown" # Rola usera, priradena k tomuto objektu
-        self.crForm  = crForm    # vytvaranie formulara, Y, N
-
-        #----------------------------------------------------------------------
-        # Vytvorenie DMS a HTM renderera
-        #----------------------------------------------------------------------
-        self.dms  = DMS (self.journal, self)
-        self.html = HTML(self.journal, who=self.name, dms=self.dms, classId=classId)
-
 
         #----------------------------------------------------------------------
         # Verifikujem/registrujem logicky Objekt v databaze
@@ -98,6 +86,14 @@ class Object(Database):
         "Returns info about the Object"
 
         toRet = []
+
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def html(self):
+        "This method should be overrided and return html code for this Object"
+
+        toRet = ''
 
         return toRet
 
@@ -133,7 +129,7 @@ class Object(Database):
                   where CLASS_ID = {pagStr} and OBJ_PAR = {parStr}
                   order by OBJ_PAR, OBJ_ID"""
         
-        rows = self.readDb(who, sql)
+        rows = self.dms.readDb(who, sql)
         
         #----------------------------------------------------------------------
         # Kontrola existencie objektov
@@ -272,7 +268,7 @@ class Object(Database):
                   where CLASS_ID = {pag} and   OBJ_ID  = {obj}
                   order by ITEM_ID"""
   
-        rows = self.readDb(who, sql)
+        rows = self.dms.readDb(who, sql)
         # self.journal.M(f"{self.name}.resourceGet: '{rows}'")
         
         #----------------------------------------------------------------------
@@ -663,11 +659,13 @@ class Object(Database):
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    from   siqolib.journal                 import SiqoJournal
-    journal = SiqoJournal('test-object', debug=3)
+    from   siqolib.journal       import SiqoJournal
+    from   app_dms               import DMS
     
-#    obj = Object(journal, 'palo4', classId='PagManLogin')
-    obj = Object(journal, 'palo4', classId='PagManHomepage')
+    journal = SiqoJournal('test-object', debug=3)
+    dms     = DMS(journal, Config.dtbsName, Config.dtbsPath)
+    
+    obj = Object(journal, dms, userId='palo4', classId='PagManHomepage')
     
     rec = obj.objectGet('who', '__STAG__')
 

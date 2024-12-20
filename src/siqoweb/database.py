@@ -3,10 +3,10 @@
 #------------------------------------------------------------------------------
 import os
 import re
-from   datetime                 import datetime, timedelta
+from   datetime              import datetime, timedelta
 
 import sqlite3
-import siqolib.general          as gen
+import siqolib.general       as gen
 
 #==============================================================================
 # package's constants
@@ -92,8 +92,6 @@ class Database:
 
         self.journal.O()
 
-    #==========================================================================
-    # DB tools
     #--------------------------------------------------------------------------
     def commit(self):
         "Commits open transaction"
@@ -112,6 +110,8 @@ class Database:
         self.prevCmd = ''
         self.journal.M(f'{self.dtbs}.rollback: Rollback {self.prevCmd}')
 
+    #==========================================================================
+    # DB tools
     #--------------------------------------------------------------------------
     def tables(self):
         "Returns list of tables in the database"
@@ -780,7 +780,7 @@ if __name__ == '__main__':
     journal = SiqoJournal('test-db', debug=5)
 
     from   config                   import Config
-    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=True)
+    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=False)
  
     tables     = db.tables()
 #    attributes = db.attributes(Config.tabUser)
@@ -790,7 +790,7 @@ if __name__ == '__main__':
     users      = db.readTable('who', Config.tabUser)
     palo4      = db.readTable('who', Config.tabUser, "user_id = 'palo4'")
     
-    db.sSqlScript(who='test', fName='ohistory.ini')
+    #db.sSqlScript(who='test', fName='ohistory.ini')
     
     db.sJournal('SIQO')
     

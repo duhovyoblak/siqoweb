@@ -4,23 +4,21 @@
 import os
 
 import flask
-from   flask              import url_for, get_flashed_messages, flash, render_template, make_response
-from   flask              import request, session, abort, redirect
-from   flask_login        import login_user, logout_user, current_user
+from   flask                 import url_for, get_flashed_messages, flash, render_template, make_response
+from   flask                 import request, session, abort, redirect
+from   flask_login           import login_user, logout_user, current_user
 
-from   markupsafe         import escape
-from   wtforms.validators import ValidationError
+from   markupsafe            import escape
+from   wtforms.validators    import ValidationError
 
-import jinja2             as j2
-from   jinja2             import Environment, FileSystemLoader, PackageLoader, select_autoescape
+import jinja2                as j2
+from   jinja2                import Environment, FileSystemLoader, PackageLoader, select_autoescape
 
-import siqolib.general    as gen
-
-from   database           import Database
-from   config             import Config
-from   app_user           import User
-from   p__structure       import Structure
-
+import siqolib.general       as gen
+from   config                import Config
+from   app_user              import User
+from   app_dms               import DMS
+from   p__structure          import Structure
 
 #==============================================================================
 # package's constants
@@ -59,6 +57,11 @@ class Page(Structure):
             userId   = 'Anonymous'
             userName = 'Guest User'
             lang     = 'SK'
+
+        #----------------------------------------------------------------------
+        # Konstruktor DMS/Database
+        #----------------------------------------------------------------------
+        self.dms  = DMS (journal, Config.dtbsName, Config.dtbsPath)
 
         #----------------------------------------------------------------------
         # Konstruktor DataStructure,

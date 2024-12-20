@@ -2,15 +2,16 @@
 #  SIQO Homepage: DMS API
 #------------------------------------------------------------------------------
 import os
-from   flask                   import Flask, url_for, render_template, make_response
+from   flask                 import Flask, url_for, render_template, make_response
 
-import siqolib.general         as gen
-from   config                  import Config
+import siqolib.general       as gen
+from   config                import Config
+from   database              import Database
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.04'
+_VER           = '1.05'
 
 _DMS_PREFIX    = 'SF'
 _DAY_CHANGES   = 32       # Pocet dni, pocas ktorych sa item povazuje za cerstvo zmeneny
@@ -31,22 +32,26 @@ _TITLE_MAX     = 36       # Maximalny pocet zobrazenych znakov TITLE v selectore
 #==============================================================================
 # Class DMS
 #------------------------------------------------------------------------------
-class DMS:
+class DMS(Database):
     
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, db):
+    def __init__(self, journal, dtbs, path):
         "Call constructor of DMS"
 
         journal.I("DMS.init:")
         
         #----------------------------------------------------------------------
+        # Inicializacia databazy
+        #----------------------------------------------------------------------
+        super().__init__(journal, dtbs, path)
+
+        #----------------------------------------------------------------------
         # Identifikacia objektu
         #----------------------------------------------------------------------
-        self.name    = f"DMS({db.dtbs})"
+        self.name    = f"DMS({dtbs})"
         self.journal = journal
-        self.db      = db        # Database with DMS metadata
         self.docs    = []        # List of documents in RAM
         
         #----------------------------------------------------------------------
@@ -76,7 +81,14 @@ class DMS:
     #--------------------------------------------------------------------------
     def uri(self, fName):
         
-        return url_for('static', filename = f"{Config.dmsFolder}/{fName}")
+        try: 
+            return url_for('static', filename = f"{Config.dmsFolder}/{fName}")
+        
+        except RuntimeError as err:
+            self.journal.M(f"{self.name}.uri: fName = '{fName}' ERROR", True)
+            self.journal.M(f"{self.name}.uri: {str(err)}", True)
+            return fName
+            
 
     #==========================================================================
     # Praca s jednym dokumentom
@@ -116,7 +128,7 @@ class DMS:
 
         self.journal.I(f"{self.name}.docRead: where '{where}'")
         
-        self.docs = self.db.readTable(who, Config.tabDms, where, header='detail')
+        self.docs = self.readTable(who, Config.tabDms, where, header='detail')
 
         # DOC_ID,C_FUNC,USER_ID,D_CREATED,C_TYPE,FILENAME,ORIGNAME,THUMBNAME,
         # N_SIZE,C_PUB,TITLE,NOTES,D_VALID,D_EXPIRY,MD5
@@ -144,7 +156,7 @@ class DMS:
         #----------------------------------------------------------------------
         # Nacitanie polozky z DB ako dict
         #----------------------------------------------------------------------
-        rows = self.db.readTable(who=who, table=Config.tabForum, where=where, header='detail')
+        rows = self.readTable(who=who, table=Config.tabForum, where=where, header='detail')
         
         #----------------------------------------------------------------------
         # Kontrola existencie forum itemu
@@ -303,7 +315,7 @@ class DMS:
         # Nacitanie zoznamu TITLEs z DB ako list
         #----------------------------------------------------------------------
         sql = f"select ITEM_ID, C_FUNC, TITLE from {Config.tabForum} where {where} order by TITLE"
-        children = self.db.readDb(who=who, sql=sql)
+        children = self.readDb(who=who, sql=sql)
         
         #----------------------------------------------------------------------
         self.journal.O()
@@ -315,12 +327,10 @@ class DMS:
 if __name__ == '__main__':
     
     from   siqolib.journal         import SiqoJournal
-    from   database                import Database
     
     journal = SiqoJournal('test-DMS', debug=4)
-    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=False)
     
-    dms = DMS(journal, db)
+    dms = DMS(journal, Config.dtbsName, Config.dtbsPath)
     
     docs = dms.docRead('ja')
     doc  = dms.docById('ja', 57)

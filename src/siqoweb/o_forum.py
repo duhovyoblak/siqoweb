@@ -9,6 +9,8 @@ import traceback
 
 from   datetime                 import date
 from   flask                    import request, url_for
+
+from   o__object                import Object
 from   f_forum                  import FormForum
 
 #==============================================================================
@@ -25,12 +27,13 @@ _VER           = '1.10'
 #==============================================================================
 # Class Forum
 #------------------------------------------------------------------------------
-class Forum:
+class Forum(Object):
     
+    journal, userId, classId, height=20, width=20, rMode= 'STRICT', crForm='N'):
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, who, dms=None, classId='noClass'):
+    def __init__(self, journal, userId, classId, height=20, width=20):
         
         self.journal   = journal
         self.who       = who   
