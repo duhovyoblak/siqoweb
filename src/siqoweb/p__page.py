@@ -61,12 +61,12 @@ class Page(Structure):
         #----------------------------------------------------------------------
         # Konstruktor DMS/Database
         #----------------------------------------------------------------------
-        self.dms  = DMS (journal, Config.dtbsName, Config.dtbsPath)
+        dms  = DMS (journal, Config.dtbsName, Config.dtbsPath)
 
         #----------------------------------------------------------------------
         # Konstruktor DataStructure,
         #----------------------------------------------------------------------
-        super().__init__(journal, env, userId, userName, lang, classId, height, template)
+        super().__init__(journal, env, dms, userId, userName, lang, classId, height, template)
         
         self.name     = f"Page({self.name})"
         self.postForm = None                   # Data from POST request.form

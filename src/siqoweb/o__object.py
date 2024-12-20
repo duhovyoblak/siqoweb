@@ -205,8 +205,12 @@ class Object(HTML):
         #----------------------------------------------------------------------
         items = self.resourceGet(who, objId=objPar)
                     
-        if len(items) > 0: self.conts.extend( items )
-        else             : self.journal.M(f"{self.name}.objectGet: '{objPar}' has no resource")
+        if len(items) > 0: 
+            
+            self.conts.extend( items )
+            self.journal.M(f"{self.name}.objectGet: '{objPar}' has resource {items}")
+            
+        else: self.journal.M(f"{self.name}.objectGet: '{objPar}' has no resource")
 
         #----------------------------------------------------------------------
         self.journal.O()
@@ -669,10 +673,11 @@ if __name__ == '__main__':
     from   siqolib.journal       import SiqoJournal
     from   app_dms               import DMS
     
-    journal = SiqoJournal('test-object', debug=7)
+    journal = SiqoJournal('test-object', debug=8)
     dms     = DMS(journal, Config.dtbsName, Config.dtbsPath)
     
-    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__HEAD__')
+#    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__NAVB__')
+    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__STAG__')
     
     print()
     print(obj.html())
