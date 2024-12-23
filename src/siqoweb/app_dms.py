@@ -2,7 +2,7 @@
 #  SIQO Homepage: DMS API
 #------------------------------------------------------------------------------
 import os
-from   flask                 import Flask, url_for, render_template, make_response
+from   flask                 import url_for
 
 import siqolib.general       as gen
 from   config                import Config
@@ -11,7 +11,7 @@ from   database              import Database
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.05'
+_VER           = '1.06'
 
 _DMS_PREFIX    = 'SF'
 _DAY_CHANGES   = 32       # Pocet dni, pocas ktorych sa item povazuje za cerstvo zmeneny

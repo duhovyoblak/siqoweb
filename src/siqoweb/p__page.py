@@ -4,15 +4,15 @@
 import os
 
 import flask
-from   flask                 import url_for, get_flashed_messages, flash, render_template, make_response
+from   flask                 import url_for, get_flashed_messages, flash, make_response
 from   flask                 import request, session, abort, redirect
 from   flask_login           import login_user, logout_user, current_user
 
 from   markupsafe            import escape
 from   wtforms.validators    import ValidationError
 
-import jinja2                as j2
-from   jinja2                import Environment, FileSystemLoader, PackageLoader, select_autoescape
+#import jinja2                as j2
+#from   jinja2                import Environment, FileSystemLoader, PackageLoader, select_autoescape
 
 import siqolib.general       as gen
 from   config                import Config
@@ -37,7 +37,7 @@ class Page(Structure):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, title, classId, height, template="1 structure.html"):
+    def __init__(self, journal, title, classId, height):
         "Call constructor of Page and initialise it"
         
         journal.I(f"Page({classId}).init:")
@@ -66,7 +66,7 @@ class Page(Structure):
         #----------------------------------------------------------------------
         # Konstruktor Page Structure
         #----------------------------------------------------------------------
-        super().__init__(journal, env, dms, title, userId, userName, lang, classId, height, template)
+        super().__init__(journal, dms, title, userId, userName, lang, classId, height)
         
         self.name     = f"Page({self.name})"
         self.postForm = None                   # Data from POST request.form
@@ -143,7 +143,7 @@ class Page(Structure):
                 return resp
 
         #----------------------------------------------------------------------
-        # Default response: Ziskam template a vratim html
+        # Default response:
         #----------------------------------------------------------------------
         resp = self.respGet()
         self.journal.O()
@@ -161,18 +161,11 @@ class Page(Structure):
     #--------------------------------------------------------------------------
     def respGet(self):
      
-        self.journal.I(f"{self.name}.respGet: Default html get response from template='{self.template}'")
+        self.journal.I(f"{self.name}.respGet: Default html get response")
         
-        #----------------------------------------------------------------------
-        # Vytvorenie template
-        #----------------------------------------------------------------------
-        #template = self.env.get_template(self.template)
-        #self.journal.M(f"{self.name}.respGet: template loaded")
-
         #----------------------------------------------------------------------
         # Vygenerujem html response
         #----------------------------------------------------------------------
-#        resp = make_response(template.render(**self.context), 200)
         resp = make_response(self.html(), 200)
         
         # V pripade potreby vies doplnit headers o custom data
@@ -201,14 +194,7 @@ if __name__ == '__main__':
     from   siqolib.journal              import SiqoJournal
     journal = SiqoJournal('test-base', debug=5)
     
-    env = Environment(
-    
-     autoescape = select_autoescape()
-    ,loader     = FileSystemLoader(['templates'])
-
-    )
-
-    page = Page(journal, env, 'Homepage', 700)
+    page = Page(journal, 'Homepage', 'PagManHomepage', 700)
     
 
 #==============================================================================

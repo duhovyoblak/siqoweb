@@ -5,7 +5,7 @@ import os
 import unicodedata
 
 import flask
-from   flask                    import Flask, url_for, render_template, make_response
+from   flask                    import Flask, url_for, make_response
 from   flask                    import request, session, abort, redirect
 from   flask                    import get_flashed_messages, flash
 from   flask_login              import LoginManager, login_required, login_user, current_user
@@ -18,7 +18,7 @@ import app_views                as app_views
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER        = '1.06'
+_VER        = '1.07'
 _LOGIN_VIEW = 'pgLogin'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 

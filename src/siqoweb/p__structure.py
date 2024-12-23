@@ -3,13 +3,10 @@
 #------------------------------------------------------------------------------
 import os
 
-from   flask                 import url_for, get_flashed_messages, flash, render_template, make_response
+from   flask                 import url_for, get_flashed_messages, flash, make_response
 from   flask                 import request, session, abort, redirect
 from   flask_login           import login_user, logout_user, current_user
 from   markupsafe            import escape
-
-import jinja2                as j2
-from   jinja2                import Environment, FileSystemLoader, select_autoescape
 
 import siqolib.general       as gen
 
@@ -36,7 +33,7 @@ class Structure:
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, dms, title, userId, userName, lang, classId, height, template="1 structure.html"):
+    def __init__(self, journal, dms, title, userId, userName, lang, classId, height):
         "Call constructor of the Structure and initialise it"
         
         journal.I(f"Structure({classId}).init:")
@@ -46,7 +43,6 @@ class Structure:
         #----------------------------------------------------------------------
         self.journal       = journal
         self.name          = f"Struct({classId})"
-        self.env           = env
         self.dms           = dms
         
         self.title         = title   
@@ -56,7 +52,6 @@ class Structure:
         self.classId       = classId   # OBJECT_ID v pagman db
         self.height        = height
         
-        self.template      = template
         self.loaded        = False
 
         #----------------------------------------------------------------------
@@ -293,7 +288,7 @@ class Structure:
         toRet.append( '<div class="TirageItem" style="width:40%" ></div>')
         
         href = self.urlFor('pgContact')
-        toRet.append( '<div class="TirageItem" id="TI_1"><a href="{href}">Kontakt </a></div>')
+        toRet.append(f'<div class="TirageItem" id="TI_1"><a href="{href}">Kontakt </a></div>')
     
         href = self.urlFor('pgHomepage')
         toRet.append(f'<div class="TirageItem" id="TI_2"><a href="{href}">Homepage</a></div>')
@@ -602,11 +597,10 @@ if __name__ == '__main__':
     
     journal = SiqoJournal('test-Structure', debug=5)
     
-    env = Environment(autoescape = select_autoescape(),loader=FileSystemLoader(['templates']))
     dms = DMS (journal, Config.dtbsName, Config.dtbsPath)
     
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'PagManLogin', 700)
-    page = Structure(journal, env, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManHomepage', 700)
+    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManHomepage', 700)
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'FAQ', 700)
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'OHISTORY', 700)
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'PagManContact', 700)

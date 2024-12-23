@@ -7,8 +7,6 @@ from   flask              import make_response
 from   flask              import request, session, abort, redirect
 from   markupsafe         import escape
 
-from   jinja2             import Environment, FileSystemLoader, select_autoescape
-
 from   p__page            import Page
 from   p_login            import PageLogin
 from   p_forum            import PageForum
@@ -25,12 +23,6 @@ else                        : _IS_TEST = False
 # package's variables
 #------------------------------------------------------------------------------
 journal = None
-
-env = Environment(
-    
-     autoescape = select_autoescape()
-    ,loader     = FileSystemLoader(['templates'])
-)
 
 #==============================================================================
 # package's tools
@@ -57,18 +49,18 @@ def pgLogin():
     
     journal.I('app_views.pgLogin()')
 
-    page = PageLogin(journal, env, 'PagManLogin', height=670, template="3 login.html")
+    page = PageLogin(journal, title='Login', classId='PagManLogin', height=670)
     resp = page.resp()
 
     journal.O()
     return resp
 
 #------------------------------------------------------------------------------
-def pgEmpty(classId, height=670):
+def pgEmpty(title, classId, height=670):
     
     journal.I('app_views.pgEmpty()')
 
-    page = Page(journal, env, classId=classId, height=height, template="3 empty.html")
+    page = Page(journal, title=title,classId=classId, height=height)
     resp = page.resp()
 
     journal.O()
@@ -79,18 +71,18 @@ def pgStaged(title, classId, height=670):
     
     journal.I('app_views.pgHomepage()')
 
-    page = Page(journal, env, title=title, classId=classId, height=height, template="3 staged.html")
+    page = Page(journal, title=title, classId=classId, height=height)
     resp = page.resp()
 
     journal.O()
     return resp
 
 #------------------------------------------------------------------------------
-def pgForum(classId, target, idx=0, height=670):
+def pgForum(title, classId, target, idx=0, height=670):
     
     journal.I('app_views.pgForum()')
 
-    page = PageForum(journal, env, classId=classId, target=target, idx=idx, height=height, template="3 empty.html")
+    page = PageForum(journal, title=title, classId=classId, target=target, idx=idx, height=height)
     resp = page.resp()
 
     journal.O()

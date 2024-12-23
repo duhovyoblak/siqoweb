@@ -8,12 +8,12 @@ import re
 import traceback
 
 from   datetime              import date
-from   flask                 import request, url_for
+from   flask                 import url_for
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.11'
+_VER           = '1.12'
 
 #==============================================================================
 # package's variables
