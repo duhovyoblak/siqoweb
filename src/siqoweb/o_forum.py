@@ -29,11 +29,16 @@ _VER           = '1.10'
 #------------------------------------------------------------------------------
 class Forum(Object):
     
-    journal, userId, classId, height=20, width=20, rMode= 'STRICT', crForm='N'):
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, userId, classId, height=20, width=20):
+    def __init__(self, journal, userId, lang, classId, height=20, width=20):
+
+        #----------------------------------------------------------------------
+        # Inicializacia Objectu
+        #----------------------------------------------------------------------
+        super().__init__(journal, dms, userId, lang, classId)  # classId=OBJECT_ID v pagman db
+
         
         self.journal   = journal
         self.who       = who   

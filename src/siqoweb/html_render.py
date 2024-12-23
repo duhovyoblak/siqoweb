@@ -44,6 +44,16 @@ class HTML:
         self.dynForms  = []
 
     #--------------------------------------------------------------------------
+    def urlFor(self, url):
+        
+        toRet = f"url_for({url})"
+        
+        try                : toRet = url_for(url)
+        except RuntimeError: self.journal.M(f"{self.name}.urlFor: RuntimeError", True)
+
+        return toRet    
+        
+    #--------------------------------------------------------------------------
     def itemDrop(self, item, key, pop=False):
         
         if key in item.keys(): 
@@ -257,7 +267,7 @@ class HTML:
             link = uri
             
         else:
-            link = url_for(url)
+            link = self.urlFor(url)
             if idx != '': link += f'/{idx.strip()}'
             if arg != '': link += f'?{arg}'
         
@@ -761,7 +771,7 @@ class HTML:
             # Render the object formular
             #------------------------------------------------------------------
             method = 'POST'
-            action = url_for(target)
+            action = self.urlFor(target)
             toRet += self.formStart({"method":method, "action":action, "enctype":"multipart/form-data"})
             
             #toRet += str(self.dynForms[0].parentId.label())

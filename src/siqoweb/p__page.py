@@ -37,7 +37,7 @@ class Page(Structure):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, classId, height, template="1 structure.html"):
+    def __init__(self, journal, env, title, classId, height, template="1 structure.html"):
         "Call constructor of Page and initialise it"
         
         journal.I(f"Page({classId}).init:")
@@ -64,9 +64,9 @@ class Page(Structure):
         dms  = DMS (journal, Config.dtbsName, Config.dtbsPath)
 
         #----------------------------------------------------------------------
-        # Konstruktor DataStructure,
+        # Konstruktor Page Structure
         #----------------------------------------------------------------------
-        super().__init__(journal, env, dms, userId, userName, lang, classId, height, template)
+        super().__init__(journal, env, dms, title, userId, userName, lang, classId, height, template)
         
         self.name     = f"Page({self.name})"
         self.postForm = None                   # Data from POST request.form
@@ -81,8 +81,8 @@ class Page(Structure):
         #----------------------------------------------------------------------
         # Doplnenie dynamickeho contextu idx
         #----------------------------------------------------------------------
-        self.idContext = self.loadContent()
-        self.addContext(self.idContext)
+        #self.idContext = self.loadContent()
+        #self.addContext(self.idContext)
 
 
         self.journal.O()
@@ -166,13 +166,14 @@ class Page(Structure):
         #----------------------------------------------------------------------
         # Vytvorenie template
         #----------------------------------------------------------------------
-        template = self.env.get_template(self.template)
-        self.journal.M(f"{self.name}.respGet: template loaded")
+        #template = self.env.get_template(self.template)
+        #self.journal.M(f"{self.name}.respGet: template loaded")
 
         #----------------------------------------------------------------------
         # Vygenerujem html response
         #----------------------------------------------------------------------
-        resp = make_response(template.render(**self.context), 200)
+#        resp = make_response(template.render(**self.context), 200)
+        resp = make_response(self.html(), 200)
         
         # V pripade potreby vies doplnit headers o custom data
         # resp.headers['X-Something'] = 'A value'

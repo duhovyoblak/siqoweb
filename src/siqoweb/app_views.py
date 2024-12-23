@@ -75,11 +75,11 @@ def pgEmpty(classId, height=670):
     return resp
 
 #------------------------------------------------------------------------------
-def pgStaged(classId, height=670):
+def pgStaged(title, classId, height=670):
     
     journal.I('app_views.pgHomepage()')
 
-    page = Page(journal, env, classId=classId, height=height, template="3 staged.html")
+    page = Page(journal, env, title=title, classId=classId, height=height, template="3 staged.html")
     resp = page.resp()
 
     journal.O()

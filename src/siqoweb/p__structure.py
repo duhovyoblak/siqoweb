@@ -36,16 +36,11 @@ class Structure:
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, env, dms, userId, userName, lang, classId, height, template="1 structure.html"):
+    def __init__(self, journal, env, dms, title, userId, userName, lang, classId, height, template="1 structure.html"):
         "Call constructor of the Structure and initialise it"
         
         journal.I(f"Structure({classId}).init:")
         
-        #----------------------------------------------------------------------
-        # Konstruktor DataStructure
-        #----------------------------------------------------------------------
-        super().__init__(journal, userId, lang, classId, height=height, rMode= 'STRICT')
-
         #----------------------------------------------------------------------
         # Definicia stranky
         #----------------------------------------------------------------------
@@ -54,10 +49,12 @@ class Structure:
         self.env           = env
         self.dms           = dms
         
+        self.title         = title   
         self.userId        = userId   
         self.userName      = userName
         self.lang          = lang
         self.classId       = classId   # OBJECT_ID v pagman db
+        self.height        = height
         
         self.template      = template
         self.loaded        = False
@@ -65,413 +62,480 @@ class Structure:
         #----------------------------------------------------------------------
         # Inicializacia default objektov
         #----------------------------------------------------------------------
-        self.cnts          = []
+        self.cont          = {}        # Content of the Page in objects
         
         self.initId        = "Content"
         self.context       = {}
+        
+        self.loadPage('ja')
         
 
         #----------------------------------------------------------------------
         # Inicializacia statickeho contextu
         #----------------------------------------------------------------------
-        self.initContext()
+        #self.initContext()
 
         #----------------------------------------------------------------------
         # Doplnenie statickeho contextu z DB
         #----------------------------------------------------------------------
-        self.dbContext = self.loadPageResource()
-        self.addContext(self.dbContext)
+        #self.dbContext = self.loadPageResource()
+        #self.addContext(self.dbContext)
 
         #----------------------------------------------------------------------
         #gen.dictPrint(dct=self.context)
         self.journal.O(f"{self.name}.init")
         
+    #--------------------------------------------------------------------------
+    def __str__(self):
+        "Prints info about this Structure"
+        
+        return f"Structure>{', '.join(self.info())}"
+
+    #--------------------------------------------------------------------------
+    def info(self):
+        "Returns info about the Structure"
+
+        toRet = []
+        
+        #----------------------------------------------------------------------
+        # Prejdem vsetky sekcie Page
+        #----------------------------------------------------------------------
+        for contId, contObj in self.cont.items():
+            
+            toRet.append('\n')
+            toRet.append(f"Section {contId}>")
+            
+            toRet.append('\n')
+            toRet.append(str(contObj))
+
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def urlFor(self, endpoint, filename=None):
+        
+        toRet = f"url_for({endpoint}, filename={filename})"
+        
+        try                : toRet = url_for(endpoint, filename=filename)
+        except RuntimeError: self.journal.M(f"{self.name}.urlFor: RuntimeError", True)
+
+        return toRet    
+        
     #==========================================================================
-    # Vytvorenie page
+    # HTML renderer
+    #--------------------------------------------------------------------------
+    def html(self):
+        "This method should be overrided and return html code for this Page"
+
+        self.journal.I("{self.name}.html:")
+        toRet = ''
+        
+        #----------------------------------------------------------------------
+        # Document start
+        #----------------------------------------------------------------------
+        toRet += '<!------------------------------------------------------------------> \n'
+        toRet += '<!-- SIQO Web Document start                                      --> \n'
+        toRet += '<!------------------------------------------------------------------> \n'
+        toRet += '<!DOCTYPE html> \n'
+        toRet += '<html> \n'
+
+        #----------------------------------------------------------------------
+        # Page header
+        #----------------------------------------------------------------------
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<!-- Document Header                                       --> \n'
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<head> \n'
+        for cmd in self.htmlHead(): toRet += f"{cmd} \n"
+        toRet += '</head> \n'
+       
+        #----------------------------------------------------------------------
+        # Page body start
+        #----------------------------------------------------------------------
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<!-- Document Body                                         --> \n'
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<body> \n'
+
+        #----------------------------------------------------------------------
+        # JS script before content
+        #----------------------------------------------------------------------
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<!-- JS before content                                     --> \n'
+        toRet += '<!-----------------------------------------------------------> \n'
+        for cmd in self.htmlScriptBefore(): toRet += f"{cmd} \n"
+
+        #----------------------------------------------------------------------
+        # Header object
+        #----------------------------------------------------------------------
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<!-- Head object                                           --> \n'
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<div class="Header" id="Header" onclick="ShowElement(\'Content\')"> \n'
+        if self.cont['__HEAD__'] is not None: toRet += self.cont['__HEAD__'].html()
+        toRet += '</div> \n'
+
+        #----------------------------------------------------------------------
+        # NavBar object
+        #----------------------------------------------------------------------
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<!-- NavBar object                                         --> \n'
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<div class="BarMenu" id="BarMenu"> \n'
+        if self.cont['__NAVB__'] is not None: toRet += self.cont['__NAVB__'].html()
+        toRet += '</div> \n'
+
+        #----------------------------------------------------------------------
+        # Flash
+        #----------------------------------------------------------------------
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<!-- Flash object                                          --> \n'
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet +=f'<div class="Flash" id="Flash" style="height:{self.height}px; display:none"> \n'
+        toRet += '</div> \n'
+
+        #----------------------------------------------------------------------
+        # Content start
+        #----------------------------------------------------------------------
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<!-- Content start                                         --> \n'
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet +=f'<div class="Content" id="Content" style="height:{self.height}px; display:block"> \n'
+
+        #----------------------------------------------------------------------
+        # Objects of stage
+        #----------------------------------------------------------------------
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<!-- Stage object                                          --> \n'
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<div class="StageSelector"> \n'
+        if self.cont['__SELS__'] is not None: toRet += self.cont['__SELS__'].html()
+        toRet += '\n </div> \n'
+        
+        toRet += '<!-----------------------------------------------------------> \n'
+        if self.cont['__STGS__'] is not None: toRet += self.cont['__STGS__'].html()
+        
+        #----------------------------------------------------------------------
+        # Content stop
+        #----------------------------------------------------------------------
+        if self.cont['__CONT__'] is not None: toRet += self.cont['__CONT__'].html()
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<!-- Content stop                                          --> \n'
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '</div> \n'
+
+        #----------------------------------------------------------------------
+        # Tirage
+        #----------------------------------------------------------------------
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<!-- Tirage                                                --> \n'
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<div class="Tirage" onclick="ShowElement(\'Content\')"> \n'
+        for cmd in self.htmlTirage(): toRet += f"{cmd} \n"
+        toRet += '</div> \n'
+    
+        #----------------------------------------------------------------------
+        # JS script after content
+        #----------------------------------------------------------------------
+        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '<!-- JS after content                                      --> \n'
+        toRet += '<!-----------------------------------------------------------> \n'
+        for cmd in self.htmlScriptAfter(): toRet += f"{cmd} \n"
+
+        #----------------------------------------------------------------------
+        # Page body stop
+        #----------------------------------------------------------------------
+        toRet += '</body> \n'
+
+        #----------------------------------------------------------------------
+        # Document stop
+        #----------------------------------------------------------------------
+        toRet += '</html> \n'
+        toRet += '<!------------------------------------------------------------------> \n'
+        toRet += '<!-- SIQO Web Document stop                                       --> \n'
+        toRet += '<!------------------------------------------------------------------> \n'
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def htmlHead(self):
+        "Returns list of commands for HTML page header"
+        
+        toRet = []
+
+        toRet.append( '<meta   http-equiv="Content-Type"      content="text/html; charset=UTF-8">')
+        toRet.append( '<meta   name="META HTTP-EQUIV"         content="NO-CACHE">')
+        toRet.append( '<meta   name="author"                  content="Palo4">')
+    
+        href = self.urlFor('static', filename='css/paragraph.css')
+        toRet.append(f'<link   href="{href}" rel="stylesheet" type="text/css">')
+        
+        href = self.urlFor('static', filename='css/structure.css')
+        toRet.append(f'<link   href="{href}" rel="stylesheet" type="text/css">')
+
+        href = self.urlFor('static', filename='css/object.css')
+        toRet.append(f'<link   href="{href}" rel="stylesheet" type="text/css">')
+
+        href = self.urlFor('static', filename='js/structure.js')
+        toRet.append(f'<script src= "{href}" type="text/javascript"></script>')
+
+        toRet.append( '<title>{self.title}</title>')
+        
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def htmlTirage(self):
+        "Returns list of commands for HTML page tirage"
+        
+        toRet = []
+
+        toRet.append( '<div class="TirageItem" style="width:40%" ></div>')
+        
+        href = self.urlFor('pgContact')
+        toRet.append( '<div class="TirageItem" id="TI_1"><a href="{href}">Kontakt </a></div>')
+    
+        href = self.urlFor('pgHomepage')
+        toRet.append(f'<div class="TirageItem" id="TI_2"><a href="{href}">Homepage</a></div>')
+    
+        href = self.urlFor('pgFaq')
+        toRet.append(f'<div class="TirageItem" id="TI_3"><a href="{href}">F.A.Q.  </a></div>')
+
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def htmlScriptBefore(self):
+        "Returns list of commands for HTML page script to be executed before content"
+        
+        toRet = []
+
+        toRet.append(f'<script>InitElement("{self.initId}")</script>')
+
+        return toRet
+
+    #--------------------------------------------------------------------------
+    def htmlScriptAfter(self):
+        "Returns list of commands for HTML page script to be executed after content"
+        
+        toRet = []
+
+        toRet.append('<script>ShowInitElement()</script>')
+        toRet.append('<script>ShowStage(1)</script>')
+
+        return toRet
+
+    #==========================================================================
+    # Nacitanie page z Database
     #--------------------------------------------------------------------------
 #!!!! znacka
     def loadPage(self, who):
         "This method creates all objects for the Page"
         
         self.journal.I(f"{self.name}.pageGet: For page '{self.classId}'")
+        
+        self.cont = {}
 
-        self.cnts.append( self.getHead() )
-        self.cnts.append( self.getNavb() )
-        self.cnts.append( self. )
-        self.cnts.append( self. )
- 
-        obj = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar='__STAG__')
-        self.cnts.append(obj)
- 
-        obj = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar='__CONT__')
-        self.cnts.append(obj)
+        self.cont['__HEAD__'] = self.getHead(who)
+        self.cont['__NAVB__'] = self.getNavb(who)
+        
+        objSel, objStg = self.getStag(who)
+        
+        self.cont['__SELS__'] = objSel
+        self.cont['__STGS__'] = objStg
+
+        self.cont['__CONT__'] = self.getCont(who)
+
+        self.loaded = True
 
         #----------------------------------------------------------------------
         self.journal.O()
-        return self.cnts
+        return self.cont
 
     #--------------------------------------------------------------------------
-    def getHead(self):
-        "This method creates object and loads for parent __HEAD__ from Database"
+    def getHead(self, who):
+        "This method creates Head object and loads for parent __HEAD__ from Database"
         
         self.journal.I(f"{self.name}.getHead:")
         
-        obj = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar='__HEAD__')
+        objs = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar='__HEAD__')
         
+        #----------------------------------------------------------------------
+        # Skontrolujem, ci existuje prave jeden Head objekt
+        #----------------------------------------------------------------------
+        if (len(objs.conts)!=1) or (type(objs.conts[0])!=Object):
+            
+            self.journal.M(f"{self.name}.getHead: Head object is missing or duplicated", True)
+            self.journal.O()
+            return None
+
+        #----------------------------------------------------------------------
         self.journal.O()
-        return obj
+        return objs.conts[0]
 
     #--------------------------------------------------------------------------
-    def getNavb(self):
-        "This method creates object and loads for parent __NAVB__ from Database"
+    def getNavb(self, who):
+        "This method creates NavBar object and loads for parent __NAVB__ from Database"
         
         self.journal.I(f"{self.name}.getNavb:")
         
         #----------------------------------------------------------------------
         # Nacitam NavBar objekty z Database
         #----------------------------------------------------------------------
-        obj = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar='__NAVB__')
+        objs = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar='__NAVB__')
         
         #----------------------------------------------------------------------
-        # Pripravim si item s obsahom navbaritem na pgLogin
+        # Skontrolujem, ci existuje prave jeden NavBar objekt
         #----------------------------------------------------------------------
-        loginBarLink = {"SK":self.userName, "URL":"pgLogin", "TYPE":"BARMENUITEM"}
+        if (len(objs.conts)!=1) or (type(objs.conts[0])!=Object):
+            self.journal.M(f"{self.name}.getNavb: NavBar object is missing or duplicated", True)
+            self.journal.O()
+            return None
+        
+        #----------------------------------------------------------------------
+        # NavBar objekt je jediny objekt v objs
+        #----------------------------------------------------------------------
+        objNavb = objs.conts[0]
 
         #----------------------------------------------------------------------
-        # Skontrolujem, ci existuje aspon 1 objekt pre NavBar
+        # Na prvu poziciu vlozim link na pgLogin
         #----------------------------------------------------------------------
-        if (len(obj.conts) > 0) and (type(obj.conts[0])==Object):
-
-            #------------------------------------------------------------------
-            # Do prveho objektu v obj.conts vlozim na poziciu 0 loginBarLink
-            #------------------------------------------------------------------
-            obj.conts[0].conts.insert(0, loginBarLink )
-
-            #------------------------------------------------------------------
-            # Vsetkym itemom nastavim type=BARMENUITEM
-            #------------------------------------------------------------------
-            for navItem in obj.conts[0].conts: navItem["TYPE"] = "BARMENUITEM"
+        objNavb.conts.insert(0, {"SK":self.userName, "URL":"pgLogin"} )
 
         #----------------------------------------------------------------------
-        # Objekt NavBar nedefinovany, vlozim link na login
+        # Vsetkym itemom nastavim type=BARMENUITEM
         #----------------------------------------------------------------------
-        else: obj.conts.append(loginBarLink)
+        for navItem in objNavb.conts: navItem["TYPE"] = "BARMENUITEM"
 
         self.journal.O()
-        return obj
+        return objNavb
 
     #--------------------------------------------------------------------------
-    def getStag(self):
-        "This method creates object and loads for parent __STAG__ from Database"
+    def getStag(self, who):
+        "This method creates objSel a objStg objects and loads them for parent __STAG__ from Database"
         
-        self.journal.I(f"{self.name}.getNavb:")
+        self.journal.I(f"{self.name}.getStag:")
+
+        #----------------------------------------------------------------------
+        # Pripravim vysledne objekty SelectorObject a StageObject
+        #----------------------------------------------------------------------
+        objSel = Object(self.journal, self.dms, self.userId, self.lang, self.classId)
+        objStg = Object(self.journal, self.dms, self.userId, self.lang, self.classId)
         
         #----------------------------------------------------------------------
         # Nacitam Stage objekty z Database
         #----------------------------------------------------------------------
-        obj = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar='__STAG__')
+        objs = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar='__STAG__')
         
         #----------------------------------------------------------------------
-        # Stage objects
+        # Skontrolujem, ci tam je aspon jeden Stage objekt
         #----------------------------------------------------------------------
-        if '__STAG__' in res.keys():
+        if (len(objs.conts)==0) or (type(objs.conts[0])!=Object):
             
-            stagePos = 0
-            
-            #------------------------------------------------------------------
-            # Prejdem vsetky stage
-            #------------------------------------------------------------------
-            for stageObj, stageLst in res['__STAG__'].items():
+            self.journal.M(f"{self.name}.getStag: Stage object is missing", True)
+            self.journal.O()
+            return (objSel, objStg)
+
+        #----------------------------------------------------------------------
+        # Prejdem vsetky raw objekty
+        #----------------------------------------------------------------------
+        for rawObj in objs.conts:
     
-                #--------------------------------------------------------------
-                # Vyriesim selector v [0]-tej polozke s klucom '0_Stage'
-                #--------------------------------------------------------------
-                if '0_Stage' not in stageLst[0].keys():
-                    
-                    #----------------------------------------------------------
-                    # Ak nie je kluc '0_Stage' v 0-tej polozke listu je to chyba
-                    #----------------------------------------------------------
-                    self.journal.M(f"{self.name}.loadPageResource: Stage without '0_Stage' will be skipped", True)
-                    continue
+            #------------------------------------------------------------------
+            # Skontrolujem existenciu selector itemu a aspon jedneho itemu stage conntentu
+            #------------------------------------------------------------------
+            if len(rawObj.conts) < 2:
+                self.journal.M(f"{self.name}.getStag: Stage without any content will be skipped", True)
+                continue
 
-                else:
-                    #----------------------------------------------------------
-                    # Ak polozka '0_Stage' existuje, doplnim vlastnosti StageSelectora
-                    #----------------------------------------------------------
-                    stageLst[0]['0_Stage']['TYPE'] = 'STAGESELECTOR'
-                    
-                    # Pozicia je v kluci POS ako string, prehodim na int
-                    stagePos = int(stageLst[0]['0_Stage']['POS'])
-                    stageLst[0]['0_Stage']['POS'] = stagePos
-                    
-                #--------------------------------------------------------------
-                # Ak stage conntent nie je definovany
-                #--------------------------------------------------------------
-                if len(stageLst)-1 == 0:
+            #------------------------------------------------------------------
+            # Skontrolujem definiciu pozicie v prvom iteme = Selector item
+            #------------------------------------------------------------------
+            if 'POS' not in rawObj.conts[0].keys():
+                self.journal.M(f"{self.name}.getStag: Stage without 'POS' will be skipped", True)
+                continue
 
-                    self.journal.M(f"{self.name}.loadPageResource: Stage {stageObj} has no content defined", True)
+            #------------------------------------------------------------------
+            # Rozdelim rawObj na objCurSel a objCurStg
+            #------------------------------------------------------------------
+            objCurSel = Object(self.journal, self.dms, self.userId, self.lang, self.classId)
+            objCurSel.contSet(who, contList=[rawObj.conts[0]])
 
-                #--------------------------------------------------------------
-                # Ak stage conntent obsahuje len 1 item (okrem 0_StageName)
-                #--------------------------------------------------------------
-                elif len(stageLst)-1 == 1:
+            objCurStg = Object(self.journal, self.dms, self.userId, self.lang, self.classId)
+            objCurStg.contSet(who, contList=rawObj.conts[1:])
+
+            #------------------------------------------------------------------
+            # Doplnim vlastnosti objCurSel
+            #------------------------------------------------------------------
+            objCurSel.conts[0]['TYPE'] = 'STAGESELECTOR'
+                    
+            # Pozicia je v kluci POS ako string, prehodim na int
+            stagePos = int(objCurSel.conts[0]['POS'])
+            objCurSel.conts[0]['POS'] = stagePos
+                    
+            #------------------------------------------------------------------
+            # Ak objCurStg obsahuje len 1 item
+            #------------------------------------------------------------------
+            if len(objCurStg.conts) == 1:
                             
-                    itemId = list(stageLst[1].keys())[0]
+                if 'TYPE' in objCurStg.conts[0].keys(): typeStash = objCurStg.conts[0]['TYPE']
+                else                                  : typeStash = 'P'
                             
-                    if 'TYPE' not in  stageLst[1][itemId].keys(): typeStash = 'P'
-                    else: typeStash = stageLst[1][itemId]['TYPE']
-                            
-                    stageLst[1][itemId]['TYPE'     ] = 'STAGEBOTH'
-                    stageLst[1][itemId]['typeStash'] = typeStash
-                    stageLst[1][itemId]['POS'      ] = stagePos
+                objCurStg.conts[0]['TYPE'     ] = 'STAGEBOTH'
+                objCurStg.conts[0]['typeStash'] = typeStash
+                objCurStg.conts[0]['POS'      ] = stagePos
                         
+            #------------------------------------------------------------------
+            # Ak stage conntent obsahuje viac items
+            #------------------------------------------------------------------
+            else:
                 #--------------------------------------------------------------
-                # Ak stage conntent obsahuje viac items
+                # Prvy item zmenim na typ 'STAGESTART' a pridam POS
                 #--------------------------------------------------------------
-                else:
-                    #----------------------------------------------------------
-                    # Prvy item zmenim na 'STAGESTART'
-                    #----------------------------------------------------------
-                    itemId = list(stageLst[1].keys())[0]
-
-                    if 'TYPE' not in  stageLst[1][itemId].keys(): typeStash = 'P'
-                    else: typeStash = stageLst[1][itemId]['TYPE']
+                if 'TYPE' in objCurStg.conts[0].keys(): typeStash = objCurStg.conts[0]['TYPE']
+                else                                  : typeStash = 'P'
                             
-                    stageLst[1][itemId]['TYPE'     ] = 'STAGESTART'
-                    stageLst[1][itemId]['typeStash'] = typeStash
-                    stageLst[1][itemId]['POS'      ] = stagePos
-                        
-                    #----------------------------------------------------------
-                    # Posledny item zmenim na 'STAGESTOP'
-                    #----------------------------------------------------------
-                    itemId = list(stageLst[-1].keys())[0]
+                objCurStg.conts[0]['TYPE'     ] = 'STAGESTART'
+                objCurStg.conts[0]['typeStash'] = typeStash
+                objCurStg.conts[0]['POS'      ] = stagePos
 
-                    if 'TYPE' not in  stageLst[-1][itemId].keys(): typeStash = 'P'
-                    else: typeStash = stageLst[-1][itemId]['TYPE']
+                #--------------------------------------------------------------
+                # Posledny item zmenim na typ 'STAGESTOP'
+                #--------------------------------------------------------------
+                if 'TYPE' in objCurStg.conts[-1].keys(): typeStash = objCurStg.conts[-1]['TYPE']
+                else                                   : typeStash = 'P'
                             
-                    stageLst[-1][itemId]['TYPE'     ] = 'STAGESTOP'
-                    stageLst[-1][itemId]['typeStash'] = typeStash
-                    stageLst[-1][itemId]['POS'      ] = stagePos
+                objCurStg.conts[-1]['TYPE'     ] = 'STAGESTOP'
+                objCurStg.conts[-1]['typeStash'] = typeStash
 
             #------------------------------------------------------------------
-            # Prekodujem vsetky Stage do poradia urceneho POS
+            # Pridam current objekty do vyslednych objektov
             #------------------------------------------------------------------
-            posLst = []
-            
-            #------------------------------------------------------------------
-            # Ziskam list tuples [(stageId, pos)]
-            #------------------------------------------------------------------
-            for stageId, stageLst in res['__STAG__'].items():
-                                         
-                if '0_Stage' not in stageLst[0].keys():
-                    
-                    #----------------------------------------------------------
-                    # Ak nie je kluc '0_Stage' v 0-tej polozke listu je to chyba
-                    #----------------------------------------------------------
-                    self.journal.M(f"{self.name}.loadPageResource: Stage without 'StageName' will be skipped", True)
-                    continue
-
-                else:
-                    posLst.append( (stageId, stageLst[0]['0_Stage']['POS']) )
-                
-            #------------------------------------------------------------------
-            # Zosortujem list podla POS
-            #------------------------------------------------------------------
-            posLst.sort( key=lambda tupl: tupl[1] )
-            
-            #------------------------------------------------------------------
-            # Prekodujem vsetky Stage podla sorted posLst
-            #------------------------------------------------------------------
-            copySTAG = res['__STAG__']
-            
-            res['__STAG__'] = {}
-            
-            for stageTuple in posLst:
-                
-                res['__STAG__'][stageTuple[0]] = copySTAG[stageTuple[0]]
-                
-            #------------------------------------------------------------------
+            objSel.conts.append(objCurSel)
+            objStg.conts.append(objCurStg)
+               
         #----------------------------------------------------------------------
-        self.loaded = True
-        self.journal.M(f"{self.name}.loadPageResource: {gen.dictString(res)}")
-        
+        # Zosortujem vysledne objekty objSel a objStg podla POS
+        #----------------------------------------------------------------------
+        objSel.contSort(who, key='POS')
+        objStg.contSort(who, key='POS')
+            
         #----------------------------------------------------------------------
         self.journal.O()
-        return res
+        return (objSel, objStg)
     
     #--------------------------------------------------------------------------
-    def getHead(self):
-        "This method creates object and loads for parent __HEAD__ from Database"
-
-        self.journal.I(f"{self.name}.loadPageResource:")
+    def getCont(self, who):
+        "This method creates content objects and loads them for parent __CONT__ from Database"
         
-        #----------------------------------------------------------------------
-        # Nacitanie objektov PAGE {'__HEAD__': {},'__NAVB__': {},'__STAG__': {},'__CONT__': {}}
-        #----------------------------------------------------------------------
-        res = self.pageGet(self.userId)
+        self.journal.I(f"{self.name}.getCont:")
+        toRet = None
         
-        #----------------------------------------------------------------------
-        # NavBar objects
-        #----------------------------------------------------------------------
-        userBarLink = {"User":{"SK":self.userName, "URL":"pgLogin", "TYPE":"BARMENUITEM"}}
-
-        #----------------------------------------------------------------------
-        # Skontrolujem ci existuje definicia NavBar objects
-        #----------------------------------------------------------------------
-        if len(res['__NAVB__']) > 0:
-
-            #------------------------------------------------------------------
-            # Zistim ako sa vola objekt pre navBarLinks
-            #------------------------------------------------------------------
-            for navBarObjId, navBarLst in res['__NAVB__'].items():
-                
-                #--------------------------------------------------------------
-                # Vsetkym objektom v NavBarLst nastavim type=BARMENUITEM
-                #--------------------------------------------------------------
-                for navBarObj in navBarLst:
-                
-                    #{'1_Admin': {'SK': 'Admin', 'URL': 'pgAdmin'}}
-                    key = list(navBarObj.keys())[0]
-                    navBarObj[key]["TYPE"] = "BARMENUITEM"
-
-                #--------------------------------------------------------------
-                # 0-ta polozka v NavBarLst je UserItem - vlozim ho tam
-                #--------------------------------------------------------------
-                res['__NAVB__'][navBarObjId].insert(0, userBarLink)
-            
-        #----------------------------------------------------------------------
-        # NavBar nedefinovany, vlozim usera
-        #----------------------------------------------------------------------
-        else: res['__NAVB__'] = {'NavLinks': [userBarLink]}
-
-        #----------------------------------------------------------------------
-        # Stage objects
-        #----------------------------------------------------------------------
-        if '__STAG__' in res.keys():
-            
-            stagePos = 0
-            
-            #------------------------------------------------------------------
-            # Prejdem vsetky stage
-            #------------------------------------------------------------------
-            for stageObj, stageLst in res['__STAG__'].items():
-    
-                #--------------------------------------------------------------
-                # Vyriesim selector v [0]-tej polozke s klucom '0_Stage'
-                #--------------------------------------------------------------
-                if '0_Stage' not in stageLst[0].keys():
-                    
-                    #----------------------------------------------------------
-                    # Ak nie je kluc '0_Stage' v 0-tej polozke listu je to chyba
-                    #----------------------------------------------------------
-                    self.journal.M(f"{self.name}.loadPageResource: Stage without '0_Stage' will be skipped", True)
-                    continue
-
-                else:
-                    #----------------------------------------------------------
-                    # Ak polozka '0_Stage' existuje, doplnim vlastnosti StageSelectora
-                    #----------------------------------------------------------
-                    stageLst[0]['0_Stage']['TYPE'] = 'STAGESELECTOR'
-                    
-                    # Pozicia je v kluci POS ako string, prehodim na int
-                    stagePos = int(stageLst[0]['0_Stage']['POS'])
-                    stageLst[0]['0_Stage']['POS'] = stagePos
-                    
-                #--------------------------------------------------------------
-                # Ak stage conntent nie je definovany
-                #--------------------------------------------------------------
-                if len(stageLst)-1 == 0:
-
-                    self.journal.M(f"{self.name}.loadPageResource: Stage {stageObj} has no content defined", True)
-
-                #--------------------------------------------------------------
-                # Ak stage conntent obsahuje len 1 item (okrem 0_StageName)
-                #--------------------------------------------------------------
-                elif len(stageLst)-1 == 1:
-                            
-                    itemId = list(stageLst[1].keys())[0]
-                            
-                    if 'TYPE' not in  stageLst[1][itemId].keys(): typeStash = 'P'
-                    else: typeStash = stageLst[1][itemId]['TYPE']
-                            
-                    stageLst[1][itemId]['TYPE'     ] = 'STAGEBOTH'
-                    stageLst[1][itemId]['typeStash'] = typeStash
-                    stageLst[1][itemId]['POS'      ] = stagePos
-                        
-                #--------------------------------------------------------------
-                # Ak stage conntent obsahuje viac items
-                #--------------------------------------------------------------
-                else:
-                    #----------------------------------------------------------
-                    # Prvy item zmenim na 'STAGESTART'
-                    #----------------------------------------------------------
-                    itemId = list(stageLst[1].keys())[0]
-
-                    if 'TYPE' not in  stageLst[1][itemId].keys(): typeStash = 'P'
-                    else: typeStash = stageLst[1][itemId]['TYPE']
-                            
-                    stageLst[1][itemId]['TYPE'     ] = 'STAGESTART'
-                    stageLst[1][itemId]['typeStash'] = typeStash
-                    stageLst[1][itemId]['POS'      ] = stagePos
-                        
-                    #----------------------------------------------------------
-                    # Posledny item zmenim na 'STAGESTOP'
-                    #----------------------------------------------------------
-                    itemId = list(stageLst[-1].keys())[0]
-
-                    if 'TYPE' not in  stageLst[-1][itemId].keys(): typeStash = 'P'
-                    else: typeStash = stageLst[-1][itemId]['TYPE']
-                            
-                    stageLst[-1][itemId]['TYPE'     ] = 'STAGESTOP'
-                    stageLst[-1][itemId]['typeStash'] = typeStash
-                    stageLst[-1][itemId]['POS'      ] = stagePos
-
-            #------------------------------------------------------------------
-            # Prekodujem vsetky Stage do poradia urceneho POS
-            #------------------------------------------------------------------
-            posLst = []
-            
-            #------------------------------------------------------------------
-            # Ziskam list tuples [(stageId, pos)]
-            #------------------------------------------------------------------
-            for stageId, stageLst in res['__STAG__'].items():
-                                         
-                if '0_Stage' not in stageLst[0].keys():
-                    
-                    #----------------------------------------------------------
-                    # Ak nie je kluc '0_Stage' v 0-tej polozke listu je to chyba
-                    #----------------------------------------------------------
-                    self.journal.M(f"{self.name}.loadPageResource: Stage without 'StageName' will be skipped", True)
-                    continue
-
-                else:
-                    posLst.append( (stageId, stageLst[0]['0_Stage']['POS']) )
-                
-            #------------------------------------------------------------------
-            # Zosortujem list podla POS
-            #------------------------------------------------------------------
-            posLst.sort( key=lambda tupl: tupl[1] )
-            
-            #------------------------------------------------------------------
-            # Prekodujem vsetky Stage podla sorted posLst
-            #------------------------------------------------------------------
-            copySTAG = res['__STAG__']
-            
-            res['__STAG__'] = {}
-            
-            for stageTuple in posLst:
-                
-                res['__STAG__'][stageTuple[0]] = copySTAG[stageTuple[0]]
-                
-            #------------------------------------------------------------------
-        #----------------------------------------------------------------------
-        self.loaded = True
-        self.journal.M(f"{self.name}.loadPageResource: {gen.dictString(res)}")
         
         #----------------------------------------------------------------------
         self.journal.O()
-        return res
-    
+        return toRet
+        
+    #--------------------------------------------------------------------------
     #==========================================================================
     # Internal methods
     #--------------------------------------------------------------------------
@@ -532,39 +596,30 @@ class Structure:
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    from   siqolib.journal                 import SiqoJournal
+    from   siqolib.journal       import SiqoJournal
+    from   config                import Config
+    from   app_dms               import DMS
+    
     journal = SiqoJournal('test-Structure', debug=5)
     
-    env = Environment(
-     autoescape = select_autoescape()
-    ,loader     = FileSystemLoader(['templates'])
-
-    )
+    env = Environment(autoescape = select_autoescape(),loader=FileSystemLoader(['templates']))
+    dms = DMS (journal, Config.dtbsName, Config.dtbsPath)
     
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'PagManLogin', 700)
-    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'PagManHomepage', 700)
+    page = Structure(journal, env, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManHomepage', 700)
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'FAQ', 700)
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'OHISTORY', 700)
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'PagManContact', 700)
  
-    rec = page.context
+    print(page)
+    print()
+    print(page.html())
 
 #    item = page.dms.loadForumItem('ja', forumId='OHISTORY')
 
     
 #==============================================================================
 print(f"Structure {_VER}")
-
-"""
-for stageId, stage in page.context['__STAG__']['objs'].items():
-
-    print(stageId)
-
-    for objId, obj in stage['objs'].items():
-
-        if objId.startswith('SName'): print('selector ', objId, ', items ', obj['items'])
-        if objId.startswith('SCont'): print('content ',  objId, ', items ', obj['items'])
-"""
 
 #==============================================================================
 #                              END OF FILE

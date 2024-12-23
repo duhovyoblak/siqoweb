@@ -1,0 +1,111 @@
+
+<!------------------------------------------------------------------> 
+<!-- SIQO Web Document start                                      --> 
+<!------------------------------------------------------------------> 
+<!DOCTYPE html> 
+<html> 
+<!-----------------------------------------------------------> 
+<!-- Document Header                                       --> 
+<!-----------------------------------------------------------> 
+<head> 
+<meta   http-equiv="Content-Type"      content="text/html; charset=UTF-8"> 
+<meta   name="META HTTP-EQUIV"         content="NO-CACHE"> 
+<meta   name="author"                  content="Palo4"> 
+<link   href="/static/css/paragraph.css" rel="stylesheet" type="text/css"> 
+<link   href="/static/css/structure.css" rel="stylesheet" type="text/css"> 
+<link   href="/static/css/object.css" rel="stylesheet" type="text/css"> 
+<script src= "/static/js/structure.js" type="text/javascript"></script> 
+<title>{self.title}</title> 
+</head> 
+<!-----------------------------------------------------------> 
+<!-- Document Body                                         --> 
+<!-----------------------------------------------------------> 
+<body> 
+<!-----------------------------------------------------------> 
+<!-- JS before content                                     --> 
+<!-----------------------------------------------------------> 
+<script>InitElement("Content")</script> 
+<!-----------------------------------------------------------> 
+<!-- Head object                                           --> 
+<!-----------------------------------------------------------> 
+<div class="Header" id="Header" onclick="ShowElement('Content')"> 
+<div  class ="HeaderTitle" name ="HeaderTitle" id ="HeaderTitle">
+<h1 >SIQO Homepage</h1> 
+</div> 
+<div  class ="HeaderComment" name ="HeaderComment" id ="HeaderComment">
+<p >Development environment</p>
+</div> 
+<h4 >Hlavná stránka projektu SIQO</h1> 
+</div> 
+<!-----------------------------------------------------------> 
+<!-- NavBar object                                         --> 
+<!-----------------------------------------------------------> 
+<div class="BarMenu" id="BarMenu"> 
+<div  class ="BarMenuItem" name ="BarMenuItem" id ="BarMenuItem">
+<a  URL ="pgLogin" href ="/login">Guest User</a></div> 
+<div  class ="BarMenuItem" name ="BarMenuItem" id ="BarMenuItem">
+<a  URL ="pgAdmin" href ="/admin">Admin</a></div> 
+<div  class ="BarMenuItem" name ="BarMenuItem" id ="BarMenuItem">
+<a  URL ="pgResource" href ="/resource">Resource</a></div> 
+<div  class ="BarMenuItem" name ="BarMenuItem" id ="BarMenuItem">
+<a  URL ="pgDms" href ="/dms">Documents</a></div> 
+<div  class ="BarMenuItem" name ="BarMenuItem" id ="BarMenuItem">
+<a  URL ="pgSession" href ="/session">Sessions</a></div> 
+</div> 
+<!-----------------------------------------------------------> 
+<!-- Flash object                                          --> 
+<!-----------------------------------------------------------> 
+<div class="Flash" id="Flash" style="height:670px; display:none"> 
+</div> 
+<!-----------------------------------------------------------> 
+<!-- Content start                                         --> 
+<!-----------------------------------------------------------> 
+<div class="Content" id="Content" style="height:670px; display:block"> 
+<!-----------------------------------------------------------> 
+<!-- Stage object                                          --> 
+<!-----------------------------------------------------------> 
+<div class="StageSelector"> 
+<div  class ="StageSelectorItem" name ="StageSelectorItem" id ="StageSelectorItem">
+<input  name ="SSB" id ="SSB_1" onclick ="ShowStage('1')" type ="radio" checked/>
+<label  for ="SSB_1">O stránkach SIQO</label><br></div> 
+<div  class ="StageSelectorItem" name ="StageSelectorItem" id ="StageSelectorItem">
+<input  name ="SSB" id ="SSB_2" onclick ="ShowStage('2')" type ="radio" />
+<label  for ="SSB_2">Oral History</label><br></div> 
+
+ </div> 
+<!-----------------------------------------------------------> 
+<div  class ="StagePanel" name ="SP" id ="SP_1" style ="display:none">
+<h2  typeStash ="H2" POS ="1" name ="SContent">S.I.Q.O. - to je spoločnosť s IQ obmedzeným</h1> 
+<p >Projekt SIQO je experimentálna základňa pre projekty, spojené vývojom asociatívne adresovaných pamäťových priestorov. Naozaj, aj keď sa to možno podľa aplikácií nezdá.</p>
+<p >Asociatívne pamäte sa testujú na viacerých demonštračných projektoch, opísaných v príslušných záložkách</p>
+<p  typeStash ="P" name ="SContent">Zároveň s vývojom a testovaním pamätí prebieha vývoj frameworku, optimalizovaného pre takéto aplikácie</p>
+</div> 
+<div  class ="StagePanel" name ="SP" id ="SP_2" style ="display:none">
+<h2  typeStash ="H2" POS ="2" name ="SContent">Oral History</h1> 
+<p >Veľká história sa zaoberá veľkými udalosťami, ktoré ovplyvnia mnoho ľudí a zvyčajne sa nezaobídu bez príslušného počtu mŕtvol alebo aspoň jedu, dýky a kráľa. Tieto príbehy sú také veľké, že sa nedokážu dostať k nášmu srdcu a dotýkajú sa nás asi ako boje medzi zelenokožími citrusmi v susednej galaxii.</p>
+<p >Príbehy <a  URL ="pgOhistory" href ="/oralhistory">oral history </a> sú malé, omnoho menšie ako tie z učebníc dejepisu. Sú dostatočne drobné na to, aby sa dostali k nášmu vnútru a zanechali tam stopu. Tieto príbehy sa stali ľuďom, ktorí sa na nás veľmi podobali. Skoro by sa mohli stať aj nám, keby sme tam vtedy boli.</p>
+<p >Ráčte <a  URL ="pgOhistory" href ="/oralhistory">vstúpiť </a></p>
+</div> 
+<!-----------------------------------------------------------> 
+<!-- Content stop                                          --> 
+<!-----------------------------------------------------------> 
+</div> 
+<!-----------------------------------------------------------> 
+<!-- Tirage                                                --> 
+<!-----------------------------------------------------------> 
+<div class="Tirage" onclick="ShowElement('Content')"> 
+<div class="TirageItem" style="width:40%" ></div> 
+<div class="TirageItem" id="TI_1"><a href="{href}">Kontakt </a></div> 
+<div class="TirageItem" id="TI_2"><a href="/homepage">Homepage</a></div> 
+<div class="TirageItem" id="TI_3"><a href="/faq">F.A.Q.  </a></div> 
+</div> 
+<!-----------------------------------------------------------> 
+<!-- JS after content                                      --> 
+<!-----------------------------------------------------------> 
+<script>ShowInitElement()</script> 
+<script>ShowStage(1)</script> 
+</body> 
+</html> 
+<!------------------------------------------------------------------> 
+<!-- SIQO Web Document stop                                       --> 
+<!------------------------------------------------------------------> 

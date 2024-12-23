@@ -161,11 +161,11 @@ def pgLogout():
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 @app.route('/homepage', methods=['GET', 'POST'])
-@login_required
+#@login_required
 def pgHomepage():
 
     journal.M("/homepage:")
-    return app_views.pgStaged(classId='PagManHomepage')
+    return app_views.pgStaged(title='SIQO Homepage', classId='PagManHomepage')
 
 #------------------------------------------------------------------------------
 @app.route('/admin', methods=['GET', 'POST'])

@@ -71,23 +71,38 @@ class Object(HTML):
         #----------------------------------------------------------------------
         # Ak je zadany parent Id, automaticky nacitam content
         #----------------------------------------------------------------------
-        if objPar is not None: self.objectGet(userId, objPar)
+        if objPar is not None: self.contLoad(userId, objPar)
 
         #----------------------------------------------------------------------
         self.journal.M(f"{self.name}.init: Done")
         self.journal.O()
         
     #--------------------------------------------------------------------------
+    def copy(self):
+        "Creates copy of this Object"
+        
+        self.journal.M("{self.name}.copy:")
+        
+        copyObj = Object(self.journal, self.dms, self.userId, self.lang, self.classId)
+        copyObj.contSet(contList=self.conts)
+        
+        return copyObj
+    
+    #--------------------------------------------------------------------------
     def __str__(self):
         "Prints info about this Object"
         
-        return f"Object>{' '.join(self.info())}"
+        return f"Object>{', '.join(self.info())}"
 
     #--------------------------------------------------------------------------
     def info(self):
         "Returns info about the Object"
 
         toRet = []
+        
+        for element in self.conts:
+            toRet.append('\n')
+            toRet.append(str(element))
 
         return toRet
 
@@ -114,7 +129,189 @@ class Object(HTML):
         return toRet
 
     #==========================================================================
-    # Praca s objektom (page-obj)
+    # Praca s contentom objektu
+    #--------------------------------------------------------------------------
+#!!!! znacka
+    def contLoad(self, who, objPar):
+        """"Loads content of the object from Database as list [{item}, {item}, <Object>, {item}, ...] """
+        
+        self.journal.I(f"{self.name}.contLoad: For parent '{objPar}'")
+
+        #----------------------------------------------------------------------
+        # Inicializacia odpovede
+        #----------------------------------------------------------------------
+        self.conts = []
+        
+        #----------------------------------------------------------------------
+        # Nacitanie zoznamu definicii vnorenych objektov
+        #----------------------------------------------------------------------
+        rows = self.readObjs(who, objPar)
+
+        #----------------------------------------------------------------------
+        # Prehladanie definicii vnorenych objektov pre parenta objPar
+        #----------------------------------------------------------------------
+        for row in rows:
+
+            #------------------------------------------------------------------
+            # Precitam definiciu vnoreneho objektu
+            #------------------------------------------------------------------
+            objId = row[1]
+            self.journal.M(f"{self.name}.contLoad: '{objPar}.{objId}' is being analysed...")
+
+            #------------------------------------------------------------------
+            # Ak nie som sam sebe parentom
+            #------------------------------------------------------------------
+            if objId != objPar:
+                
+                #--------------------------------------------------------------
+                # Na zaklade definicie vytvorim vnoreny Object a vlozim ho do conts
+                #--------------------------------------------------------------
+                subObj = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar=objId)
+                self.conts.append(subObj)
+
+        #----------------------------------------------------------------------
+        # Doplnim zoznam itemov parent objektu
+        #----------------------------------------------------------------------
+        items = self.resourceGet(who, objId=objPar)
+                    
+        if len(items) > 0: 
+            
+            self.conts.extend( items )
+            self.journal.M(f"{self.name}.contLoad: '{objPar}' has resource {items}")
+            
+        else: self.journal.M(f"{self.name}.contLoad: '{objPar}' has no resource")
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return self.conts
+    
+    #--------------------------------------------------------------------------
+    def contSet(self, who, contList):
+        """"Sets content of the object  as list [{item}, {item}, <Object>, {item}, ...] """
+        
+        self.journal.I(f"{self.name}.contSet: '{contList}'")
+        
+        self.conts = contList
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return self.conts
+
+    #--------------------------------------------------------------------------
+    def contKeyVal(self, who, key):
+        """"Returns value for the first occurence of the <key> in object's content"""
+        
+        self.journal.I(f"{self.name}.contKeyVal: Key = '{key}'")
+        
+        #----------------------------------------------------------------------
+        # Prejdem vsetky polozky v conts
+        #----------------------------------------------------------------------
+        for element in self.conts:
+            
+            #------------------------------------------------------------------
+            # Ak je to dictionary
+            #------------------------------------------------------------------
+            if type(element)==dict:
+            
+                #--------------------------------------------------------------
+                # Ak sa v dict nachadza key
+                #--------------------------------------------------------------
+                if key in element.keys():
+                
+                    self.journal.O()
+                    return element[key]
+
+        #----------------------------------------------------------------------
+        self.journal.I(f"{self.name}.contKeyVal: Key = '{key}' was not found", True)
+        self.journal.O()
+        return None
+
+    #--------------------------------------------------------------------------
+    def contCopy(self, who):
+        """"Creates deep copy of the object's content"""
+        
+        self.journal.I(f"{self.name}.contCopy:")
+        
+        copyCont = []
+        
+        #----------------------------------------------------------------------
+        # Prejdem vsetky polozky v conts
+        #----------------------------------------------------------------------
+        for element in self.conts:
+            
+            #------------------------------------------------------------------
+            # Vytvorim kopiu polozky
+            #------------------------------------------------------------------
+            copyElement = self.copy()
+            
+            #------------------------------------------------------------------
+            # Pridam kopiu do kopie contentu
+            #------------------------------------------------------------------
+            copyCont.append(copyElement)
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return copyCont
+
+    #--------------------------------------------------------------------------
+    def contSort(self, who, key):
+        """"Sorts content [{item}, <obj>, {item}, ...] by respective key"""
+        
+        self.journal.I(f"{self.name}.contSort: Key = '{key}'")
+ 
+        tupleLst = []
+            
+        #----------------------------------------------------------------------
+        # Ziskam list tuples tupleLst = [(keyValue, obj)]
+        #----------------------------------------------------------------------
+        for element in self.conts:
+            
+            pos = None
+            
+            #------------------------------------------------------------------
+            # Ak je to dictionary
+            #------------------------------------------------------------------
+            if type(element)==dict:
+                if key in element.keys(): pos = element[key]
+                                         
+            #------------------------------------------------------------------
+            # Ak je to Object
+            #------------------------------------------------------------------
+            else: 
+                pos = element.contKeyVal(who, key=key)
+
+            #------------------------------------------------------------------
+            # Skontrolujem definiciu pozicie
+            #------------------------------------------------------------------
+            if pos is None:
+                    
+                self.journal.M(f"{self.name}.contSort: Element without key '{key}' will be skipped", True)
+                continue
+
+            else:
+                tupleLst.append( (pos, element) )
+                
+        #----------------------------------------------------------------------
+        # Zosortujem list podla Pos
+        #----------------------------------------------------------------------
+        tupleLst.sort( key=lambda tupl: tupl[0] )
+        print(tupleLst)
+            
+        #----------------------------------------------------------------------
+        # Prekodujem content podla sorted tupleLst
+        #----------------------------------------------------------------------
+        self.conts = []
+            
+        for tupl in tupleLst:
+                
+                self.conts.append(tupl[1])
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return self.conts
+
+    #==========================================================================
+    # Privatne metody
     #--------------------------------------------------------------------------
     def readObjs(self, who, objPar):
         "Reads and returns list of objects ownd by parent object <objPar>"
@@ -161,61 +358,6 @@ class Object(HTML):
         self.journal.O()
         return rows
         
-    #--------------------------------------------------------------------------
-#!!!! znacka
-    def objectGet(self, who, objPar):
-        """"Returns content of object as list [{item}, {item}, <Object>, {item}, ...] """
-        
-        self.journal.I(f"{self.name}.objectGet: For parent '{objPar}'")
-
-        #----------------------------------------------------------------------
-        # Inicializacia odpovede
-        #----------------------------------------------------------------------
-        self.conts = []
-        
-        #----------------------------------------------------------------------
-        # Nacitanie zoznamu definicii vnorenych objektov
-        #----------------------------------------------------------------------
-        rows = self.readObjs(who, objPar)
-
-        #----------------------------------------------------------------------
-        # Prehladanie definicii vnorenych objektov pre parenta objPar
-        #----------------------------------------------------------------------
-        for row in rows:
-
-            #------------------------------------------------------------------
-            # Precitam definiciu vnoreneho objektu
-            #------------------------------------------------------------------
-            objId = row[1]
-            self.journal.M(f"{self.name}.objectGet: '{objPar}.{objId}' is being analysed...")
-
-            #------------------------------------------------------------------
-            # Ak nie som sam sebe parentom
-            #------------------------------------------------------------------
-            if objId != objPar:
-                
-                #--------------------------------------------------------------
-                # Na zaklade definicie vytvorim vnoreny Object a vlozim ho do conts
-                #--------------------------------------------------------------
-                subObj = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar=objId)
-                self.conts.append(subObj)
-
-        #----------------------------------------------------------------------
-        # Doplnim zoznam itemov parent objektu
-        #----------------------------------------------------------------------
-        items = self.resourceGet(who, objId=objPar)
-                    
-        if len(items) > 0: 
-            
-            self.conts.extend( items )
-            self.journal.M(f"{self.name}.objectGet: '{objPar}' has resource {items}")
-            
-        else: self.journal.M(f"{self.name}.objectGet: '{objPar}' has no resource")
-
-        #----------------------------------------------------------------------
-        self.journal.O()
-        return self.conts
-
     #--------------------------------------------------------------------------
     def objectRegister(self, who):
 
@@ -676,11 +818,16 @@ if __name__ == '__main__':
     journal = SiqoJournal('test-object', debug=8)
     dms     = DMS(journal, Config.dtbsName, Config.dtbsPath)
     
-#    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__NAVB__')
-    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__STAG__')
+#    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__HEAD__')
+    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__NAVB__')
+#    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__STAG__')
     
+    print(obj.conts)
     print()
-    print(obj.html())
+
+
+
+    #print(obj.html())
     
     #rows = obj.readObjs('ja', objPar='__HEAD__')
     #rec = obj.objectGet('who', '__STAG__')
