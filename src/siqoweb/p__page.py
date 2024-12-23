@@ -78,13 +78,6 @@ class Page(Structure):
         journal.M(f"{self.name}).init: user = '{self.userName}'")
         journal.M(f"{self.name}).init: lang = '{self.lang}'")
 
-        #----------------------------------------------------------------------
-        # Doplnenie dynamickeho contextu idx
-        #----------------------------------------------------------------------
-        #self.idContext = self.loadContent()
-        #self.addContext(self.idContext)
-
-
         self.journal.O()
        
     #==========================================================================

@@ -58,26 +58,15 @@ class Structure:
         # Inicializacia default objektov
         #----------------------------------------------------------------------
         self.cont          = {}        # Content of the Page in objects
-        
         self.initId        = "Content"
-        self.context       = {}
-        
-        self.loadPage('ja')
-        
 
-        #----------------------------------------------------------------------
-        # Inicializacia statickeho contextu
-        #----------------------------------------------------------------------
-        #self.initContext()
-
+        self.loadStruct('ja')
+ 
         #----------------------------------------------------------------------
         # Doplnenie statickeho contextu z DB
         #----------------------------------------------------------------------
-        #self.dbContext = self.loadPageResource()
-        #self.addContext(self.dbContext)
-
+ 
         #----------------------------------------------------------------------
-        #gen.dictPrint(dct=self.context)
         self.journal.O(f"{self.name}.init")
         
     #--------------------------------------------------------------------------
@@ -323,10 +312,10 @@ class Structure:
     # Nacitanie page z Database
     #--------------------------------------------------------------------------
 #!!!! znacka
-    def loadPage(self, who):
-        "This method creates all objects for the Page"
+    def loadStruct(self, who):
+        "This method creates all objects for the Structure"
         
-        self.journal.I(f"{self.name}.pageGet: For page '{self.classId}'")
+        self.journal.I(f"{self.name}.loadStruct: For page '{self.classId}'")
         
         self.cont = {}
 
@@ -534,56 +523,10 @@ class Structure:
     #==========================================================================
     # Internal methods
     #--------------------------------------------------------------------------
-    # Context methods
-    #--------------------------------------------------------------------------
-    def initContext(self):
-        "Creates context"
-    
-        self.journal.I(f"{self.name}.initContext:")
-        self.context = {}
-
-        #----------------------------------------------------------------------
-        # Funkcie
-        #----------------------------------------------------------------------
-        self.context["len"                 ] = len
-        self.context["url_for"             ] = url_for
-        self.context["get_flashed_messages"] = get_flashed_messages
-        self.context["html"                ] = self.html
-        
-        #----------------------------------------------------------------------
-        # Definicia stranky
-        #----------------------------------------------------------------------
-        self.context["height"              ] = self.height
-        self.context["initId"              ] = self.initId
-        self.context["lang"                ] = self.lang
-
-        #----------------------------------------------------------------------
-        self.journal.M(f"{self.name}.initContext: Context initialised")
-        self.journal.O()
-
-    #--------------------------------------------------------------------------
-    def addContext(self, cont):
-        "Add optional context"
-        
-        self.journal.I(f"{self.name}.addContext: {cont.keys()}")
-        self.context.update(cont)
-        self.journal.O()
-
-    #--------------------------------------------------------------------------
     def addFlash(self, mess):
 
         self.journal.I(f"{self.name}.addFlash: {mess}")
         flash(mess)
-        self.journal.O()
-
-    #--------------------------------------------------------------------------
-    def setInitId(self, initId):
-
-        self.journal.I(f"{self.name}.initId: {initId}")
-        
-        self.initId = initId
-        self.addContext({"initId":self.initId})
-         
         self.journal.O()
 
 #==============================================================================
