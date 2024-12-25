@@ -11,7 +11,6 @@ from   markupsafe            import escape
 import siqolib.general       as gen
 
 from   o__object             import Object
-from   f__form               import FormStruct
 
 #==============================================================================
 # package's constants
@@ -109,7 +108,7 @@ class Structure:
     #--------------------------------------------------------------------------
 #????  ZNACKA
     def html(self):
-        "This method should be overrided and return html code for this Page"
+        "Returns html code for this Page"
 
         self.journal.I("{self.name}.html:")
         toRet = ''
@@ -130,7 +129,7 @@ class Structure:
         toRet += '<!-- Document Header                                       --> \n'
         toRet += '<!-----------------------------------------------------------> \n'
         toRet += '<head> \n'
-        for cmd in self.htmlHead(): toRet += f"{cmd} \n"
+        for cmd in self.htmlHead(): toRet += f"  {cmd} \n"
         toRet += '</head> \n'
        
         #----------------------------------------------------------------------
@@ -144,66 +143,66 @@ class Structure:
         #----------------------------------------------------------------------
         # JS script before content
         #----------------------------------------------------------------------
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '<!-- JS before content                                     --> \n'
-        toRet += '<!-----------------------------------------------------------> \n'
-        for cmd in self.htmlScriptBefore(): toRet += f"{cmd} \n"
+        toRet += '  <!-----------------------------------------------------------> \n'
+        toRet += '  <!-- JS before content                                     --> \n'
+        toRet += '  <!-----------------------------------------------------------> \n'
+        for cmd in self.htmlScriptBefore(): toRet += f"  {cmd} \n"
 
         #----------------------------------------------------------------------
         # Header object
         #----------------------------------------------------------------------
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '<!-- Head object                                           --> \n'
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '<div class="Header" id="Header" onclick="ShowElement(\'Content\')"> \n'
+        toRet += '  <!-----------------------------------------------------------> \n'
+        toRet += '  <!-- Head object                                           --> \n'
+        toRet += '  <!-----------------------------------------------------------> \n'
+        toRet += '  <div class="Header" id="Header" onclick="ShowElement(\'Content\')"> \n'
         if self.cont['__HEAD__'] is not None: toRet += self.cont['__HEAD__'].html()
-        toRet += '</div> \n'
+        toRet += '  </div> \n'
 
         #----------------------------------------------------------------------
         # NavBar object
         #----------------------------------------------------------------------
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '<!-- NavBar object                                         --> \n'
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '<div class="BarMenu" id="BarMenu"> \n'
+        toRet += '  <!-----------------------------------------------------------> \n'
+        toRet += '  <!-- NavBar object                                         --> \n'
+        toRet += '  <!-----------------------------------------------------------> \n'
+        toRet += '  <div class="BarMenu" id="BarMenu"> \n'
         if self.cont['__NAVB__'] is not None: toRet += self.cont['__NAVB__'].html()
-        toRet += '</div> \n'
+        toRet += '  </div> \n'
 
         #----------------------------------------------------------------------
         # Flash
         #----------------------------------------------------------------------
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '<!-- Flash object                                          --> \n'
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet +=f'<div class="Flash" id="Flash" style="height:{self.height}px; display:none"> \n'
-        toRet += '</div> \n'
+        toRet += '  <!-----------------------------------------------------------> \n'
+        toRet += '  <!-- Flash object                                          --> \n'
+        toRet += '  <!-----------------------------------------------------------> \n'
+        toRet +=f'  <div class="Flash" id="Flash" style="height:{self.height}px; display:none"> \n'
+        toRet += '  </div> \n'
 
         #----------------------------------------------------------------------
         # Content start
         #----------------------------------------------------------------------
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '<!-- Content start                                         --> \n'
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet +=f'<div class="Content" id="Content" style="height:{self.height}px; display:block"> \n'
+        toRet += '  <!-----------------------------------------------------------> \n'
+        toRet += '  <!-- Content start                                         --> \n'
+        toRet += '  <!-----------------------------------------------------------> \n'
+        toRet +=f'  <div class="Content" id="Content" style="height:{self.height}px; display:block"> \n'
 
         #----------------------------------------------------------------------
         # Objects of stage
         #----------------------------------------------------------------------
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '<!-- Stage object                                          --> \n'
-        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '    <!-----------------------------------------------------------> \n'
+        toRet += '    <!-- Stage object                                          --> \n'
+        toRet += '    <!-----------------------------------------------------------> \n'
         if self.cont['__SELS__'] is not None: toRet += self.cont['__SELS__'].html()
-        toRet += '<!-----------------------------------------------------------> \n'
+        toRet += '    <!-----------------------------------------------------------> \n'
         if self.cont['__STGS__'] is not None: toRet += self.cont['__STGS__'].html()
         
         #----------------------------------------------------------------------
         # Content stop
         #----------------------------------------------------------------------
         if self.cont['__CONT__'] is not None: toRet += self.cont['__CONT__'].html()
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '<!-- Content stop                                          --> \n'
-        toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '</div> \n'
+        toRet += '  <!-----------------------------------------------------------> \n'
+        toRet += '  <!-- Content stop                                          --> \n'
+        toRet += '  <!-----------------------------------------------------------> \n'
+        toRet += '  </div> \n'
 
         #----------------------------------------------------------------------
         # Tirage
@@ -211,9 +210,9 @@ class Structure:
         toRet += '<!-----------------------------------------------------------> \n'
         toRet += '<!-- Tirage                                                --> \n'
         toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '<div class="Tirage" onclick="ShowElement(\'Content\')"> \n'
-        for cmd in self.htmlTirage(): toRet += f"{cmd} \n"
-        toRet += '</div> \n'
+        toRet += '  <div class="Tirage" onclick="ShowElement(\'Content\')"> \n'
+        for cmd in self.htmlTirage(): toRet += f"  {cmd} \n"
+        toRet += '  </div> \n'
     
         #----------------------------------------------------------------------
         # JS script after content

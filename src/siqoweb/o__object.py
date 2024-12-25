@@ -38,7 +38,7 @@ class Object(HTML):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dms, userId, lang, classId, objPar=None, height=20, width=20):
+    def __init__(self, journal, dms, userId, lang, classId, objPar=None, height='20%', width='20%'):
         "Call constructor of Object"
 
         journal.I("Object.init:")
@@ -52,8 +52,10 @@ class Object(HTML):
         # Identifikacia objektu
         #----------------------------------------------------------------------
         self.name    = f"Obj({classId})"
-
         self.dms     = dms       # DMS/Database
+        self.height  = height
+        self.width   = width
+        
         self.conts   = []        # obsah objektu [{item}, {item}, <Object>, {item}, ...] 
 
         self.rMode   = 'ROOT'    # uroven kontroly privilegii, STRICT, ROOT

@@ -69,7 +69,7 @@ INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','t
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','height','A', '94%',                     DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','width', 'A', '99%',                     DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','CLASS', 'A', 'FORUM',                   DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','FORUM', 'A', 'OHISTORY',                DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','objId', 'A', 'OHISTORY',                DATE('now'), DATE('now'), 'SIQO');
 
 
 

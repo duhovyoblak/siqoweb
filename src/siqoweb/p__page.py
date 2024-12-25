@@ -20,6 +20,9 @@ from   app_user              import User
 from   app_dms               import DMS
 from   p__structure          import Structure
 
+from   p__page_f             import PageForm
+
+
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------

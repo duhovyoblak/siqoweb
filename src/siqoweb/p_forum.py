@@ -19,7 +19,7 @@ from   app_user            import User
 from   app_dms             import DMS
 
 from   p__page             import Page
-from   o_forum             import Forum
+from   w_forum             import Forum
 
 #==============================================================================
 # package's constants

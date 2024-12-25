@@ -6,7 +6,7 @@ import os
 from wtforms            import HiddenField, StringField, TextAreaField, IntegerField, SubmitField
 from wtforms            import validators
 
-from f__form            import FormStruct
+from p__page_f          import PageForm
 
 #==============================================================================
 # package's constants
@@ -21,7 +21,7 @@ _CWD      = os.getcwd()
 #==============================================================================
 # FormForum
 #------------------------------------------------------------------------------
-class FormForum(FormStruct):
+class ForumForm(PageForm):
     
     itemId       = StringField  ('Item ID',             validators=[validators.ReadOnly() ])
 
