@@ -13,7 +13,7 @@ from   flask                 import url_for
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.13'
+_VER           = '1.14'
 
 #==============================================================================
 # package's variables
@@ -211,7 +211,7 @@ class HTML:
             elif typ == 'FUNC'          : toRet = self.ftion(item)
             elif typ == 'HTML'          : toRet = self.html(item)
             elif typ == 'DIVSTART'      : toRet = self.divStart(item)
-            elif typ == 'DIVSTOP'       : toRet = self.divStop(item)
+            elif typ == 'DIVSTOP'       : toRet = self.divStop()
             
         #----------------------------------------------------------------------
         # Error handling

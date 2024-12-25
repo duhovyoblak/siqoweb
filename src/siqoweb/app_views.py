@@ -36,8 +36,6 @@ def index():
     
     journal.I('app_views.index()')
     
-    template = env.get_template("index.html")
-    
     resp = make_response(template.render(is_test=_IS_TEST), 200)
     resp.headers['X-Something'] = 'A value'
 

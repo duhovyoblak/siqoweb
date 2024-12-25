@@ -143,7 +143,7 @@ def load_user(user_id='Anonymous'):
 def pgLogin():
 
     journal.M("/login:")
-    return app_views.pgLogin()
+    return app_views.pgLogin(title='SIQO Login page', classId='PagManHomepage')
     
 #------------------------------------------------------------------------------
 @app.route('/logout')

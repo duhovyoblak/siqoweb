@@ -107,6 +107,7 @@ class Structure:
     #==========================================================================
     # HTML renderer
     #--------------------------------------------------------------------------
+#????  ZNACKA
     def html(self):
         "This method should be overrided and return html code for this Page"
 
@@ -191,10 +192,7 @@ class Structure:
         toRet += '<!-----------------------------------------------------------> \n'
         toRet += '<!-- Stage object                                          --> \n'
         toRet += '<!-----------------------------------------------------------> \n'
-        toRet += '<div class="StageSelector"> \n'
         if self.cont['__SELS__'] is not None: toRet += self.cont['__SELS__'].html()
-        toRet += '\n </div> \n'
-        
         toRet += '<!-----------------------------------------------------------> \n'
         if self.cont['__STGS__'] is not None: toRet += self.cont['__STGS__'].html()
         
@@ -504,6 +502,12 @@ class Structure:
         objStg.contSort(who, key='POS')
             
         #----------------------------------------------------------------------
+        # Vlozim objekty objSel do div
+        #----------------------------------------------------------------------
+        objSel.conts.insert(0, {'TYPE':'DIVSTART', 'class':'StageSelector'})
+        objSel.conts.append(   {'TYPE':'DIVSTOP'                          })
+
+        #----------------------------------------------------------------------
         self.journal.O()
         return (objSel, objStg)
     
@@ -542,7 +546,7 @@ if __name__ == '__main__':
     
     dms = DMS (journal, Config.dtbsName, Config.dtbsPath)
     
-#    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'PagManLogin', 700)
+#    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManLogin',    700)
     page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManHomepage', 700)
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'FAQ', 700)
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'OHISTORY', 700)

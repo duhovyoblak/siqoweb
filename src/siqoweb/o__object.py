@@ -820,7 +820,7 @@ if __name__ == '__main__':
     
 #    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__HEAD__')
     obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__NAVB__')
-#    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__STAG__')
+    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__STAG__')
     
     print(obj.conts)
     print()
