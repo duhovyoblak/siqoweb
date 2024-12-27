@@ -11,7 +11,7 @@ from   datetime                 import date
 from   flask                    import request, url_for
 
 from   o__object                import Object
-from   p_forum_f                import ForumForm
+from   w_forum_f                import ForumForm
 
 #==============================================================================
 # package's constants
@@ -32,139 +32,151 @@ class Forum(Object):
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dms, userId, lang, classId, height=20, width=20):
+    def __init__(self, journal, dms, userId, lang, item, idx, height=20, width=20):
+
+        journal.I(f"Forum.__init__: for {userId}")
+
+        #----------------------------------------------------------------------
+        # Define parameters of the ItemDef
+        #----------------------------------------------------------------------
+        (itemDef, self.classId ) = self.itemDrop(item, 'CLASS' )  
+        (itemDef, self.objId   ) = self.itemDrop(item, 'objId' )
+        (itemDef, self.target  ) = self.itemDrop(item, 'target')
+        (itemDef, self.crForm  ) = self.itemDrop(item, 'crForm')
+        
+        (itemDef, self.height  ) = self.itemDrop(item, 'height')
+        (itemDef, self.width   ) = self.itemDrop(item, 'width' )
+        
+        if self.width  == '': self.width  = '99%'
+        if self.height == '': self.height = '94%'
 
         #----------------------------------------------------------------------
         # Inicializacia Objectu
         #----------------------------------------------------------------------
-        super().__init__(journal, dms, userId, lang, classId, height=height, width=width) # classId=OBJECT_ID v pagman db
+        super().__init__(journal, dms, userId, lang, self.classId, height=height, width=width) # classId=OBJECT_ID v pagman db
 
-        
         self.journal   = journal
-        self.name      = f"Win({self.name})"   
-        self.dms       = dms       # DMS manager
-        self.classId   = classId   # OBJECT_ID v pagman db
+        self.name      = f"Forum({self.name})"
+        self.idx       = idx                      # Primarny kluc objektu
         
+        self.itemDef   = item                     # Item dict definition from DB
+        self.dbData    = None                     # Data content from DMS/Formular
+        self.dbItem    = None                     # Item content from DMS
+        
+        self.formPost  = None                     # Data from POST request.form
+        self.form      = None                     # Formular asociated with this window
+        self.formId    = f"ForumForm_{self.idx}"  # Id of the formular
+       
         #----------------------------------------------------------------------
-        # Dynamicky prenasane parametre
+        # Nacitanie formulara s POST udajmi
         #----------------------------------------------------------------------
-        self.dynIdx    = 0
-        self.dynForms  = []
+        self.loadForm()
+
+        self.journal.O()
 
     #==========================================================================
-    # Rendering API for templates
+    # Form methods
     #--------------------------------------------------------------------------
-    def render(self, objDic, lang):
-        "Returns HTML for json-encoded item"
+    def loadForm(self):
+        "This method should return class specific content like forms, objects etc."
         
-        self.journal.I(f"HTML_{self.name}.render: Going to render an object dictionary...")
-        toRet = ''
+        self.journal.I(f"{self.name}.loadForm:")
+        
+        #----------------------------------------------------------------------
+        # Ziskanie post data
+        #----------------------------------------------------------------------
+        self.formPost  = request.form
+
+        #----------------------------------------------------------------------
+        # Vytvorenie Forum formulara z post data
+        #----------------------------------------------------------------------
+        self.form = ForumForm(formdata=self.formPost, target=self.target, itemId=self.idx)
+
+        self.journal.O()
+
+    #==========================================================================
+    # DB Persistency methods
+    #--------------------------------------------------------------------------
+    def dbLoad(self):
+        """"This method should be overrided and load tuple (dbItem, dbData) 
+            from DMS/Database"""
+        
+        self.dbData    = None                  # Data content from DMS/Formular
+        self.dbItem    = None                  # Item content from DMS
     
         #----------------------------------------------------------------------
-        # Prejdem vsetky objekty
+        # Nacitanie objektu podla class/objId/idx
         #----------------------------------------------------------------------
-        for objId, rec in objDic.items():
+        self.dbData, self.dbItem = self.dms.loadForumItem(self.name, forumId=self.objId, idx=self.idx, target=self.target)
+      
+        if self.dbItem is None:
             
-            #------------------------------------------------------------------
-            # Ak je rec typu dict, ide o vnoreny objekt
-            #------------------------------------------------------------------
-            if type(rec)==dict:
-              
-                #--------------------------------------------------------------
-                # Rekurzivne zavolam objectsRender
-                #--------------------------------------------------------------
-                toRet += self.objectsRender(rec, lang)
-                
-            #------------------------------------------------------------------
-            # Ak je rec typu list, ide o zoznam itemov
-            #------------------------------------------------------------------
-            elif type(rec)==list:
-              
-                #--------------------------------------------------------------
-                # Zavolam itemListRender
-                #--------------------------------------------------------------
-                toRet += self.itemListRender(rec, lang, objId)
-            
-            #------------------------------------------------------------------
-            # Inak je to neznamy udaj
-            #------------------------------------------------------------------
-            else:
-                self.journal.M(f"HTML_{self.name}.render: UNKNOWN object '{objDic}'", True)
+            self.journal.M(f"HTML_{self.name}.dbLoad: No dbItem for class={self.classId}, object={self.objId} with idx={self.idx}", True)
 
         #----------------------------------------------------------------------
-        self.journal.O()
-        return toRet
+        return (self.dbData, self.dbItem)
+    
+    #--------------------------------------------------------------------------
+    def dbSave(self):
+        """"This method should be overrided and save dbData 
+            into DMS/Database"""
         
+       
+        #----------------------------------------------------------------------
+        print('dbData > ', self.dbData)
+    
     #==========================================================================
-    # DB Objects block
+    # HTML methods
     #--------------------------------------------------------------------------
 #!!!!
-    def dbObject(self, item, lang):
+    def html(self):
         "Returns html code for this Window"
-
         
         toRet = ''
-        
-        #----------------------------------------------------------------------
-        # Define parameters of an object
-        #----------------------------------------------------------------------
-        (item, objClass ) = self.itemDrop(item, 'CLASS' )
-        (item, target   ) = self.itemDrop(item, 'target')
-        (item, crForm   ) = self.itemDrop(item, 'crForm')
-        
-        (item, objId    ) = self.itemDrop(item, 'objId' )
-        (item, height   ) = self.itemDrop(item, 'height')
-        (item, width    ) = self.itemDrop(item, 'width' )
-        
-        if width  == '': width  = '99%'
-        if height == '': height = '94%'
   
         #----------------------------------------------------------------------
-        # Read instance of the object for respective class
+        # Kontrola existencie dbItem
         #----------------------------------------------------------------------
-        dbData, dbItem = self.loadDbItem(who='ja', objClass=objClass, item=item)
-        
-        if dbItem is None:
-            
-            self.journal.M(f"HTML_{self.name}.dbObject: No dbItem for class={objClass} and item={item}", True)
+        if self.dbItem is None:
+            self.journal.M(f"HTML_{self.name}.dbObject: No dbItem defined", True)
             return toRet
 
         #----------------------------------------------------------------------
         # Object space
         #----------------------------------------------------------------------
-        atts = {"name":objId, "id":f"{objId}_OS", "class":"Object", "style":f"height:{height}; width:{width};"}
-        toRet += self.divStart(atts);
+        atts = {"name":self.objId, "id":f"{self.objId}_OS", "class":"Object", "style":f"height:{self.height}; width:{self.width};"}
+        toRet += self.divStart(atts)
 
         #----------------------------------------------------------------------
         # Header space
         #----------------------------------------------------------------------
-        atts = {"name":objId, "id":f"{objId}_HS", "class":"ObjectHeaderSpace", "onclick":f"ObjectContentControl('{objId}', '20')"}
-        toRet += self.divStart(atts);
-        toRet += self.objectHead(objClass, item=item, dbItem=dbItem, lang=lang)
+        atts = {"name":self.objId, "id":f"{self.objId}_HS", "class":"ObjectHeaderSpace", "onclick":f"ObjectContentControl('{self.objId}', '20')"}
+        toRet += self.divStart(atts)
+        toRet += self.objectHead()
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
         # Back space
         #----------------------------------------------------------------------
-        atts = {"name":objId, "id":f"{objId}_BS", "class":"ObjectBackSpace", "style":"height:0px;"}
-        toRet += self.divStart(atts);
-        toRet += self.objectBack(objClass, item=item, dbItem=dbItem, dbData=dbData, lang=lang)
+        atts = {"name":self.objId, "id":f"{self.objId}_BS", "class":"ObjectBackSpace", "style":"height:0px;"}
+        toRet += self.divStart(atts)
+        toRet += self.objectBack()
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
         # Front space
         #----------------------------------------------------------------------
-        atts = {"name":objId, "id":f"{objId}_FS", "class":"ObjectFrontSpace", "style":f"height:{height};"}
-        toRet += self.divStart(atts);
-        toRet += self.objectFront(objClass, item=item, dbItem=dbItem, lang=lang)
+        atts = {"name":self.objId, "id":f"{self.objId}_FS", "class":"ObjectFrontSpace", "style":f"height:{self.height};"}
+        toRet += self.divStart(atts)
+        toRet += self.objectFront()
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
         # Control space
         #----------------------------------------------------------------------
-        atts = {"name":objId, "id":f"{objId}_CS", "class":"ObjectControlSpace"}
-        toRet += self.divStart(atts);
-        toRet += self.objectControll(objClass, item=item, dbItem=dbItem, lang=lang)
+        atts = {"name":self.objId, "id":f"{self.objId}_CS", "class":"ObjectControlSpace"}
+        toRet += self.divStart(atts)
+        toRet += self.objectControll()
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -176,192 +188,135 @@ class Forum(Object):
         return toRet
 
     #--------------------------------------------------------------------------
-    def loadDbItem(self, who, objClass, item):
-        
-        dbData = None
-        dbItem = None
-    
-        #----------------------------------------------------------------------
-        # Nacitanie objektu podla class
-        #----------------------------------------------------------------------
-        if objClass == 'Forum':
-            
-            (item, ForumId) = self.itemDrop(item, 'Forum' )
-            (item, target ) = self.itemDrop(item, 'target')
-            
-            dbData, dbItem = self.dms.loadForumItem(who, ForumId=ForumId, idx=self.dynIdx, target=target)
-      
-        #----------------------------------------------------------------------
-        return (dbData, dbItem)
-    
-    #--------------------------------------------------------------------------
-    def saveDbItem(self, who, dbItem):
-        
-       
-        #----------------------------------------------------------------------
-        print('dbItem > ', dbItem)
-    
-    #--------------------------------------------------------------------------
-    def objectHead(self, objClass, item, dbItem, lang):
+    def htmlHead(self):
+        """"This method should be overrided and return html code
+            for the head space of this window"""
         
         toRet = ''
         
         #----------------------------------------------------------------------
         # Vytvorenie hlavicky objektu podla class
         #----------------------------------------------------------------------
-        if objClass == 'Forum':
-            
-            (dbItem, title) = self.itemDrop(dbItem, 'TITLE')
-            toRet += self.itemRender(title, lang)
-
-        else: 
-            (dbItem, objName) = self.itemDrop(dbItem, lang)
-            toRet += self.p({lang:objName}, lang)
+        (self.dbItem, title) = self.itemDrop(self.dbItem, 'TITLE')
+        toRet += self.itemRender(title, self.lang)
 
         #----------------------------------------------------------------------
         return toRet
 
     #--------------------------------------------------------------------------
-    def objectBack(self, objClass, item, dbItem, dbData, lang):
+    def htmlBack(self, objClass, item, dbItem, dbData, lang):
+        """"This method should be overrided and return html code
+            for the back space of this window"""
 
         toRet = ''
 
         #----------------------------------------------------------------------
-        # Vytvorenie Front/end objektu podla class
+        # Render the object formular
         #----------------------------------------------------------------------
-        if objClass == 'Forum':
+        method = 'POST'
+        action = url_for(self.target)
+        toRet += self.formStart({"method":method, "action":action, "enctype":"multipart/form-data"})
             
-            (item,   target) = self.itemDrop(  item, 'target'   )
-            
-            #------------------------------------------------------------------
-            # Render the object formular
-            #------------------------------------------------------------------
-            method = 'POST'
-            action = url_for(target)
-            toRet += self.formStart({"method":method, "action":action, "enctype":"multipart/form-data"})
-            
-            #toRet += str(self.dynForms[0].parentId.label())
-            #toRet += str(self.dynForms[0].parentId( value=dbData['PARENT_ID']))
-            #toRet += self.breakLine()
+        toRet += str(self.form.itemId.label())
+        toRet += str(self.form.itemId( value=dbData['ITEM_ID']))
+        toRet += self.breakLine()
 
-            toRet += str(self.dynForms[0].itemId.label())
-            toRet += str(self.dynForms[0].itemId( value=dbData['ITEM_ID']))
-            toRet += self.breakLine()
+        toRet += str(self.form.title.label())
+        toRet += str(self.form.title(    class_="ObjectInputString", value=dbData['TITLE']))
+        toRet += self.breakLine()
 
-            toRet += str(self.dynForms[0].title.label())
-            toRet += str(self.dynForms[0].title(    class_="ObjectInputString", value=dbData['TITLE']))
-            toRet += self.breakLine()
+        toRet += str(self.form.user_id.label())
+        toRet += str(self.form.user_id(  class_="ObjectInputString", value=dbData['USER_ID'], size=35))
+        toRet += self.breakLine()
 
-            toRet += str(self.dynForms[0].user_id.label())
-            toRet += str(self.dynForms[0].user_id(  class_="ObjectInputString", value=dbData['USER_ID'], size=35))
-            toRet += self.breakLine()
-
-            toRet += str(self.dynForms[0].narrator.label())
-            toRet += str(self.dynForms[0].narrator( class_="ObjectInputString", value=dbData['NARRATOR'], size=35))
-            toRet += self.breakLine()
-
+        toRet += str(self.form.narrator.label())
+        toRet += str(self.form.narrator( class_="ObjectInputString", value=dbData['NARRATOR'], size=35))
+        toRet += self.breakLine()
           
-            toRet += str(self.dynForms[0].item.label())
-            self.dynForms[0].item.data = dbData['ITEM']
-            toRet += str(self.dynForms[0].item(class_="ObjectInputText", rows="20"))
+        toRet += str(self.form.item.label())
+        self.form.item.data = dbData['ITEM']
+        toRet += str(self.form.item(class_="ObjectInputText", rows="20"))
 
-            toRet += str(self.dynForms[0].hidden_tag())
+        toRet += str(self.form.hidden_tag())
 
-            self.formStop()
-            #------------------------------------------------------------------
-            
-        else: 
-            (dbItem, objName) = self.itemDrop(dbItem, lang)
-            toRet += self.p({lang:objName}, lang)
+        self.formStop()
 
         #----------------------------------------------------------------------
         return toRet
 
     #--------------------------------------------------------------------------
-    def objectFront(self, objClass, item, dbItem, lang):
+    def htmlFront(self):
+        """"This method should be overrided and return html code
+            for the front space of this window"""
 
         toRet = ''
 
         #----------------------------------------------------------------------
         # Vytvorenie Front/end objektu podla class
         #----------------------------------------------------------------------
-        if objClass == 'Forum':
+        (self.dbItem, objId) = self.itemDrop(self.dbItem, 'ITEM_ID'  )
+        (self.dbItem, parId) = self.itemDrop(self.dbItem, 'PARENT_ID')
+        (self.dbItem, narr ) = self.itemDrop(self.dbItem, 'NARR'     )
+        (self.dbItem, d_crt) = self.itemDrop(self.dbItem, 'D_CRT'    )
+        (self.dbItem, d_chg) = self.itemDrop(self.dbItem, 'D_CHG'    )
+        (self.dbItem, text ) = self.itemDrop(self.dbItem, 'TEXT'     )
             
-            (item, ForumId) = self.itemDrop(  item, 'Forum'    )
-            (item, target ) = self.itemDrop(  item, 'target'   )
+            
+        idx    = objId['SK']
+        parIdx = parId['SK']
 
-            (dbItem, objId) = self.itemDrop(dbItem, 'ITEM_ID'  )
-            (dbItem, parId) = self.itemDrop(dbItem, 'PARENT_ID')
-            (dbItem, narr ) = self.itemDrop(dbItem, 'NARR'     )
-            (dbItem, d_crt) = self.itemDrop(dbItem, 'D_CRT'    )
-            (dbItem, d_chg) = self.itemDrop(dbItem, 'D_CHG'    )
-            (dbItem, text ) = self.itemDrop(dbItem, 'TEXT'     )
+#        print('idx,    ', idx)
+#        print('parIdx, ', parIdx)
             
+        #----------------------------------------------------------------------
+        # Vykreslenie Siblings/Changes
+        #----------------------------------------------------------------------
+        toRet += self.divStart({"class":"Selector", "style":"height:100%; width:20%; display:block"})
+        sibs   = self.dms.loadForumSiblings(self.name, forumId=self.objId, parIdx=parIdx, idx=idx, target=self.target)
+        toRet += self.itemListRender(sibs, self.lang)
+        toRet += self.divStop()
             
-            idx    = objId['SK']
-            parIdx = parId['SK']
+        #----------------------------------------------------------------------
+        # Vykreslenie Vykreslenie Forum itemu
+        #----------------------------------------------------------------------
+        toRet += self.divStart({"class":"ForumItem", "style":"height:100%; width:60%; display:block"})
+        toRet += self.itemRender(narr,  self.lang)
+        toRet += self.itemRender(d_chg, self.lang)
 
-#            print('idx,    ', idx)
-#            print('parIdx, ', parIdx)
+        # Finalne vykreslenie textu
+        toRet += self.itemRender(text,  self.lang)
+        toRet += self.divStop()
             
-            #------------------------------------------------------------------
-            # Vykreslenie Siblings/Changes
-            #------------------------------------------------------------------
-            toRet += self.divStart({"class":"Selector", "style":"height:100%; width:20%; display:block"})
-            sibs   = self.dms.loadForumSiblings(who='ja', ForumId=ForumId, parIdx=parIdx, idx=idx, target=target)
-            toRet += self.itemListRender(sibs, lang)
-            toRet += self.divStop()
+        #----------------------------------------------------------------------
+        # Vykreslenie Children
+        #----------------------------------------------------------------------
+        toRet += self.divStart({"class":"Selector", "style":"height:100%; width:20%; display:block"})
+        child  = self.dms.loadForumChildren(self.name, forumId=self.objId, idx=idx, target=self.target)
+        toRet += self.itemListRender(child, self.lang)
+        toRet += self.divStop()
             
-            #------------------------------------------------------------------
-            # Vykreslenie Vykreslenie Forum itemu
-            #------------------------------------------------------------------
-            toRet += self.divStart({"class":"ForumItem", "style":"height:100%; width:60%; display:block"})
-            toRet += self.itemRender(narr,  lang)
-            toRet += self.itemRender(d_chg, lang)
-
-            # Finalne vykreslenie textu
-            toRet += self.itemRender(text,  lang)
-            toRet += self.divStop()
-            
-            #------------------------------------------------------------------
-            # Vykreslenie Children
-            #------------------------------------------------------------------
-            toRet += self.divStart({"class":"Selector", "style":"height:100%; width:20%; display:block"})
-            child  = self.dms.loadForumChildren(who='ja', ForumId=ForumId, idx=idx, target=target)
-            toRet += self.itemListRender(child, lang)
-            toRet += self.divStop()
-            
-        else: 
-            (dbItem, objName) = self.itemDrop(dbItem, lang)
-            toRet += self.p({lang:objName}, lang)
-
         #----------------------------------------------------------------------
         return toRet
 
     #--------------------------------------------------------------------------
-    def objectControll(self, objClass, item, dbItem, lang):
+    def htmlControll(self):
+        """"This method should be overrided and return html code
+            for the controll space of this window"""
 
         toRet = ''
 
-        if objClass == 'Forum':
-            
-            toRet += str(self.dynForms[0].sfUp        (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfAddChapter(class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].afAddChild  (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfCancel    (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfApply     (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfPublish   (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfDelete    (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfMove      (class_="ObjectControlBtn"))
-
-        else: 
-            (dbItem, objName) = self.itemDrop(dbItem, lang)
-            toRet += self.p({lang:objName}, lang)
+        toRet += str(self.form.sfUp        (class_="ObjectControlBtn"))
+        toRet += str(self.form.sfAddChapter(class_="ObjectControlBtn"))
+        toRet += str(self.form.afAddChild  (class_="ObjectControlBtn"))
+        toRet += str(self.form.sfCancel    (class_="ObjectControlBtn"))
+        toRet += str(self.form.sfApply     (class_="ObjectControlBtn"))
+        toRet += str(self.form.sfPublish   (class_="ObjectControlBtn"))
+        toRet += str(self.form.sfDelete    (class_="ObjectControlBtn"))
+        toRet += str(self.form.sfMove      (class_="ObjectControlBtn"))
 
         #----------------------------------------------------------------------
         return toRet
 
-    #--------------------------------------------------------------------------
     
 #==============================================================================
 print(f"Forum {_VER}")

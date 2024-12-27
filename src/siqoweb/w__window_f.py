@@ -1,12 +1,11 @@
 #==============================================================================
-#  SIQO Homepage: Form Login
+#  SIQO Homepage: Basic root Formulars
 #------------------------------------------------------------------------------
 import os
 
-from wtforms            import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired
-
-from p__page_f          import PageForm
+from flask_wtf          import FlaskForm
+from wtforms            import HiddenField, StringField, TextAreaField, PasswordField, BooleanField, SubmitField
+from wtforms            import validators
 
 #==============================================================================
 # package's constants
@@ -19,20 +18,14 @@ _CWD      = os.getcwd()
 #------------------------------------------------------------------------------
 
 #==============================================================================
-# FormLogin
+# Form
 #------------------------------------------------------------------------------
-class LoginForm(PageForm):
+class WindowForm(FlaskForm):
     
-    username   = StringField  ('Username', validators=[DataRequired()] )
-    password   = PasswordField('Password', validators=[DataRequired()] )
-    remember   = BooleanField ('Remember Me')
-    
-    btnLogin   = SubmitField('Sign In')
-    btnGuest   = SubmitField('Continue as Guest User')
-    btnLogout  = SubmitField('Sign Out')
+    target = HiddenField(u'',              validators=[validators.Optional()])
 
 #==============================================================================
-print(f"forms {_VER}")
+print(f"w_window_f {_VER}")
 
 #==============================================================================
 #                              END OF FILE

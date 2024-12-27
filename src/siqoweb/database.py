@@ -11,7 +11,7 @@ import siqolib.general       as gen
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER       = '1.04'
+_VER       = '1.05'
 _CWD       = os.getcwd()
 
 _PING_LAG  =    2    # Number of hours after which ping is recomended
@@ -780,7 +780,7 @@ if __name__ == '__main__':
     journal = SiqoJournal('test-db', debug=5)
 
     from   config                   import Config
-    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=False)
+    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=True)
  
     tables     = db.tables()
 #    attributes = db.attributes(Config.tabUser)
@@ -790,7 +790,8 @@ if __name__ == '__main__':
     users      = db.readTable('who', Config.tabUser)
     palo4      = db.readTable('who', Config.tabUser, "user_id = 'palo4'")
     
-    #db.sSqlScript(who='test', fName='ohistory.ini')
+#    db.sSqlScript(who='test', fName='users.sql'   )
+#    db.sSqlScript(who='test', fName='ohistory.sql')
     
     db.sJournal('SIQO')
     

@@ -1,0 +1,39 @@
+#==============================================================================
+#  SIQO Homepage: Form Login
+#------------------------------------------------------------------------------
+import os
+
+from wtforms            import StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import DataRequired
+
+from w__window_f        import WindowForm
+
+#==============================================================================
+# package's constants
+#------------------------------------------------------------------------------
+_VER      = '1.02'
+_CWD      = os.getcwd()
+
+#==============================================================================
+# package's variables
+#------------------------------------------------------------------------------
+
+#==============================================================================
+# FormLogin
+#------------------------------------------------------------------------------
+class LoginForm(WindowForm):
+    
+    username   = StringField  ('Username', validators=[DataRequired()] )
+    password   = PasswordField('Password', validators=[DataRequired()] )
+    remember   = BooleanField ('Remember Me')
+    
+    btnLogin   = SubmitField('Sign In')
+    btnGuest   = SubmitField('Continue as Guest User')
+    btnLogout  = SubmitField('Sign Out')
+
+#==============================================================================
+print(f"w_login_f {_VER}")
+
+#==============================================================================
+#                              END OF FILE
+#------------------------------------------------------------------------------

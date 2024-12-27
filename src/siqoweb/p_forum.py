@@ -68,15 +68,10 @@ class PageForum(Page):
         self.journal.I(f"{self.name}.loadContent:")
         
         #----------------------------------------------------------------------
-        # Vytvorenie formularov
+        # Vytvorenie Forum window
         #----------------------------------------------------------------------
-        self.form = FormForum(formdata=self.post, target=self.target, itemId=self.idx)   # Formular pre Forum 
+        self.form = ForumForm(formdata=self.post, target=self.target, itemId=self.idx)   # Formular pre Forum 
 
-        #----------------------------------------------------------------------
-        # Doplnenie dynamickych odkazov pre html_renderer
-        #----------------------------------------------------------------------
-        self.html.dynIdx  = self.idx
-        self.html.dynForms.append(self.form)
 
         self.journal.O()
         return {}

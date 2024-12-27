@@ -11,7 +11,7 @@ from   datetime                 import date
 from   flask                    import request, url_for
 
 from   o__object                import Object
-from   f_window                 import FormWindow
+from   w__window_f              import WindowForm
 
 #==============================================================================
 # package's constants
@@ -32,7 +32,9 @@ class Window(Object):
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dms, userId, lang, item, height=20, width=20):
+    def __init__(self, journal, dms, userId, lang, item, idx=0, height=20, width=20):
+
+        journal.I(f"Window.__init__: for {userId}")
 
         #----------------------------------------------------------------------
         # Define parameters of the ItemDef
@@ -55,24 +57,47 @@ class Window(Object):
 
         self.journal   = journal
         self.name      = f"Win({self.name})"
+        self.idx       = idx                      # Primarny kluc objektu
         
-        self.itemDef   = item                  # Item dict definition from DB
-        self.dbData    = None                  # Data content from DMS/Formular
-        self.dbItem    = None                  # Item content from DMS
+        self.itemDef   = item                     # Item dict definition from DB
+        self.dbData    = None                     # Data content from DMS/Formular
+        self.dbItem    = None                     # Item content from DMS
         
-        self.form      = None                  # Formular for this window
-        self.postForm  = None                  # Data from POST request.form
-        self.postForm  = request.form
+        self.formPost  = None                     # Data from POST request.form
+        self.form      = None                     # Formular asociated with this window
+        self.formId    = f"WindowForm_{self.idx}" # Id of the formular
        
         #----------------------------------------------------------------------
-        # Dynamicky prenasane parametre
+        # Nacitanie formulara s POST udajmi
         #----------------------------------------------------------------------
+        self.loadForm()
 
+        self.journal.O()
 
     #==========================================================================
-    # Persistency methods
+    # Form methods
     #--------------------------------------------------------------------------
-    def load(self, idx):
+    def loadForm(self):
+        "This method should return class specific content like forms, objects etc."
+        
+        self.journal.I(f"{self.name}.loadForm:")
+        
+        #----------------------------------------------------------------------
+        # Ziskanie post data
+        #----------------------------------------------------------------------
+        self.formPost  = request.form
+
+        #----------------------------------------------------------------------
+        # Vytvorenie window formulara z post data
+        #----------------------------------------------------------------------
+        "This section should be overrided"
+
+        self.journal.O()
+
+    #==========================================================================
+    # DB Persistency methods
+    #--------------------------------------------------------------------------
+    def dbLoad(self):
         """"This method should be overrided and load tuple (dbItem, dbData) 
             from DMS/Database"""
         
@@ -80,68 +105,23 @@ class Window(Object):
         self.dbItem    = None                  # Item content from DMS
     
         #----------------------------------------------------------------------
-        # Nacitanie objektu podla class
+        # Nacitanie objektu podla class/objId/idx
         #----------------------------------------------------------------------
-        self.dbData, self.dbItem = self.dms.loadForumItem(self.name, forumId=self.objId, idx=idx, target=self.target)
+        "This section should be overrided"
       
-        if self.dbItem is None:
-            
-            self.journal.M(f"HTML_{self.name}.load: No dbItem for class={self.classId}, object={self.objId} with idx={idx}", True)
-
         #----------------------------------------------------------------------
         return (self.dbData, self.dbItem)
     
     #--------------------------------------------------------------------------
-    def saveDbItem(self, dbItem):
+    def dbSave(self):
+        """"This method should be overrided and save dbData 
+            into DMS/Database"""
         
+        #----------------------------------------------------------------------
+        # Zapis objektu podla class/objId/idx
+        #----------------------------------------------------------------------
+        "This section should be overrided"
        
-        #----------------------------------------------------------------------
-        print('dbItem > ', dbItem)
-    
-    #==========================================================================
-    # Rendering API for templates
-    #--------------------------------------------------------------------------
-    def html(self, objDic, lang):
-        "Returns HTML for json-encoded item"
-        
-        self.journal.I(f"HTML_{self.name}.html: Going to render an object dictionary...")
-        toRet = ''
-    
-        #----------------------------------------------------------------------
-        # Prejdem vsetky objekty
-        #----------------------------------------------------------------------
-        for objId, rec in objDic.items():
-            
-            #------------------------------------------------------------------
-            # Ak je rec typu dict, ide o vnoreny objekt
-            #------------------------------------------------------------------
-            if type(rec)==dict:
-              
-                #--------------------------------------------------------------
-                # Rekurzivne zavolam objectsRender
-                #--------------------------------------------------------------
-                toRet += self.html(rec, lang)
-                
-            #------------------------------------------------------------------
-            # Ak je rec typu list, ide o zoznam itemov
-            #------------------------------------------------------------------
-            elif type(rec)==list:
-              
-                #--------------------------------------------------------------
-                # Zavolam itemListRender
-                #--------------------------------------------------------------
-                toRet += self.itemListRender(rec, lang, objId)
-            
-            #------------------------------------------------------------------
-            # Inak je to neznamy udaj
-            #------------------------------------------------------------------
-            else:
-                self.journal.M(f"HTML_{self.name}.html: UNKNOWN object '{objDic}'", True)
-
-        #----------------------------------------------------------------------
-        self.journal.O()
-        return toRet
-        
     #==========================================================================
     # HTML methods
     #--------------------------------------------------------------------------
@@ -212,10 +192,9 @@ class Window(Object):
         toRet = ''
         
         #----------------------------------------------------------------------
-        # Vytvorenie hlavicky objektu podla class
+        # Class specific data
         #----------------------------------------------------------------------
-        (self.dbItem, title) = self.itemDrop(self.dbItem, 'TITLE')
-        toRet += self.itemRender(title, self.lang)
+        "This section should be overrided"
 
         #----------------------------------------------------------------------
         return toRet
@@ -230,119 +209,37 @@ class Window(Object):
         #----------------------------------------------------------------------
         # Render the object formular
         #----------------------------------------------------------------------
-            
-        method = 'POST'
-        action = url_for(self.target)
-        toRet += self.formStart({"method":method, "action":action, "enctype":"multipart/form-data"})
-            
-        toRet += str(self.dynForms[0].itemId.label())
-        toRet += str(self.dynForms[0].itemId( value=dbData['ITEM_ID']))
-        toRet += self.breakLine()
-
-        toRet += str(self.dynForms[0].title.label())
-        toRet += str(self.dynForms[0].title(    class_="ObjectInputString", value=dbData['TITLE']))
-        toRet += self.breakLine()
-
-        toRet += str(self.dynForms[0].user_id.label())
-        toRet += str(self.dynForms[0].user_id(  class_="ObjectInputString", value=dbData['USER_ID'], size=35))
-        toRet += self.breakLine()
-
-        toRet += str(self.dynForms[0].narrator.label())
-        toRet += str(self.dynForms[0].narrator( class_="ObjectInputString", value=dbData['NARRATOR'], size=35))
-        toRet += self.breakLine()
-
-          
-        toRet += str(self.dynForms[0].item.label())
-        self.dynForms[0].item.data = dbData['ITEM']
-        toRet += str(self.dynForms[0].item(class_="ObjectInputText", rows="20"))
-
-        toRet += str(self.dynForms[0].hidden_tag())
-
-        self.formStop()
+        "This section should be overrided"
 
         #----------------------------------------------------------------------
         return toRet
 
     #--------------------------------------------------------------------------
-    def htmlFront(self, objClass, item, dbItem, lang):
+    def htmlFront(self):
+        """"This method should be overrided and return html code
+            for the front space of this window"""
 
         toRet = ''
 
         #----------------------------------------------------------------------
-        # Vytvorenie Front/end objektu podla class
+        # Class specific data
         #----------------------------------------------------------------------
-        if objClass == 'FORUM':
+        "This section should be overrided"
             
-            (self.itemDef, ForumId) = self.itemDrop(  item, 'Forum'    )
-            (self.itemDef, target ) = self.itemDrop(  item, 'target'   )
-
-            (dbItem, objId) = self.itemDrop(dbItem, 'ITEM_ID'  )
-            (dbItem, parId) = self.itemDrop(dbItem, 'PARENT_ID')
-            (dbItem, narr ) = self.itemDrop(dbItem, 'NARR'     )
-            (dbItem, d_crt) = self.itemDrop(dbItem, 'D_CRT'    )
-            (dbItem, d_chg) = self.itemDrop(dbItem, 'D_CHG'    )
-            (dbItem, text ) = self.itemDrop(dbItem, 'TEXT'     )
-            
-            
-            idx    = objId['SK']
-            parIdx = parId['SK']
-
-#            print('idx,    ', idx)
-#            print('parIdx, ', parIdx)
-            
-            #------------------------------------------------------------------
-            # Vykreslenie Siblings/Changes
-            #------------------------------------------------------------------
-            toRet += self.divStart({"class":"Selector", "style":"height:100%; width:20%; display:block"})
-            sibs   = self.dms.loadForumSiblings(who='ja', ForumId=ForumId, parIdx=parIdx, idx=idx, target=target)
-            toRet += self.itemListRender(sibs, lang)
-            toRet += self.divStop()
-            
-            #------------------------------------------------------------------
-            # Vykreslenie Vykreslenie Forum itemu
-            #------------------------------------------------------------------
-            toRet += self.divStart({"class":"ForumItem", "style":"height:100%; width:60%; display:block"})
-            toRet += self.itemRender(narr,  lang)
-            toRet += self.itemRender(d_chg, lang)
-
-            # Finalne vykreslenie textu
-            toRet += self.itemRender(text,  lang)
-            toRet += self.divStop()
-            
-            #------------------------------------------------------------------
-            # Vykreslenie Children
-            #------------------------------------------------------------------
-            toRet += self.divStart({"class":"Selector", "style":"height:100%; width:20%; display:block"})
-            child  = self.dms.loadForumChildren(who='ja', ForumId=ForumId, idx=idx, target=target)
-            toRet += self.itemListRender(child, lang)
-            toRet += self.divStop()
-            
-        else: 
-            (dbItem, objName) = self.itemDrop(dbItem, lang)
-            toRet += self.p({lang:objName}, lang)
-
         #----------------------------------------------------------------------
         return toRet
 
     #--------------------------------------------------------------------------
-    def htmlControll(self, objClass, item, dbItem, lang):
+    def htmlControll(self):
+        """"This method should be overrided and return html code
+            for the controll space of this window"""
 
         toRet = ''
 
-        if objClass == 'FORUM':
-            
-            toRet += str(self.dynForms[0].sfUp        (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfAddChapter(class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].afAddChild  (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfCancel    (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfApply     (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfPublish   (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfDelete    (class_="ObjectControlBtn"))
-            toRet += str(self.dynForms[0].sfMove      (class_="ObjectControlBtn"))
-
-        else: 
-            (dbItem, objName) = self.itemDrop(dbItem, lang)
-            toRet += self.p({lang:objName}, lang)
+        #----------------------------------------------------------------------
+        # Class specific data
+        #----------------------------------------------------------------------
+        "This section should be overrided"
 
         #----------------------------------------------------------------------
         return toRet

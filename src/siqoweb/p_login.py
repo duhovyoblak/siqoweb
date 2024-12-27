@@ -16,7 +16,7 @@ import siqolib.general     as gen
 from   config              import Config
 from   app_user            import User, _ANONYM
 from   p__page             import Page
-from   p_login_f           import LoginForm
+from   w_login_f           import LoginForm
 
 
 #==============================================================================

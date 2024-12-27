@@ -37,12 +37,6 @@ class HTML:
         self.lang      = lang
         self.classId   = classId   # OBJECT_ID v pagman db
         
-        #----------------------------------------------------------------------
-        # Dynamicky prenasane parametre
-        #----------------------------------------------------------------------
-        self.dynIdx    = 0
-        self.dynForms  = []
-
     #--------------------------------------------------------------------------
     def urlFor(self, url):
         

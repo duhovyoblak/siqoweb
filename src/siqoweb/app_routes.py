@@ -13,6 +13,8 @@ from   markupsafe               import escape
 
 from   config                   import Config
 from   app_user                 import User
+from   p__page                  import Page
+
 import app_views                as app_views
 
 #==============================================================================
@@ -100,7 +102,11 @@ def shutdownServer():
 def index():
 
     journal.M("index():")
-    return app_views.index()
+    
+    resp = app.send_static_file('html/index.html')
+    resp.headers['X-Something'] = 'A value'
+
+    return resp
 
 #------------------------------------------------------------------------------
 @app.get('/shutdown')
@@ -143,7 +149,11 @@ def load_user(user_id='Anonymous'):
 def pgLogin():
 
     journal.M("/login:")
-    return app_views.pgLogin(title='SIQO Login page', classId='PagManHomepage')
+    
+    page = Page(journal, title='SIQO Login page', classId='PagManLogin', height=670)
+    resp = page.resp()
+    
+    return resp
     
 #------------------------------------------------------------------------------
 @app.route('/logout')

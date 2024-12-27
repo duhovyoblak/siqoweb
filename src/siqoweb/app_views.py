@@ -32,17 +32,6 @@ journal = None
 #==============================================================================
 # System's app_views 
 #------------------------------------------------------------------------------
-def index():
-    
-    journal.I('app_views.index()')
-    
-    resp = make_response(template.render(is_test=_IS_TEST), 200)
-    resp.headers['X-Something'] = 'A value'
-
-    journal.O()
-    return resp
-
-#------------------------------------------------------------------------------
 def pgLogin():
     
     journal.I('app_views.pgLogin()')
