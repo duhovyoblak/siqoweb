@@ -131,10 +131,7 @@ class Login(Window):
         #----------------------------------------------------------------------
         # Vytvorenie Login formulara z post data
         #----------------------------------------------------------------------
-        try: 
-            self.form = LoginForm(formdata=self.postForm, formType="LoginForm")
-            Window.forms[self.name] = self.form
-            
+        try   : self.form = LoginForm(formdata=self.postForm, formType="LoginForm")
         except: self.journal.M(f"{self.name}.loadForm: Ouside context, form was not created", True)
 
         #----------------------------------------------------------------------
