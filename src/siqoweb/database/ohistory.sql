@@ -63,8 +63,8 @@ INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'HeadItems',   '2_Comment',  'T
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'HeadItems',   '3_SubTitle', 'SK',    'A', 'Fórum projektu SIQO',     DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'HeadItems',   '3_SubTitle', 'TYPE',  'A', 'HEADSUBTIT',              DATE('now'), DATE('now'), 'SIQO');
 
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','SK',    'A', 'ForumObject',             DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','TYPE',  'A', 'OBJECT',                  DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','NAME',  'A', 'ForumWindow',             DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','TYPE',  'A', 'WINDOW',                  DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','target','A', 'pgOhistory',              DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','height','A', '94%',                     DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'OHISTORY',  'OHIST_cont',  'ForumObject','width', 'A', '99%',                     DATE('now'), DATE('now'), 'SIQO');

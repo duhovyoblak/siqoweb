@@ -51,7 +51,7 @@ class Object(HTML):
         #----------------------------------------------------------------------
         # Identifikacia objektu
         #----------------------------------------------------------------------
-        self.name    = f"Obj({classId})"
+        self.name    = f"Object({objPar})"
         self.dms     = dms       # DMS/Database
         self.height  = height
         self.width   = width
@@ -94,17 +94,26 @@ class Object(HTML):
     def __str__(self):
         "Prints info about this Object"
         
-        return f"Object>{', '.join(self.info())}"
+        return ''.join(self.info())
 
     #--------------------------------------------------------------------------
-    def info(self):
+    def info(self, lvl=2):
         "Returns info about the Object"
 
-        toRet = []
+        toRet = [f"{3*' '*lvl}{self.name}> ["]
+        toRet.append('\n')
         
         for element in self.conts:
-            toRet.append('\n')
-            toRet.append(str(element))
+            
+            if type(element)==dict: 
+                toRet.append(f"{3*' '*(lvl+1)}{str(element)}")
+                toRet.append('\n')
+                
+            else                  : toRet.extend(element.info(lvl+1))
+            
+            
+        toRet.append(f"{3*' '*lvl}]")
+        toRet.append('\n')
 
         return toRet
 
@@ -123,8 +132,8 @@ class Object(HTML):
             #------------------------------------------------------------------
             # Ak je polozka typu Object
             #------------------------------------------------------------------
-            if type(item)==Object: toRet += item.html()
-            else                 : toRet += self.itemRender(item)
+            if type(item)==dict: toRet += self.itemRender(item)
+            else               : toRet += item.html()
         
         #----------------------------------------------------------------------
         self.journal.O()

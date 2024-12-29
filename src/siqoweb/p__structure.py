@@ -3,14 +3,15 @@
 #------------------------------------------------------------------------------
 import os
 
-from   flask                 import url_for, get_flashed_messages, flash, make_response
-from   flask                 import request, session, abort, redirect
-from   flask_login           import login_user, logout_user, current_user
-from   markupsafe            import escape
+from   flask                    import url_for, get_flashed_messages, flash, make_response
+from   flask                    import request, session, abort, redirect
+from   flask_login              import login_user, logout_user, current_user
+from   markupsafe               import escape
 
-import siqolib.general       as gen
+import siqolib.general          as gen
 
-from   o__object             import Object
+from   o__object                import Object
+from   w__window                import Window
 
 #==============================================================================
 # package's constants
@@ -48,22 +49,22 @@ class Structure:
         self.userId        = userId   
         self.userName      = userName
         self.lang          = lang
-        self.classId       = classId   # OBJECT_ID v pagman db
+        self.classId       = classId      # OBJECT_ID v pagman db
         self.height        = height
         
         self.loaded        = False
 
         #----------------------------------------------------------------------
+        # Ziskanie POST data
+        #----------------------------------------------------------------------
+        self.postForm      = self.getPost()
+
+        #----------------------------------------------------------------------
         # Inicializacia default objektov
         #----------------------------------------------------------------------
-        self.cont          = {}        # Content of the Page in objects
-        self.initId        = "Content"
-
+        self.sects  = {}                 # Content of the Page in objects
+        self.initId = "Content"
         self.loadStruct('ja')
- 
-        #----------------------------------------------------------------------
-        # Doplnenie statickeho contextu z DB
-        #----------------------------------------------------------------------
  
         #----------------------------------------------------------------------
         self.journal.O(f"{self.name}.init")
@@ -72,26 +73,32 @@ class Structure:
     def __str__(self):
         "Prints info about this Structure"
         
-        return f"Structure>{', '.join(self.info())}"
+        return self.info()
 
     #--------------------------------------------------------------------------
     def info(self):
         "Returns info about the Structure"
 
-        toRet = []
+        toRet = self.name + '>\n'
         
         #----------------------------------------------------------------------
-        # Prejdem vsetky sekcie Page
+        # Ak je level=1, prejdem vsetky sekcie Page
         #----------------------------------------------------------------------
-        for contId, contObj in self.cont.items():
+        for contId, contObj in self.sects.items():
             
-            toRet.append('\n')
-            toRet.append(f"Section {contId}>")
+            toRet += '\n'
+            toRet += f"   Section {contId}>"
+            toRet += '\n'
             
-            toRet.append('\n')
-            toRet.append(str(contObj))
+            toRet += str(contObj)
 
         return toRet
+
+    #--------------------------------------------------------------------------
+    def windows(self):
+        "Returns dict {formId: form}"
+
+        return Window.wins
 
     #--------------------------------------------------------------------------
     def urlFor(self, endpoint, filename=None):
@@ -103,6 +110,23 @@ class Structure:
 
         return toRet    
         
+    #--------------------------------------------------------------------------
+    def getPost(self):
+        
+        self.journal.I(f"{self.name}.getPost:")
+
+        #----------------------------------------------------------------------
+        # Ziskanie POST data
+        #----------------------------------------------------------------------
+        try   : toRet = request.form
+        except: toRet = None
+
+        self.journal.M(f"{self.name}.getPost: {toRet}")
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return toRet
+
     #==========================================================================
     # HTML renderer
     #--------------------------------------------------------------------------
@@ -110,7 +134,7 @@ class Structure:
     def html(self):
         "Returns html code for this Page"
 
-        self.journal.I("{self.name}.html:")
+        self.journal.I(f"{self.name}.html:")
         toRet = ''
         
         #----------------------------------------------------------------------
@@ -155,7 +179,7 @@ class Structure:
         toRet += '  <!-- Head object                                           --> \n'
         toRet += '  <!-----------------------------------------------------------> \n'
         toRet += '  <div class="Header" id="Header" onclick="ShowElement(\'Content\')"> \n'
-        if self.cont['__HEAD__'] is not None: toRet += self.cont['__HEAD__'].html()
+        if self.sects['__HEAD__'] is not None: toRet += self.sects['__HEAD__'].html()
         toRet += '  </div> \n'
 
         #----------------------------------------------------------------------
@@ -165,7 +189,7 @@ class Structure:
         toRet += '  <!-- NavBar object                                         --> \n'
         toRet += '  <!-----------------------------------------------------------> \n'
         toRet += '  <div class="BarMenu" id="BarMenu"> \n'
-        if self.cont['__NAVB__'] is not None: toRet += self.cont['__NAVB__'].html()
+        if self.sects['__NAVB__'] is not None: toRet += self.sects['__NAVB__'].html()
         toRet += '  </div> \n'
 
         #----------------------------------------------------------------------
@@ -191,14 +215,14 @@ class Structure:
         toRet += '    <!-----------------------------------------------------------> \n'
         toRet += '    <!-- Stage object                                          --> \n'
         toRet += '    <!-----------------------------------------------------------> \n'
-        if self.cont['__SELS__'] is not None: toRet += self.cont['__SELS__'].html()
+        if self.sects['__SELS__'] is not None: toRet += self.sects['__SELS__'].html()
         toRet += '    <!-----------------------------------------------------------> \n'
-        if self.cont['__STGS__'] is not None: toRet += self.cont['__STGS__'].html()
+        if self.sects['__STGS__'] is not None: toRet += self.sects['__STGS__'].html()
         
         #----------------------------------------------------------------------
         # Content stop
         #----------------------------------------------------------------------
-        if self.cont['__CONT__'] is not None: toRet += self.cont['__CONT__'].html()
+        if self.sects['__CONT__'] is not None: toRet += self.sects['__CONT__'].html()
         toRet += '  <!-----------------------------------------------------------> \n'
         toRet += '  <!-- Content stop                                          --> \n'
         toRet += '  <!-----------------------------------------------------------> \n'
@@ -261,6 +285,9 @@ class Structure:
         href = self.urlFor('static', filename='js/structure.js')
         toRet.append(f'<script src= "{href}" type="text/javascript"></script>')
 
+        href = self.urlFor('static', filename='js/object.js')
+        toRet.append(f'<script src= "{href}" type="text/javascript"></script>')
+
         toRet.append( '<title>{self.title}</title>')
         
         return toRet
@@ -314,23 +341,23 @@ class Structure:
         
         self.journal.I(f"{self.name}.loadStruct: For page '{self.classId}'")
         
-        self.cont = {}
+        self.sects = {}
 
-        self.cont['__HEAD__'] = self.getHead(who)
-        self.cont['__NAVB__'] = self.getNavb(who)
+        self.sects['__HEAD__'] = self.getHead(who)
+        self.sects['__NAVB__'] = self.getNavb(who)
         
         objSel, objStg = self.getStag(who)
         
-        self.cont['__SELS__'] = objSel
-        self.cont['__STGS__'] = objStg
+        self.sects['__SELS__'] = objSel
+        self.sects['__STGS__'] = objStg
 
-        self.cont['__CONT__'] = self.getCont(who)
+        self.sects['__CONT__'] = self.getCont(who)
 
         self.loaded = True
 
         #----------------------------------------------------------------------
         self.journal.O()
-        return self.cont
+        return self.sects
 
     #--------------------------------------------------------------------------
     def getHead(self, who):
@@ -515,12 +542,79 @@ class Structure:
         "This method creates content objects and loads them for parent __CONT__ from Database"
         
         self.journal.I(f"{self.name}.getCont:")
-        toRet = None
-        
         
         #----------------------------------------------------------------------
+        # Ziskam vsetky objekty pre CONT
+        #----------------------------------------------------------------------
+        objs = Object(self.journal, self.dms, self.userId, self.lang, self.classId, objPar='__CONT__')
+
+        #----------------------------------------------------------------------
+        # Skontrolujem, ci existuje prave jeden Content objekt
+        #----------------------------------------------------------------------
+        if (len(objs.conts)!=1) or (type(objs.conts[0])!=Object):
+            
+            self.journal.M(f"{self.name}.getCont: Content object is missing or duplicated", True)
+            self.journal.O()
+            return None
+
+        #----------------------------------------------------------------------
+        # Prejdem vsetky raw objekty
+        #----------------------------------------------------------------------
+        posObj = 0
+        for rawObj in objs.conts:
+            
+            # !!!! Tu by sa hodila rekurzia, ale nechce sa mi...
+
+            #------------------------------------------------------------------
+            # Prejdem vsety Items v rawObject
+            #------------------------------------------------------------------
+            posItem = 0
+            for item in rawObj.conts:
+            
+                self.journal.M(f"{self.name}.getCont: {posObj}/{posItem}: {item}")
+            
+                #--------------------------------------------------------------
+                # Ak je item typu WINDOW
+                #--------------------------------------------------------------
+                if (type(item)==dict) and ('TYPE' in item.keys()) and (item['TYPE']=='WINDOW'):
+                    
+                    objClass = item['CLASS']
+                    obj      = None
+                    
+                    #----------------------------------------------------------
+                    # Vytvorim prislusny objekt
+                    #----------------------------------------------------------
+                    if   objClass=='LOGIN':
+                        
+                        from w_login import Login
+                        obj = Login(self.journal, self.dms, self.userId, self.lang, item=item, postForm=self.postForm)
+                        Window.wins[obj.name] = obj
+                        
+                    elif objClass=='FORUM':
+                    
+                        from w_forum import Forum
+                     
+                    else:
+                        self.journal.M(f"{self.name}.getCont: Unknown object class {objClass} ERROR", True)
+            
+                    #----------------------------------------------------------
+                    # Nahradim Item vytvorenym objektom
+                    #----------------------------------------------------------
+                    if obj is not None: rawObj.conts[posItem] = obj
+
+                #--------------------------------------------------------------
+                # Nasledujuci item
+                #--------------------------------------------------------------
+                posItem += 1
+
+            #------------------------------------------------------------------
+            # Nasledujuci raw object
+            #------------------------------------------------------------------
+            posObj += 1
+            
+        #----------------------------------------------------------------------
         self.journal.O()
-        return toRet
+        return objs.conts[0]
         
     #--------------------------------------------------------------------------
     #==========================================================================
@@ -545,15 +639,17 @@ if __name__ == '__main__':
     
     dms = DMS (journal, Config.dtbsName, Config.dtbsPath)
     
-#    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManLogin',    700)
-    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManHomepage', 700)
+    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManLogin',    700)
+#    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManHomepage', 700)
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'FAQ', 700)
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'OHISTORY', 700)
 #    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'PagManContact', 700)
  
+    print()
     print(page)
     print()
-    print(page.html())
+    
+   # print(page.html())
 
 #    item = page.dms.loadForumItem('ja', forumId='OHISTORY')
 

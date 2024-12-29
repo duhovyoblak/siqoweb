@@ -10,7 +10,7 @@ import traceback
 from   datetime                 import date
 from   flask                    import request, url_for
 
-from   o__object                import Object
+from   w__window                import Window
 from   w_forum_f                import ForumForm
 
 #==============================================================================
@@ -27,14 +27,14 @@ _VER           = '1.10'
 #==============================================================================
 # Class Forum
 #------------------------------------------------------------------------------
-class Forum(Object):
+class Forum(Window):
     
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dms, userId, lang, item, idx, height=20, width=20):
+    def __init__(self, journal, dms, userId, lang, item, postForm, idx):
 
-        journal.I(f"Forum.__init__: for {userId}")
+        journal.I(f"Forum.__init__: From {item} for {userId}")
 
         #----------------------------------------------------------------------
         # Define parameters of the ItemDef
@@ -51,26 +51,17 @@ class Forum(Object):
         if self.height == '': self.height = '94%'
 
         #----------------------------------------------------------------------
-        # Inicializacia Objectu
+        # Inicializacia Window
         #----------------------------------------------------------------------
-        super().__init__(journal, dms, userId, lang, self.classId, height=height, width=width) # classId=OBJECT_ID v pagman db
+        super().__init__(journal, dms, userId, lang, item=item, postForm=postForm, idx=idx) # classId=OBJECT_ID v pagman db
 
-        self.journal   = journal
         self.name      = f"Forum({self.name})"
-        self.idx       = idx                      # Primarny kluc objektu
-        
-        self.itemDef   = item                     # Item dict definition from DB
-        self.dbData    = None                     # Data content from DMS/Formular
-        self.dbItem    = None                     # Item content from DMS
-        
-        self.formPost  = None                     # Data from POST request.form
-        self.form      = None                     # Formular asociated with this window
         self.formId    = f"ForumForm_{self.idx}"  # Id of the formular
        
         #----------------------------------------------------------------------
         # Nacitanie formulara s POST udajmi
         #----------------------------------------------------------------------
-        self.loadForm()
+#        self.loadForm()
 
         self.journal.O()
 
@@ -90,7 +81,7 @@ class Forum(Object):
         #----------------------------------------------------------------------
         # Vytvorenie Forum formulara z post data
         #----------------------------------------------------------------------
-        self.form = ForumForm(formdata=self.formPost, target=self.target, itemId=self.idx)
+        self.form = ForumForm(formdata=self.formPost, formType="LoginForm", target=self.target, itemId=self.idx)
 
         self.journal.O()
 
@@ -129,65 +120,6 @@ class Forum(Object):
     # HTML methods
     #--------------------------------------------------------------------------
 #!!!!
-    def html(self):
-        "Returns html code for this Window"
-        
-        toRet = ''
-  
-        #----------------------------------------------------------------------
-        # Kontrola existencie dbItem
-        #----------------------------------------------------------------------
-        if self.dbItem is None:
-            self.journal.M(f"HTML_{self.name}.dbObject: No dbItem defined", True)
-            return toRet
-
-        #----------------------------------------------------------------------
-        # Object space
-        #----------------------------------------------------------------------
-        atts = {"name":self.objId, "id":f"{self.objId}_OS", "class":"Object", "style":f"height:{self.height}; width:{self.width};"}
-        toRet += self.divStart(atts)
-
-        #----------------------------------------------------------------------
-        # Header space
-        #----------------------------------------------------------------------
-        atts = {"name":self.objId, "id":f"{self.objId}_HS", "class":"ObjectHeaderSpace", "onclick":f"ObjectContentControl('{self.objId}', '20')"}
-        toRet += self.divStart(atts)
-        toRet += self.objectHead()
-        toRet += self.divStop()
-
-        #----------------------------------------------------------------------
-        # Back space
-        #----------------------------------------------------------------------
-        atts = {"name":self.objId, "id":f"{self.objId}_BS", "class":"ObjectBackSpace", "style":"height:0px;"}
-        toRet += self.divStart(atts)
-        toRet += self.objectBack()
-        toRet += self.divStop()
-
-        #----------------------------------------------------------------------
-        # Front space
-        #----------------------------------------------------------------------
-        atts = {"name":self.objId, "id":f"{self.objId}_FS", "class":"ObjectFrontSpace", "style":f"height:{self.height};"}
-        toRet += self.divStart(atts)
-        toRet += self.objectFront()
-        toRet += self.divStop()
-
-        #----------------------------------------------------------------------
-        # Control space
-        #----------------------------------------------------------------------
-        atts = {"name":self.objId, "id":f"{self.objId}_CS", "class":"ObjectControlSpace"}
-        toRet += self.divStart(atts)
-        toRet += self.objectControll()
-        toRet += self.divStop()
-
-        #----------------------------------------------------------------------
-        # Object space end
-        #----------------------------------------------------------------------
-        toRet += self.divStop()
-
-        #----------------------------------------------------------------------
-        return toRet
-
-    #--------------------------------------------------------------------------
     def htmlHead(self):
         """"This method should be overrided and return html code
             for the head space of this window"""
@@ -204,7 +136,7 @@ class Forum(Object):
         return toRet
 
     #--------------------------------------------------------------------------
-    def htmlBack(self, objClass, item, dbItem, dbData, lang):
+    def htmlBack(self):
         """"This method should be overrided and return html code
             for the back space of this window"""
 
@@ -218,23 +150,23 @@ class Forum(Object):
         toRet += self.formStart({"method":method, "action":action, "enctype":"multipart/form-data"})
             
         toRet += str(self.form.itemId.label())
-        toRet += str(self.form.itemId( value=dbData['ITEM_ID']))
+        toRet += str(self.form.itemId( value=self.dbData['ITEM_ID']))
         toRet += self.breakLine()
 
         toRet += str(self.form.title.label())
-        toRet += str(self.form.title(    class_="ObjectInputString", value=dbData['TITLE']))
+        toRet += str(self.form.title(    class_="ObjectInputString", value=self.dbData['TITLE']))
         toRet += self.breakLine()
 
         toRet += str(self.form.user_id.label())
-        toRet += str(self.form.user_id(  class_="ObjectInputString", value=dbData['USER_ID'], size=35))
+        toRet += str(self.form.user_id(  class_="ObjectInputString", value=self.dbData['USER_ID'], size=35))
         toRet += self.breakLine()
 
         toRet += str(self.form.narrator.label())
-        toRet += str(self.form.narrator( class_="ObjectInputString", value=dbData['NARRATOR'], size=35))
+        toRet += str(self.form.narrator( class_="ObjectInputString", value=self.dbData['NARRATOR'], size=35))
         toRet += self.breakLine()
           
         toRet += str(self.form.item.label())
-        self.form.item.data = dbData['ITEM']
+        self.form.item.data = self.dbData['ITEM']
         toRet += str(self.form.item(class_="ObjectInputText", rows="20"))
 
         toRet += str(self.form.hidden_tag())

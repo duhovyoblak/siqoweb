@@ -27,7 +27,7 @@ else                        : _IS_TEST = False
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
-journal = SiqoJournal('siqo-web', debug=4)
+journal = SiqoJournal('siqo-web', debug=7)
 
 app_routes.journal = journal
 app_views. journal = journal

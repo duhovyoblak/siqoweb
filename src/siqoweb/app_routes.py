@@ -171,7 +171,7 @@ def pgLogout():
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 @app.route('/homepage', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def pgHomepage():
 
     journal.M("/homepage:")

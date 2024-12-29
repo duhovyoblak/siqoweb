@@ -72,8 +72,6 @@ class Page(Structure):
         super().__init__(journal, dms, title, userId, userName, lang, classId, height)
         
         self.name     = f"Page({self.name})"
-        self.postForm = None                   # Data from POST request.form
-        self.postForm = request.form
 
         #----------------------------------------------------------------------
         # Aktualny user a jazyk
@@ -83,17 +81,6 @@ class Page(Structure):
 
         self.journal.O()
        
-    #==========================================================================
-    # Content methods
-    #--------------------------------------------------------------------------
-    def loadContent(self):
-        "This method should return page specific content like forms, objects etc."
-        
-        self.journal.I(f"{self.classId}.loadContent:")
-        
-        self.journal.O()
-        return {}
-
     #==========================================================================
     # Response generators
     #--------------------------------------------------------------------------
@@ -148,16 +135,18 @@ class Page(Structure):
     #--------------------------------------------------------------------------
     def respPost(self):
      
-        self.journal.I(f"{self.name}.respPost: Default None post response")
+        self.journal.I(f"{self.name}.respPost: Default None POST response")
+        
+        resp = self.windows()['LoginWindow'].respPost()
         
         
         self.journal.O()
-        return None
+        return resp
 
     #--------------------------------------------------------------------------
     def respGet(self):
      
-        self.journal.I(f"{self.name}.respGet: Default html get response")
+        self.journal.I(f"{self.name}.respGet: Default GET response")
         
         #----------------------------------------------------------------------
         # Vygenerujem html response
@@ -190,7 +179,9 @@ if __name__ == '__main__':
     from   siqolib.journal              import SiqoJournal
     journal = SiqoJournal('test-base', debug=5)
     
-    page = Page(journal, 'Homepage', 'PagManHomepage', 700)
+    page = Page(journal, 'Homepage', 'PagManLogin', 700)
+#    page = Page(journal, 'Homepage', 'PagManHomepage', 700)
+    print(page)
     
 
 #==============================================================================

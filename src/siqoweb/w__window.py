@@ -8,7 +8,7 @@ import re
 import traceback
 
 from   datetime                 import date
-from   flask                    import request, url_for
+from   flask                    import request, session, abort, redirect
 
 from   o__object                import Object
 from   w__window_f              import WindowForm
@@ -30,11 +30,16 @@ _VER           = '1.10'
 class Window(Object):
     
     #==========================================================================
+    # Staticke premenne
+    #--------------------------------------------------------------------------
+    wins = {}
+    
+    #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dms, userId, lang, item, idx=0, height=20, width=20):
+    def __init__(self, journal, dms, userId, lang, item, postForm, idx=0):
 
-        journal.I(f"Window.__init__: for {userId}")
+        journal.I(f"Window.__init__: From {item} for {userId}")
 
         #----------------------------------------------------------------------
         # Define parameters of the ItemDef
@@ -53,26 +58,39 @@ class Window(Object):
         #----------------------------------------------------------------------
         # Inicializacia Objectu
         #----------------------------------------------------------------------
-        super().__init__(journal, dms, userId, lang, self.classId, height=height, width=width) # classId=OBJECT_ID v pagman db
+        super().__init__(journal, dms, userId, lang, classId=self.classId, height=self.height, width=self.width) # classId=OBJECT_ID v pagman db
 
-        self.journal   = journal
-        self.name      = f"Win({self.name})"
-        self.idx       = idx                      # Primarny kluc objektu
+        (itemDef, self.name) = self.itemDrop(item, 'NAME')  
         
         self.itemDef   = item                     # Item dict definition from DB
+        self.postForm  = postForm                 # Data from POST request.form
+        self.idx       = idx                      # Primarny kluc objektu
+        
         self.dbData    = None                     # Data content from DMS/Formular
         self.dbItem    = None                     # Item content from DMS
         
-        self.formPost  = None                     # Data from POST request.form
         self.form      = None                     # Formular asociated with this window
-        self.formId    = f"WindowForm_{self.idx}" # Id of the formular
        
         #----------------------------------------------------------------------
         # Nacitanie formulara s POST udajmi
         #----------------------------------------------------------------------
         self.loadForm()
 
+        #----------------------------------------------------------------------
+        # Nacitanie formulara z Databazy
+        #----------------------------------------------------------------------
+        self.dbLoad()
+
         self.journal.O()
+
+    #--------------------------------------------------------------------------
+    def info(self, lvl=2):
+        "Returns info about the Window"
+
+        toRet = [f"{3*' '*lvl}{self.name}> {self.classId}.{self.objId}({self.idx}) {self.width}x{self.height}"]
+        toRet.append('\n')
+        
+        return toRet
 
     #==========================================================================
     # Form methods
@@ -82,11 +100,6 @@ class Window(Object):
         
         self.journal.I(f"{self.name}.loadForm:")
         
-        #----------------------------------------------------------------------
-        # Ziskanie post data
-        #----------------------------------------------------------------------
-        self.formPost  = request.form
-
         #----------------------------------------------------------------------
         # Vytvorenie window formulara z post data
         #----------------------------------------------------------------------
@@ -145,11 +158,18 @@ class Window(Object):
         toRet += self.divStart(atts)
 
         #----------------------------------------------------------------------
+        # Form start
+        #----------------------------------------------------------------------
+        method = 'POST'
+        action = self.urlFor(self.target)
+        toRet += self.formStart({"method":method, "action":action, "enctype":"multipart/form-data", "style":"display:contents;"})
+
+        #----------------------------------------------------------------------
         # Header space
         #----------------------------------------------------------------------
         atts = {"name":self.objId, "id":f"{self.objId}_HS", "class":"ObjectHeaderSpace", "onclick":f"ObjectContentControl('{self.objId}', '20')"}
         toRet += self.divStart(atts)
-        toRet += self.objectHead()
+        toRet += self.htmlHead()
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -157,7 +177,7 @@ class Window(Object):
         #----------------------------------------------------------------------
         atts = {"name":self.objId, "id":f"{self.objId}_BS", "class":"ObjectBackSpace", "style":"height:0px;"}
         toRet += self.divStart(atts)
-        toRet += self.objectBack()
+        toRet += self.htmlBack()
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -165,7 +185,7 @@ class Window(Object):
         #----------------------------------------------------------------------
         atts = {"name":self.objId, "id":f"{self.objId}_FS", "class":"ObjectFrontSpace", "style":f"height:{self.height};"}
         toRet += self.divStart(atts)
-        toRet += self.objectFront()
+        toRet += self.htmlFront()
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
@@ -173,9 +193,15 @@ class Window(Object):
         #----------------------------------------------------------------------
         atts = {"name":self.objId, "id":f"{self.objId}_CS", "class":"ObjectControlSpace"}
         toRet += self.divStart(atts)
-        toRet += self.objectControll()
+        toRet += self.htmlControll()
         toRet += self.divStop()
 
+        #----------------------------------------------------------------------
+        # Form end
+        #----------------------------------------------------------------------
+        toRet += str(self.form.hidden_tag())
+        self.formStop()
+        
         #----------------------------------------------------------------------
         # Object space end
         #----------------------------------------------------------------------

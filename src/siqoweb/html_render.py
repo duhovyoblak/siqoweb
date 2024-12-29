@@ -31,8 +31,8 @@ class HTML:
     #--------------------------------------------------------------------------
     def __init__(self, journal, userId, lang, classId='noClass'):
         
-        self.name      = f"HTML_{userId}"
         self.journal   = journal
+        self.name      = f"HTML_{userId}"
         self.userId    = userId   
         self.lang      = lang
         self.classId   = classId   # OBJECT_ID v pagman db
@@ -40,8 +40,16 @@ class HTML:
     #--------------------------------------------------------------------------
     def urlFor(self, url):
         
-        toRet = f"url_for({url})"
+        toRet = f"url_for('{url}')"
+
+        #----------------------------------------------------------------------
+        # Null response
+        #----------------------------------------------------------------------
+        if url.strip()=='': return ""
         
+        #----------------------------------------------------------------------
+        # Page response
+        #----------------------------------------------------------------------
         try                : toRet = url_for(url)
         except RuntimeError: self.journal.M(f"{self.name}.urlFor: RuntimeError", True)
 

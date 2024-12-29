@@ -4,7 +4,7 @@
 import os
 
 from wtforms            import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms            import validators
 
 from w__window_f        import WindowForm
 
@@ -23,8 +23,10 @@ _CWD      = os.getcwd()
 #------------------------------------------------------------------------------
 class LoginForm(WindowForm):
     
-    username   = StringField  ('Username', validators=[DataRequired()] )
-    password   = PasswordField('Password', validators=[DataRequired()] )
+#    WindowForm.formType.
+    
+    username   = StringField  ('Username', validators=[validators.Optional()] )
+    password   = PasswordField('Password', validators=[validators.Optional()] )
     remember   = BooleanField ('Remember Me')
     
     btnLogin   = SubmitField('Sign In')
