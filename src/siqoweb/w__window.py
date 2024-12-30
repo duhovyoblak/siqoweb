@@ -37,7 +37,7 @@ class Window(Object):
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dms, userId, lang, item, postForm, idx=0):
+    def __init__(self, journal, dms, userId, lang, item, POST, idx):
 
         journal.I(f"Window.__init__: From {item} for {userId}")
 
@@ -63,7 +63,7 @@ class Window(Object):
         (itemDef, self.name) = self.itemDrop(item, 'NAME')  
         
         self.itemDef   = item                     # Item dict definition from DB
-        self.postForm  = postForm                 # Data from POST request.form
+        self.POST      = POST                     # Data from POST request.form
         self.idx       = idx                      # Primarny kluc objektu
         
         self.dbData    = None                     # Data content from DMS/Formular
@@ -100,6 +100,11 @@ class Window(Object):
         
         self.journal.I(f"{self.name}.loadForm:")
         
+        #----------------------------------------------------------------------
+        # Vyhodnotenie dynamickeho kontextu z POST data
+        #----------------------------------------------------------------------
+        "This section should be overrided"
+
         #----------------------------------------------------------------------
         # Vytvorenie window formulara z post data
         #----------------------------------------------------------------------

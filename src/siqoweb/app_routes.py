@@ -20,7 +20,7 @@ import app_views                as app_views
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER        = '1.07'
+_VER        = '1.08'
 _LOGIN_VIEW = 'pgLogin'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
@@ -149,11 +149,7 @@ def load_user(user_id='Anonymous'):
 def pgLogin():
 
     journal.M("/login:")
-    
-    page = Page(journal, title='SIQO Login page', classId='PagManLogin', height=670)
-    resp = page.resp()
-    
-    return resp
+    return app_views.pgStaged(title='SIQO Homepage', classId='PagManLogin')
     
 #------------------------------------------------------------------------------
 @app.route('/logout')
@@ -215,7 +211,7 @@ def pgSession():
 def pgContact():
 
     journal.M("/contact:")
-    return app_views.pgEmpty(classId='PagManContact')
+    return app_views.pgStaged(title='SIQO Contacts', classId='PagManContact')
 
 #------------------------------------------------------------------------------
 @app.route('/faq',           methods=['GET'])
@@ -223,8 +219,8 @@ def pgContact():
 @login_required
 def pgFaq(idx=0):
 
-    journal.M("/faq:  idx={idx}")
-    return app_views.pgForum(classId='FAQ', target='pgFaq', idx=idx)
+    journal.M(f"/faq:  idx={idx}")
+    return app_views.pgStaged(title='SIQO F.A.Q.', classId='FAQ', idx=idx)
 
 #------------------------------------------------------------------------------
 # PATHs Tools
@@ -263,7 +259,7 @@ def show_subpath(subpath):
 def pgOhistory(idx=0):
 
     journal.M(f"/oralhistory: idx='{idx}'")
-    return app_views.pgForum(classId='OHISTORY', target='pgOhistory', idx=idx)
+    return app_views.pgStaged(title='SIQO Oral history', classId='OHISTORY', idx=idx)
 
 #==============================================================================
 # Test cases

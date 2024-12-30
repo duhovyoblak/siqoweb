@@ -126,12 +126,16 @@ class Login(Window):
     def loadForm(self):
         "This method should return class specific content like forms, objects etc."
         
-        self.journal.I(f"{self.name}.loadForm: {self.postForm}")
+        self.journal.I(f"{self.name}.loadForm: {self.POST}")
         
+        #----------------------------------------------------------------------
+        # Vyhodnotenie dynamickeho kontextu z POST data
+        #----------------------------------------------------------------------
+
         #----------------------------------------------------------------------
         # Vytvorenie Login formulara z post data
         #----------------------------------------------------------------------
-        try   : self.form = LoginForm(formdata=self.postForm, formType="LoginForm")
+        try   : self.form = LoginForm(formdata=self.POST, formType="LoginForm")
         except: self.journal.M(f"{self.name}.loadForm: Ouside context, form was not created", True)
 
         #----------------------------------------------------------------------

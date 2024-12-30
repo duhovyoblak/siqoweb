@@ -321,7 +321,7 @@ class HTML:
     def split(self, ):
     
         atts = {"SK":"––«•»––", "class":"center"}
-        return self.p(atts, 'SK')
+        return self.p(atts)
     
     #--------------------------------------------------------------------------
     def html(self, item):

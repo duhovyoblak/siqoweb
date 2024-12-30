@@ -8,7 +8,7 @@ import re
 import traceback
 
 from   datetime                 import date
-from   flask                    import request, url_for
+from   flask                    import request, redirect
 
 from   w__window                import Window
 from   w_forum_f                import ForumForm
@@ -16,7 +16,7 @@ from   w_forum_f                import ForumForm
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.10'
+_VER           = '1.11'
 
 #==============================================================================
 # package's variables
@@ -32,39 +32,46 @@ class Forum(Window):
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dms, userId, lang, item, postForm, idx):
 
-        journal.I(f"Forum.__init__: From {item} for {userId}")
 
-        #----------------------------------------------------------------------
-        # Define parameters of the ItemDef
-        #----------------------------------------------------------------------
-        (itemDef, self.classId ) = self.itemDrop(item, 'CLASS' )  
-        (itemDef, self.objId   ) = self.itemDrop(item, 'objId' )
-        (itemDef, self.target  ) = self.itemDrop(item, 'target')
-        (itemDef, self.crForm  ) = self.itemDrop(item, 'crForm')
-        
-        (itemDef, self.height  ) = self.itemDrop(item, 'height')
-        (itemDef, self.width   ) = self.itemDrop(item, 'width' )
-        
-        if self.width  == '': self.width  = '99%'
-        if self.height == '': self.height = '94%'
+    #==========================================================================
+    # Response generators
+    #--------------------------------------------------------------------------
+    def respPost(self):
+     
+        self.journal.I(f"{self.name}.respPost:")
 
         #----------------------------------------------------------------------
-        # Inicializacia Window
+        # Vyhodnotim formular
         #----------------------------------------------------------------------
-        super().__init__(journal, dms, userId, lang, item=item, postForm=postForm, idx=idx) # classId=OBJECT_ID v pagman db
-
-        self.name      = f"Forum({self.name})"
-        self.formId    = f"ForumForm_{self.idx}"  # Id of the formular
-       
+        if self.form.validate():
+            
+            #------------------------------------------------------------------
+            # Cancel
+            #------------------------------------------------------------------
+            if self.form.sfCancel.data:
+                
+                self.journal.M(f"{self.name}.respPost: Cancel by user")
+                self.journal.O()
+                return redirect(f"{self.urlFor(self.target)}/{self.idx}")
+            
+            #------------------------------------------------------------------
+            # Unknown user's action
+            #------------------------------------------------------------------
+            else:
+                self.journal.O()
+                return self.toHomepage()
+ 
         #----------------------------------------------------------------------
-        # Nacitanie formulara s POST udajmi
+        # Nie je POST
         #----------------------------------------------------------------------
-#        self.loadForm()
+        self.journal.M(f"{self.name}.respPost: form NOT validated with errors:", True)
+        self.journal.M(f"{self.name}.respPost: {self.form.errors}", True)
 
         self.journal.O()
+        return self.toHomepage()
 
+    
     #==========================================================================
     # Form methods
     #--------------------------------------------------------------------------
@@ -74,14 +81,18 @@ class Forum(Window):
         self.journal.I(f"{self.name}.loadForm:")
         
         #----------------------------------------------------------------------
-        # Ziskanie post data
+        # Vyhodnotenie dynamickeho kontextu z POST data
         #----------------------------------------------------------------------
-        self.formPost  = request.form
+        if 'itemId' in self.POST.keys(): 
+            
+            self.idx = self.POST['itemId']
+            self.journal.M(f"{self.name}.loadForm: idx was changed to {self.idx}", True)
 
         #----------------------------------------------------------------------
         # Vytvorenie Forum formulara z post data
         #----------------------------------------------------------------------
-        self.form = ForumForm(formdata=self.formPost, formType="LoginForm", target=self.target, itemId=self.idx)
+        try   : self.form = ForumForm(formdata=self.POST, formType="ForumForm", target=self.target, itemId=self.idx)
+        except: self.journal.M(f"{self.name}.loadForm: Ouside context, form was not created", True)
 
         self.journal.O()
 
@@ -92,19 +103,23 @@ class Forum(Window):
         """"This method should be overrided and load tuple (dbItem, dbData) 
             from DMS/Database"""
         
+        self.journal.I(f"{self.name}.dbLoad:")
+
         self.dbData    = None                  # Data content from DMS/Formular
         self.dbItem    = None                  # Item content from DMS
     
+        self.journal.M(f"{self.name}.dbLoad: forumId={self.objId}, idx={self.idx}", True)
+
         #----------------------------------------------------------------------
         # Nacitanie objektu podla class/objId/idx
         #----------------------------------------------------------------------
         self.dbData, self.dbItem = self.dms.loadForumItem(self.name, forumId=self.objId, idx=self.idx, target=self.target)
       
         if self.dbItem is None:
-            
-            self.journal.M(f"HTML_{self.name}.dbLoad: No dbItem for class={self.classId}, object={self.objId} with idx={self.idx}", True)
+            self.journal.M(f"{self.name}.dbLoad: No dbItem for class={self.classId}, object={self.objId} with idx={self.idx}", True)
 
         #----------------------------------------------------------------------
+        self.journal.O()
         return (self.dbData, self.dbItem)
     
     #--------------------------------------------------------------------------
@@ -146,7 +161,7 @@ class Forum(Window):
         # Render the object formular
         #----------------------------------------------------------------------
         method = 'POST'
-        action = url_for(self.target)
+        action = self.urlFor(self.target)
         toRet += self.formStart({"method":method, "action":action, "enctype":"multipart/form-data"})
             
         toRet += str(self.form.itemId.label())

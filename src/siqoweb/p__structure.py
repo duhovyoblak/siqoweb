@@ -33,7 +33,7 @@ class Structure:
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, dms, title, userId, userName, lang, classId, height):
+    def __init__(self, journal, dms, title, userId, userName, lang, classId, height, idx):
         "Call constructor of the Structure and initialise it"
         
         journal.I(f"Structure({classId}).init:")
@@ -50,6 +50,7 @@ class Structure:
         self.userName      = userName
         self.lang          = lang
         self.classId       = classId      # OBJECT_ID v pagman db
+        self.idx           = idx
         self.height        = height
         
         self.loaded        = False
@@ -57,7 +58,7 @@ class Structure:
         #----------------------------------------------------------------------
         # Ziskanie POST data
         #----------------------------------------------------------------------
-        self.postForm      = self.getPost()
+        self.POST          = self.getPost()
 
         #----------------------------------------------------------------------
         # Inicializacia default objektov
@@ -272,6 +273,7 @@ class Structure:
         toRet.append( '<meta   http-equiv="Content-Type"      content="text/html; charset=UTF-8">')
         toRet.append( '<meta   name="META HTTP-EQUIV"         content="NO-CACHE">')
         toRet.append( '<meta   name="author"                  content="Palo4">')
+        toRet.append(f'<title>{self.title}</title>')
     
         href = self.urlFor('static', filename='css/paragraph.css')
         toRet.append(f'<link   href="{href}" rel="stylesheet" type="text/css">')
@@ -288,7 +290,6 @@ class Structure:
         href = self.urlFor('static', filename='js/object.js')
         toRet.append(f'<script src= "{href}" type="text/javascript"></script>')
 
-        toRet.append( '<title>{self.title}</title>')
         
         return toRet
 
@@ -587,12 +588,14 @@ class Structure:
                     if   objClass=='LOGIN':
                         
                         from w_login import Login
-                        obj = Login(self.journal, self.dms, self.userId, self.lang, item=item, postForm=self.postForm)
+                        obj = Login(self.journal, self.dms, self.userId, self.lang, item=item, POST=self.POST, idx=self.idx)
                         Window.wins[obj.name] = obj
                         
                     elif objClass=='FORUM':
                     
                         from w_forum import Forum
+                        obj = Forum(self.journal, self.dms, self.userId, self.lang, item=item, POST=self.POST, idx=self.idx)
+                        Window.wins[obj.name] = obj
                      
                     else:
                         self.journal.M(f"{self.name}.getCont: Unknown object class {objClass} ERROR", True)
@@ -639,11 +642,11 @@ if __name__ == '__main__':
     
     dms = DMS (journal, Config.dtbsName, Config.dtbsPath)
     
-    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManLogin',    700)
+#    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManLogin',    700)
 #    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManHomepage', 700)
-#    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'FAQ', 700)
-#    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'OHISTORY', 700)
-#    page = Structure(journal, env, 'palo4', 'Pavol H', 'SK', 'PagManContact', 700)
+#    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManContact', 700)
+    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'FAQ', 700)
+#    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'OHISTORY', 700)
  
     print()
     print(page)

@@ -32,6 +32,21 @@ journal = None
 #==============================================================================
 # System's app_views 
 #------------------------------------------------------------------------------
+def pgStaged(title, classId, height=670, idx=0):
+    
+    journal.I('app_views.pgStaged()')
+
+    page = Page(journal, title=title, classId=classId, height=height, idx=idx)
+    resp = page.resp()
+
+    journal.O()
+    return resp
+
+
+
+
+
+#------------------------------------------------------------------------------
 def pgLogin():
     
     journal.I('app_views.pgLogin()')
@@ -48,17 +63,6 @@ def pgEmpty(title, classId, height=670):
     journal.I('app_views.pgEmpty()')
 
     page = Page(journal, title=title,classId=classId, height=height)
-    resp = page.resp()
-
-    journal.O()
-    return resp
-
-#------------------------------------------------------------------------------
-def pgStaged(title, classId, height=670):
-    
-    journal.I('app_views.pgHomepage()')
-
-    page = Page(journal, title=title, classId=classId, height=height)
     resp = page.resp()
 
     journal.O()

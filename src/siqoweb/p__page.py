@@ -40,7 +40,7 @@ class Page(Structure):
     #==========================================================================
     # Constructor & Tools
     #--------------------------------------------------------------------------
-    def __init__(self, journal, title, classId, height):
+    def __init__(self, journal, title, classId, height, idx=0):
         "Call constructor of Page and initialise it"
         
         journal.I(f"Page({classId}).init:")
@@ -69,7 +69,7 @@ class Page(Structure):
         #----------------------------------------------------------------------
         # Konstruktor Page Structure
         #----------------------------------------------------------------------
-        super().__init__(journal, dms, title, userId, userName, lang, classId, height)
+        super().__init__(journal, dms, title, userId, userName, lang, classId, height, idx)
         
         self.name     = f"Page({self.name})"
 
@@ -101,6 +101,9 @@ class Page(Structure):
 
         self.journal.M(f"{self.name}.resp: headers.Referer  {request.headers.get('Referer')}", True)
 #        self.journal.M(f"{self.name}.resp: headers.Cookie   {request.headers.get('Cookie' )}", True)
+
+        self.journal.M(f"{self.name}.resp: idx   > {self.idx}",    True)
+        self.journal.M(f"{self.name}.resp: POST  > {self.POST}",   True)
 
 
         #----------------------------------------------------------------------
@@ -146,7 +149,7 @@ class Page(Structure):
     #--------------------------------------------------------------------------
     def respGet(self):
      
-        self.journal.I(f"{self.name}.respGet: Default GET response")
+        self.journal.I(f"{self.name}.respGet: Default GET response ")
         
         #----------------------------------------------------------------------
         # Vygenerujem html response
