@@ -77,7 +77,8 @@ class Page(Structure):
         # Aktualny user a jazyk
         #----------------------------------------------------------------------
         journal.M(f"{self.name}).init: user = '{self.userName}'")
-        journal.M(f"{self.name}).init: lang = '{self.lang}'")
+        journal.M(f"{self.name}).init: lang = '{self.lang}'"    )
+        journal.M(f"{self.name}).init: idx  = '{self.idx}'"     )
 
         self.journal.O()
        
@@ -102,8 +103,6 @@ class Page(Structure):
         self.journal.M(f"{self.name}.resp: headers.Referer  {request.headers.get('Referer')}", True)
 #        self.journal.M(f"{self.name}.resp: headers.Cookie   {request.headers.get('Cookie' )}", True)
 
-        self.journal.M(f"{self.name}.resp: idx   > {self.idx}",    True)
-        self.journal.M(f"{self.name}.resp: POST  > {self.POST}",   True)
 
 
         #----------------------------------------------------------------------
@@ -139,10 +138,23 @@ class Page(Structure):
     def respPost(self):
      
         self.journal.I(f"{self.name}.respPost: Default None POST response")
+        resp = None
         
-        resp = self.windows()['LoginWindow'].respPost()
+        self.journal.M(f"{self.name}.respPost: idx   > {self.idx}",    True)
+        #self.journal.M(f"{self.name}.respPost: POST  > {self.POST}",   True)
+
+        #----------------------------------------------------------------------
+        # Prejdem vsetky windows
+        #----------------------------------------------------------------------
+        for winId, winObj in self.windows().items():
+            
+            #------------------------------------------------------------------
+            # Kontrola prislusnosti response
+            #------------------------------------------------------------------
+            #if winObj.
+            resp = winObj.respPost()
         
-        
+        #----------------------------------------------------------------------
         self.journal.O()
         return resp
 
@@ -161,18 +173,6 @@ class Page(Structure):
         
         self.journal.O()
         return resp
-
-    #--------------------------------------------------------------------------
-    # Default and emergency redirects
-    #--------------------------------------------------------------------------
-    def toLogin(self):
-     
-        return redirect(url_for('pgLogin'))
-
-    #--------------------------------------------------------------------------
-    def toHomepage(self):
-     
-        return redirect(url_for('pgHomepage'))
 
 #==============================================================================
 # Test cases

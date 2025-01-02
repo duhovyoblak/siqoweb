@@ -122,8 +122,6 @@ class Structure:
         try   : toRet = request.form
         except: toRet = None
 
-        self.journal.M(f"{self.name}.getPost: {toRet}")
-
         #----------------------------------------------------------------------
         self.journal.O()
         return toRet
@@ -596,6 +594,9 @@ class Structure:
                         from w_forum import Forum
                         obj = Forum(self.journal, self.dms, self.userId, self.lang, item=item, POST=self.POST, idx=self.idx)
                         Window.wins[obj.name] = obj
+                        
+                        # Pre Forum nastavim Structure.idx podla Forum.idx
+                        self.idx = obj.idx
                      
                     else:
                         self.journal.M(f"{self.name}.getCont: Unknown object class {objClass} ERROR", True)

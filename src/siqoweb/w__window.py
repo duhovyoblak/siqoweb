@@ -60,8 +60,10 @@ class Window(Object):
         #----------------------------------------------------------------------
         super().__init__(journal, dms, userId, lang, classId=self.classId, height=self.height, width=self.width) # classId=OBJECT_ID v pagman db
 
-        (itemDef, self.name) = self.itemDrop(item, 'NAME')  
+        (itemDef, name) = self.itemDrop(item, 'NAME')  
         
+        self.name      = name                     # Unique window's name
+        self.winClass  = 'Window'                 # Window's class for response generator
         self.itemDef   = item                     # Item dict definition from DB
         self.POST      = POST                     # Data from POST request.form
         self.idx       = idx                      # Primarny kluc objektu
@@ -96,7 +98,7 @@ class Window(Object):
     # Form methods
     #--------------------------------------------------------------------------
     def loadForm(self):
-        "This method should return class specific content like forms, objects etc."
+        "This method cretes specific content like forms based on POST data"
         
         self.journal.I(f"{self.name}.loadForm:")
         
@@ -202,7 +204,7 @@ class Window(Object):
         toRet += self.divStop()
 
         #----------------------------------------------------------------------
-        # Form end
+        # Hidden fields @ Form end
         #----------------------------------------------------------------------
         toRet += str(self.form.hidden_tag())
         self.formStop()

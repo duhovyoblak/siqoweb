@@ -8,7 +8,7 @@ import re
 import traceback
 
 from   datetime              import date
-from   flask                 import url_for
+from   flask                 import url_for, redirect
 
 #==============================================================================
 # package's constants
@@ -55,6 +55,16 @@ class HTML:
 
         return toRet    
         
+    #--------------------------------------------------------------------------
+    def toLogin(self):
+     
+        return redirect(self.urlFor('pgLogin'))
+
+    #--------------------------------------------------------------------------
+    def toHomepage(self):
+     
+        return redirect(self.urlFor('pgHomepage'))
+
     #--------------------------------------------------------------------------
     def itemDrop(self, item, key, pop=False):
         

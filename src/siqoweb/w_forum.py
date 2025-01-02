@@ -32,7 +32,18 @@ class Forum(Window):
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
+    def __init__(self, journal, dms, userId, lang, item, POST, idx):
 
+        journal.I(f"Forum.__init__: From {item} for {userId}")
+
+        #----------------------------------------------------------------------
+        # Inicializacia Window
+        #----------------------------------------------------------------------
+        super().__init__(journal, dms, userId, lang, item, POST, idx)
+
+        self.winClass  = 'Forum'        # Window's class for response generator
+
+        self.journal.O()
 
     #==========================================================================
     # Response generators
@@ -76,7 +87,7 @@ class Forum(Window):
     # Form methods
     #--------------------------------------------------------------------------
     def loadForm(self):
-        "This method should return class specific content like forms, objects etc."
+        "This method cretes specific content like forms based on POST data"
         
         self.journal.I(f"{self.name}.loadForm:")
         
@@ -85,13 +96,13 @@ class Forum(Window):
         #----------------------------------------------------------------------
         if 'itemId' in self.POST.keys(): 
             
-            self.idx = self.POST['itemId']
+            self.idx = int(self.POST['itemId'])
             self.journal.M(f"{self.name}.loadForm: idx was changed to {self.idx}", True)
 
         #----------------------------------------------------------------------
         # Vytvorenie Forum formulara z post data
         #----------------------------------------------------------------------
-        try   : self.form = ForumForm(formdata=self.POST, formType="ForumForm", target=self.target, itemId=self.idx)
+        try   : self.form = ForumForm(formdata=self.POST, formType="ForumForm", target=self.target, itemId=str(self.idx))
         except: self.journal.M(f"{self.name}.loadForm: Ouside context, form was not created", True)
 
         self.journal.O()
@@ -160,10 +171,6 @@ class Forum(Window):
         #----------------------------------------------------------------------
         # Render the object formular
         #----------------------------------------------------------------------
-        method = 'POST'
-        action = self.urlFor(self.target)
-        toRet += self.formStart({"method":method, "action":action, "enctype":"multipart/form-data"})
-            
         toRet += str(self.form.itemId.label())
         toRet += str(self.form.itemId( value=self.dbData['ITEM_ID']))
         toRet += self.breakLine()
@@ -183,10 +190,6 @@ class Forum(Window):
         toRet += str(self.form.item.label())
         self.form.item.data = self.dbData['ITEM']
         toRet += str(self.form.item(class_="ObjectInputText", rows="20"))
-
-        toRet += str(self.form.hidden_tag())
-
-        self.formStop()
 
         #----------------------------------------------------------------------
         return toRet
@@ -263,7 +266,6 @@ class Forum(Window):
 
         #----------------------------------------------------------------------
         return toRet
-
     
 #==============================================================================
 print(f"Forum {_VER}")

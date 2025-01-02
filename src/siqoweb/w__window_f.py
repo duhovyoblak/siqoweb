@@ -22,7 +22,7 @@ _CWD      = os.getcwd()
 #------------------------------------------------------------------------------
 class WindowForm(FlaskForm):
     
-    formType = HiddenField(u'WindowForm', validators=[validators.Optional()])
+    formType = HiddenField('WindowForm',    validators=[validators.Optional()])
 
 #==============================================================================
 print(f"w_window_f {_VER}")

@@ -18,7 +18,7 @@ from   w_login_f                import LoginForm
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER           = '1.10'
+_VER           = '1.11'
 
 #==============================================================================
 # package's variables
@@ -34,6 +34,18 @@ class Login(Window):
     #==========================================================================
     # Constructor & utilities
     #--------------------------------------------------------------------------
+    def __init__(self, journal, dms, userId, lang, item, POST, idx):
+
+        journal.I(f"Login.__init__: From {item} for {userId}")
+
+        #----------------------------------------------------------------------
+        # Inicializacia Window
+        #----------------------------------------------------------------------
+        super().__init__(journal, dms, userId, lang, item, POST, idx)
+
+        self.winClass  = 'Login'        # Window's class for response generator
+
+        self.journal.O()
 
     #==========================================================================
     # Response generators
@@ -124,7 +136,7 @@ class Login(Window):
     # Form methods
     #--------------------------------------------------------------------------
     def loadForm(self):
-        "This method should return class specific content like forms, objects etc."
+        "This method cretes specific content like forms based on POST data"
         
         self.journal.I(f"{self.name}.loadForm: {self.POST}")
         

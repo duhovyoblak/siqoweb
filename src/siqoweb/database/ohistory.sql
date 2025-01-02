@@ -49,6 +49,7 @@ INSERT INTO PM_OBJ_RESOURCE VALUES( 'PagManHomepage', 'Stage_OHST', '8_Item',  '
 /* OHISTORY Page Forum object */
 /*----------------------------------------------------------------------------------------------*/
 INSERT INTO PM_OBJECT       VALUES( 'OHISTORY',  'HeadItems',   '__HEAD__', 'A', 'Oral history',               DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJECT       VALUES( 'OHISTORY',  'NavLinks',    '__NAVB__', 'A', 'Oral history',               DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJECT       VALUES( 'OHISTORY',  'OHIST_cont',  '__CONT__', 'A', 'Oral history',               DATE('now'), DATE('now'), 'SIQO');
 
 /*----------------------------------------------------------------------------------------------*/
