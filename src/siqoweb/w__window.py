@@ -74,15 +74,13 @@ class Window(Object):
         self.form      = None                     # Formular asociated with this window
        
         #----------------------------------------------------------------------
-        # Nacitanie formulara s POST udajmi
+        # Vytvorenie formulara s POST udajmi a nacitenie jeho obrazu z DB
         #----------------------------------------------------------------------
-        self.loadForm()
+        self.resolvePost()
+        self.formDataFromDb()
+        self.formFromPost()
 
         #----------------------------------------------------------------------
-        # Nacitanie formulara z Databazy
-        #----------------------------------------------------------------------
-        self.dbLoad()
-
         self.journal.O()
 
     #--------------------------------------------------------------------------
@@ -97,16 +95,24 @@ class Window(Object):
     #==========================================================================
     # Form methods
     #--------------------------------------------------------------------------
-    def loadForm(self):
-        "This method cretes specific content like forms based on POST data"
+    def resolvePost(self):
+        "This method resolves dynamic POST data"
         
-        self.journal.I(f"{self.name}.loadForm:")
+        self.journal.I(f"{self.name}.resolvePost:")
         
         #----------------------------------------------------------------------
         # Vyhodnotenie dynamickeho kontextu z POST data
         #----------------------------------------------------------------------
         "This section should be overrided"
 
+        self.journal.O()
+
+    #--------------------------------------------------------------------------
+    def formFromPost(self):
+        "This method cretes form based on POST data"
+        
+        self.journal.I(f"{self.name}.formFromPost:")
+        
         #----------------------------------------------------------------------
         # Vytvorenie window formulara z post data
         #----------------------------------------------------------------------
@@ -114,12 +120,9 @@ class Window(Object):
 
         self.journal.O()
 
-    #==========================================================================
-    # DB Persistency methods
     #--------------------------------------------------------------------------
-    def dbLoad(self):
-        """"This method should be overrided and load tuple (dbItem, dbData) 
-            from DMS/Database"""
+    def formDataFromDb(self):
+        "This method loads tuple (dbItem, dbData) from DMS/Database"
         
         self.dbData    = None                  # Data content from DMS/Formular
         self.dbItem    = None                  # Item content from DMS
@@ -132,16 +135,6 @@ class Window(Object):
         #----------------------------------------------------------------------
         return (self.dbData, self.dbItem)
     
-    #--------------------------------------------------------------------------
-    def dbSave(self):
-        """"This method should be overrided and save dbData 
-            into DMS/Database"""
-        
-        #----------------------------------------------------------------------
-        # Zapis objektu podla class/objId/idx
-        #----------------------------------------------------------------------
-        "This section should be overrided"
-       
     #==========================================================================
     # HTML methods
     #--------------------------------------------------------------------------

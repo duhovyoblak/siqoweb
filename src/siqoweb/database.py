@@ -509,6 +509,7 @@ class Database:
 
     #--------------------------------------------------------------------------
     def sSql(self, who, sql, param=''):
+#!!!!
         "Executes SQL command"
 
         self.journal.I(f"{who}@{self.dtbs}.sSql: '{sql}' with param '{param}'")

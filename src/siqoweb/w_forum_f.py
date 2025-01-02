@@ -11,7 +11,7 @@ from w__window_f        import WindowForm
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.03'
+_VER      = '1.04'
 _CWD      = os.getcwd()
 
 #==============================================================================
@@ -25,11 +25,12 @@ class ForumForm(WindowForm):
     
     itemId       = StringField  ('Item ID',             validators=[validators.ReadOnly() ])
 
+    parentId     = StringField  ('Parent ID',           validators=[validators.DataRequired()]) 
+    userId       = StringField  ('User ID',             validators=[validators.ReadOnly()]) 
     title        = StringField  ('Title',               validators=[validators.DataRequired()])
-    user_id      = StringField  ('User ID',             validators=[validators.DataRequired()]) 
     narrator     = StringField  ('Narrator',            validators=[validators.DataRequired()])
     
-    item         = TextAreaField('Text',                validators=[validators.DataRequired()])
+    text         = TextAreaField('Text',                validators=[validators.DataRequired()])
     
     sfUp         = SubmitField  ('Up'                       )
     sfAddChapter = SubmitField  ('Add new Chapter'          )

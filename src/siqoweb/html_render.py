@@ -87,48 +87,6 @@ class HTML:
     #==========================================================================
     # Rendering API for templates
     #--------------------------------------------------------------------------
-    def objectsRender(self, objDic):
-        "Returns HTML for json-encoded item"
-        
-        self.journal.I(f"{self.name}.objectsRender: Going to render an object dictionary...")
-        toRet = ''
-    
-        #----------------------------------------------------------------------
-        # Prejdem vsetky objekty
-        #----------------------------------------------------------------------
-        for objId, rec in objDic.items():
-            
-            #------------------------------------------------------------------
-            # Ak je rec typu dict, ide o vnoreny objekt
-            #------------------------------------------------------------------
-            if type(rec)==dict:
-              
-                #--------------------------------------------------------------
-                # Rekurzivne zavolam objectsRender
-                #--------------------------------------------------------------
-                toRet += self.objectsRender(rec)
-                
-            #------------------------------------------------------------------
-            # Ak je rec typu list, ide o zoznam itemov
-            #------------------------------------------------------------------
-            elif type(rec)==list:
-              
-                #--------------------------------------------------------------
-                # Zavolam itemListRender
-                #--------------------------------------------------------------
-                toRet += self.itemListRender(rec, objId)
-            
-            #------------------------------------------------------------------
-            # Inak je to neznamy udaj
-            #------------------------------------------------------------------
-            else:
-                self.journal.M(f"{self.name}.objectsRender: UNKNOWN object '{objDic}'", True)
-
-        #----------------------------------------------------------------------
-        self.journal.O()
-        return toRet
-        
-    #--------------------------------------------------------------------------
     def itemListRender(self, itemLst, objId='noObjId'):
         "Returns HTML for json-encoded item"
         
@@ -214,8 +172,8 @@ class HTML:
             elif typ == 'STAGESTART'    : toRet = self.stageStart(item  )
             elif typ == 'STAGESTOP'     : toRet = self.stageStop(item   )
     
-            elif typ == 'NEWLINE'       : toRet = self.newLine()
             elif typ == 'BREAK'         : toRet = self.breakLine()
+            elif typ == 'NEWLINE'       : toRet = self.newLine()
             elif typ == 'SPLIT'         : toRet = self.split()
         
             elif typ == 'FUNC'          : toRet = self.ftion(item)
@@ -239,14 +197,14 @@ class HTML:
     #==========================================================================
     # Private htm rendering methods
     #--------------------------------------------------------------------------
-    def newLine(self, ):
-    
-        return "\n"
-    
-    #--------------------------------------------------------------------------
     def breakLine(self, ):
     
         return '<br>'
+    
+    #--------------------------------------------------------------------------
+    def newLine(self, ):
+    
+        return "\n"
     
     #--------------------------------------------------------------------------
     # Headers

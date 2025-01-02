@@ -141,6 +141,32 @@ class DMS(Database):
     #==========================================================================
     # Praca s FORUM
     #--------------------------------------------------------------------------
+    def saveForumItem(self, who, forumId, data):
+    
+        self.journal.I(f"{self.name}.saveForumItem: {forumId}.{data['ITEM_ID']}")
+
+        #----------------------------------------------------------------------
+        # Zapis polozky do DB
+        #----------------------------------------------------------------------
+        sql = f"""update {Config.tabForum}
+                  set
+                     PARENT_ID = data['PARENT_ID']
+                    ,USER_ID   = data['USER_ID'  ]
+                    ,TITLE     = data['TITLE'    ]
+                    ,NARRATOR  = data['NARRATOR' ]
+                    ,D_CHANGED = datetime('now')
+                    ,ITEM      = data['ITEM'     ]
+                    ,WHO       = '{who}'
+                        
+                  where FORUM_ID = '{forumId}' and ITEM_ID = {data['ITEM_ID']}
+        """
+        toRet = self.sSql(who, sql)
+
+        #----------------------------------------------------------------------
+        self.journal.O()
+        return toRet
+
+    #--------------------------------------------------------------------------
     def loadForumItem(self, who, forumId, idx=0, target=''):
     
         self.journal.I(f"{self.name}.loadForumItem: {forumId}.{idx}")

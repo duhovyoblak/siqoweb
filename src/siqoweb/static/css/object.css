@@ -7,7 +7,6 @@
 /*----------------------------------------------------------------------------*/
 div.Object {
   position         :relative;
-  float            :left;
   width            :auto;
   margin           :3px;
 }

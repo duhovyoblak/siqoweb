@@ -135,45 +135,32 @@ class Login(Window):
     #==========================================================================
     # Form methods
     #--------------------------------------------------------------------------
-    def loadForm(self):
-        "This method cretes specific content like forms based on POST data"
+    def formFromPost(self):
+        "This method cretes form based on POST data"
         
-        self.journal.I(f"{self.name}.loadForm: {self.POST}")
+        self.journal.I(f"{self.name}.formFromPost: {self.POST}")
+        self.journal.M(f"{self.name}.formFromPost   : formType='LoginForm'", True)
         
-        #----------------------------------------------------------------------
-        # Vyhodnotenie dynamickeho kontextu z POST data
-        #----------------------------------------------------------------------
-
         #----------------------------------------------------------------------
         # Vytvorenie Login formulara z post data
         #----------------------------------------------------------------------
         try   : self.form = LoginForm(formdata=self.POST, formType="LoginForm")
-        except: self.journal.M(f"{self.name}.loadForm: Ouside context, form was not created", True)
+        except: self.journal.M(f"{self.name}.formFromPost   : Ouside context, form was not created", True)
 
         #----------------------------------------------------------------------
         self.journal.O()
 
-    #==========================================================================
-    # DB Persistency methods
     #--------------------------------------------------------------------------
-    def dbLoad(self):
-        """"This method should be overrided and load tuple (dbItem, dbData) 
-            from DMS/Database"""
+    def formDataFromDb(self):
+        "This method loads tuple (dbItem, dbData) from DMS/Database"
         
+        self.journal.M(f"{self.name}.formDataFromDb : No data in DB for login", True)
+
         self.dbData    = []                  # Data content from DMS/Formular
         self.dbItem    = []                  # Item content from DMS
 
         #----------------------------------------------------------------------
         return (self.dbData, self.dbItem)
-    
-    #--------------------------------------------------------------------------
-    def dbSave(self):
-        """"This method should be overrided and save dbData 
-            into DMS/Database"""
-        
-       
-        #----------------------------------------------------------------------
-        print('dbData > ', self.dbData)
     
     #==========================================================================
     # HTML methods

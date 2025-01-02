@@ -55,6 +55,7 @@ class Forum(Window):
         #----------------------------------------------------------------------
         # Vyhodnotim formular
         #----------------------------------------------------------------------
+        #if self.form.validate_on_submit():
         if self.form.validate():
             
             #------------------------------------------------------------------
@@ -67,11 +68,35 @@ class Forum(Window):
                 return redirect(f"{self.urlFor(self.target)}/{self.idx}")
             
             #------------------------------------------------------------------
+            # Apply
+            #------------------------------------------------------------------
+            if self.form.sfApply.data:
+                
+                self.journal.M(f"{self.name}.respPost: Apply changes")
+                
+                #--------------------------------------------------------------
+                # Ziskam udaje z formulara
+                #--------------------------------------------------------------
+                self.dbData['PARENT_ID'] = self.form.parentId.data
+                self.dbData['USER_ID'  ] = self.form.userId.data
+                self.dbData['TITLE'    ] = self.form.title.data
+                self.dbData['NARRATOR' ] = self.form.narrator.data
+                self.dbData['ITEM'     ] = self.form.text.data
+
+                #--------------------------------------------------------------
+                # Zapisem zmeny do DB
+                #--------------------------------------------------------------
+                self.dms.saveForumItem(who=self.userId, forumId=self.objId, data=self.dbData)
+                
+                self.journal.O()
+                return redirect(f"{self.urlFor(self.target)}/{self.idx}")
+            
+            #------------------------------------------------------------------
             # Unknown user's action
             #------------------------------------------------------------------
             else:
                 self.journal.O()
-                return self.toHomepage()
+                return redirect(f"{self.urlFor(self.target)}/{self.idx}")
  
         #----------------------------------------------------------------------
         # Nie je POST
@@ -86,40 +111,47 @@ class Forum(Window):
     #==========================================================================
     # Form methods
     #--------------------------------------------------------------------------
-    def loadForm(self):
-        "This method cretes specific content like forms based on POST data"
+    def resolvePost(self):
+        "This method resolves dynamic POST data"
         
-        self.journal.I(f"{self.name}.loadForm:")
+        self.journal.I(f"{self.name}.resolvePost:")
         
         #----------------------------------------------------------------------
         # Vyhodnotenie dynamickeho kontextu z POST data
         #----------------------------------------------------------------------
         if 'itemId' in self.POST.keys(): 
             
+            lastIdx  = self.idx
             self.idx = int(self.POST['itemId'])
-            self.journal.M(f"{self.name}.loadForm: idx was changed to {self.idx}", True)
-
-        #----------------------------------------------------------------------
-        # Vytvorenie Forum formulara z post data
-        #----------------------------------------------------------------------
-        try   : self.form = ForumForm(formdata=self.POST, formType="ForumForm", target=self.target, itemId=str(self.idx))
-        except: self.journal.M(f"{self.name}.loadForm: Ouside context, form was not created", True)
+            self.journal.M(f"{self.name}.resolvePost    : idx was changed from {lastIdx} to {self.idx}", True)
 
         self.journal.O()
 
-    #==========================================================================
-    # DB Persistency methods
     #--------------------------------------------------------------------------
-    def dbLoad(self):
-        """"This method should be overrided and load tuple (dbItem, dbData) 
-            from DMS/Database"""
+    def formFromPost(self):
+        "This method cretes form based on POST data"
         
-        self.journal.I(f"{self.name}.dbLoad:")
+        self.journal.I(f"{self.name}.formFromPost:")
+        self.journal.M(f"{self.name}.formFromPost   : formType='ForumForm', userId={self.dbData['USER_ID']}, itemId={self.idx}", True)
+        
+        #----------------------------------------------------------------------
+        # Vytvorenie Forum formulara z post data
+        #----------------------------------------------------------------------
+        try   : self.form = ForumForm(formdata=self.POST, formType="ForumForm", userId=self.dbData['USER_ID'], itemId=str(self.idx))
+        except: self.journal.M(f"{self.name}.formFromPost   : Ouside context, form was not created", True)
+
+        self.journal.O()
+
+    #--------------------------------------------------------------------------
+    def formDataFromDb(self):
+        "This method loads tuple (dbItem, dbData) from DMS/Database"
+        
+        self.journal.I(f"{self.name}.formDataFromDb:")
 
         self.dbData    = None                  # Data content from DMS/Formular
         self.dbItem    = None                  # Item content from DMS
     
-        self.journal.M(f"{self.name}.dbLoad: forumId={self.objId}, idx={self.idx}", True)
+        self.journal.M(f"{self.name}.formDataFromDb : forumId={self.objId}, idx={self.idx}", True)
 
         #----------------------------------------------------------------------
         # Nacitanie objektu podla class/objId/idx
@@ -127,20 +159,11 @@ class Forum(Window):
         self.dbData, self.dbItem = self.dms.loadForumItem(self.name, forumId=self.objId, idx=self.idx, target=self.target)
       
         if self.dbItem is None:
-            self.journal.M(f"{self.name}.dbLoad: No dbItem for class={self.classId}, object={self.objId} with idx={self.idx}", True)
+            self.journal.M(f"{self.name}.formDataFromDb : No dbItem for class={self.classId}, object={self.objId} with idx={self.idx}", True)
 
         #----------------------------------------------------------------------
         self.journal.O()
         return (self.dbData, self.dbItem)
-    
-    #--------------------------------------------------------------------------
-    def dbSave(self):
-        """"This method should be overrided and save dbData 
-            into DMS/Database"""
-        
-       
-        #----------------------------------------------------------------------
-        print('dbData > ', self.dbData)
     
     #==========================================================================
     # HTML methods
@@ -179,17 +202,21 @@ class Forum(Window):
         toRet += str(self.form.title(    class_="ObjectInputString", value=self.dbData['TITLE']))
         toRet += self.breakLine()
 
-        toRet += str(self.form.user_id.label())
-        toRet += str(self.form.user_id(  class_="ObjectInputString", value=self.dbData['USER_ID'], size=35))
+        toRet += str(self.form.parentId.label())
+        toRet += str(self.form.parentId(  class_="ObjectInputString", value=self.dbData['PARENT_ID'], size=35))
+        toRet += self.breakLine()
+
+        toRet += str(self.form.userId.label())
+        toRet += str(self.form.userId(  class_="ObjectInputString", value=self.dbData['USER_ID'], size=35))
         toRet += self.breakLine()
 
         toRet += str(self.form.narrator.label())
         toRet += str(self.form.narrator( class_="ObjectInputString", value=self.dbData['NARRATOR'], size=35))
         toRet += self.breakLine()
           
-        toRet += str(self.form.item.label())
-        self.form.item.data = self.dbData['ITEM']
-        toRet += str(self.form.item(class_="ObjectInputText", rows="20"))
+        toRet += str(self.form.text.label())
+        self.form.text.data = self.dbData['ITEM']
+        toRet += str(self.form.text(class_="ObjectInputText", rows="20"))
 
         #----------------------------------------------------------------------
         return toRet
@@ -255,14 +282,14 @@ class Forum(Window):
 
         toRet = ''
 
-        toRet += str(self.form.sfUp        (class_="ObjectControlBtn"))
-        toRet += str(self.form.sfAddChapter(class_="ObjectControlBtn"))
-        toRet += str(self.form.afAddChild  (class_="ObjectControlBtn"))
+#        toRet += str(self.form.sfUp        (class_="ObjectControlBtn", disabled="disabled" ))
+#        toRet += str(self.form.sfAddChapter(class_="ObjectControlBtn"))
+#        toRet += str(self.form.afAddChild  (class_="ObjectControlBtn"))
         toRet += str(self.form.sfCancel    (class_="ObjectControlBtn"))
         toRet += str(self.form.sfApply     (class_="ObjectControlBtn"))
-        toRet += str(self.form.sfPublish   (class_="ObjectControlBtn"))
-        toRet += str(self.form.sfDelete    (class_="ObjectControlBtn"))
-        toRet += str(self.form.sfMove      (class_="ObjectControlBtn"))
+#        toRet += str(self.form.sfPublish   (class_="ObjectControlBtn"))
+#        toRet += str(self.form.sfDelete    (class_="ObjectControlBtn"))
+#        toRet += str(self.form.sfMove      (class_="ObjectControlBtn"))
 
         #----------------------------------------------------------------------
         return toRet
