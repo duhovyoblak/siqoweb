@@ -45,13 +45,11 @@ if __name__ =='__main__':
     journal.M('Main start')
     
     if _IS_TEST:
-        app.run(host='localhost', port=5000, debug=True, use_reloader=False)
+        app.run(host='localhost', port=80, debug=True, use_reloader=False)
     
     journal.M('Main end')
     
 #==============================================================================
-print(f"wsiqo.__init__ {_VER} at {_CWD}")
-
-#==============================================================================
+print(f"siqoweb.__init__ {_VER} at {_CWD}")
 #                              END OF FILE
 #------------------------------------------------------------------------------
