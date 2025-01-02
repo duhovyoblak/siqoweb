@@ -13,7 +13,7 @@ from   config          import Config
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
-_VER      = '1.02'
+_VER      = '1.03'
 
 if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
 else                        : _IS_TEST = False
@@ -197,7 +197,7 @@ class User(UserMixin, Database):
     #--------------------------------------------------------------------------
     def load(self, user_id):
         
-        self.journal.I(f"{self.user_id}.load: user_id = '{user_id}'")
+        self.journal.I(f"User.load: user_id = '{user_id}'")
         
         userData = self.readTable(user_id, table=Config.tabUser, where=f" user_id = '{user_id}'", header='detail')
         
@@ -207,7 +207,7 @@ class User(UserMixin, Database):
         if type(userData)==int or len(userData) != 1:
             
             self.reset()
-            self.journal.M(f"{self.user_id}.load: User '{user_id}' does not exist")
+            self.journal.M(f"User.load: User '{user_id}' does not exist", True)
             self.journal.O()
             return None
         
@@ -228,6 +228,7 @@ class User(UserMixin, Database):
         
         self.loaded = True
         
+        self.journal.M(f"{self.user_id}.load: User loaded", True)
         self.journal.O()
         return self
 

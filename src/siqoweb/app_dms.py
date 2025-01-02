@@ -150,17 +150,20 @@ class DMS(Database):
         #----------------------------------------------------------------------
         sql = f"""update {Config.tabForum}
                   set
-                     PARENT_ID = data['PARENT_ID']
-                    ,USER_ID   = data['USER_ID'  ]
-                    ,TITLE     = data['TITLE'    ]
-                    ,NARRATOR  = data['NARRATOR' ]
-                    ,D_CHANGED = datetime('now')
-                    ,ITEM      = data['ITEM'     ]
+                     PARENT_ID = '{data['PARENT_ID']}'
+                    ,USER_ID   = '{data['USER_ID'  ]}'
+                    ,TITLE     = '{data['TITLE'    ]}'
+                    ,NARRATOR  = '{data['NARRATOR' ]}'
+                    ,D_CHANGED =  datetime('now')
+                    ,ITEM      = '{data['ITEM'     ]}'
                     ,WHO       = '{who}'
                         
                   where FORUM_ID = '{forumId}' and ITEM_ID = {data['ITEM_ID']}
         """
         toRet = self.sSql(who, sql)
+        
+        if toRet >= 0: self.journal.M(f"{self.name}.saveForumItem: Saved {toRet} row(s)", True)
+        else         : self.journal.M(f"{self.name}.saveForumItem: ERROR while saving item", True)
 
         #----------------------------------------------------------------------
         self.journal.O()

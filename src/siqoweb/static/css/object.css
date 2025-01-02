@@ -8,7 +8,7 @@
 div.Object {
   position         :relative;
   width            :auto;
-  margin           :3px;
+  margin           :auto;
 }
 /*----------------------------------------------------------------------------*/
 div.ObjectHeaderSpace {
