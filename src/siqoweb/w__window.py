@@ -8,8 +8,8 @@ import traceback
 from   datetime                 import date
 from   flask                    import request, session, abort, redirect
 
-from   o__object                import Object
-from   w__window_f              import WindowForm
+from   siqoweb.o__object        import Object
+from   siqoweb.w__window_f      import WindowForm
 
 #==============================================================================
 # package's constants

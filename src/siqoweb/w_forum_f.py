@@ -1,10 +1,10 @@
 #==============================================================================
 #  SIQO Homepage: Form for object Forum
 #------------------------------------------------------------------------------
-from wtforms            import HiddenField, StringField, TextAreaField, IntegerField, SubmitField
-from wtforms            import validators
+from wtforms                    import HiddenField, StringField, TextAreaField, IntegerField, SubmitField
+from wtforms                    import validators
 
-from w__window_f        import WindowForm
+from siqoweb.w__window_f        import WindowForm
 
 #==============================================================================
 # package's constants

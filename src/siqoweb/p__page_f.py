@@ -1,9 +1,9 @@
 #==============================================================================
 #  SIQO Homepage: Basic root Formulars
 #------------------------------------------------------------------------------
-from flask_wtf          import FlaskForm
-from wtforms            import HiddenField, StringField, TextAreaField, PasswordField, BooleanField, SubmitField
-from wtforms            import validators
+from flask_wtf                  import FlaskForm
+from wtforms                    import HiddenField, StringField, TextAreaField, PasswordField, BooleanField, SubmitField
+from wtforms                    import validators
 
 #==============================================================================
 # package's constants

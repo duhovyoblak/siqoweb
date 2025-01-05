@@ -1,10 +1,10 @@
 #==============================================================================
 #  SIQO Homepage: Form Login
 #------------------------------------------------------------------------------
-from wtforms            import StringField, PasswordField, BooleanField, SubmitField
-from wtforms            import validators
+from wtforms                    import StringField, PasswordField, BooleanField, SubmitField
+from wtforms                    import validators
 
-from w__window_f        import WindowForm
+from siqoweb.w__window_f        import WindowForm
 
 #==============================================================================
 # package's constants

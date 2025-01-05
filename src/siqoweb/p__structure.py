@@ -6,8 +6,8 @@ from   flask                    import request, session, abort, redirect
 from   flask_login              import login_user, logout_user, current_user
 from   markupsafe               import escape
 
-from   o__object                import Object
-from   w__window                import Window
+from   siqoweb.o__object        import Object
+from   siqoweb.w__window        import Window
 
 #==============================================================================
 # package's constants
@@ -367,7 +367,7 @@ class Structure:
         #----------------------------------------------------------------------
         if (len(objs.conts)!=1) or (type(objs.conts[0])!=Object):
             
-            self.journal.M(f"{self.name}.getHead: Head object is missing or duplicated", True)
+            self.journal.M(f"{self.name}.getHead: Head object is missing or duplicated")
             self.journal.O()
             return None
 
@@ -390,7 +390,7 @@ class Structure:
         # Skontrolujem, ci existuje prave jeden NavBar objekt
         #----------------------------------------------------------------------
         if (len(objs.conts)!=1) or (type(objs.conts[0])!=Object):
-            self.journal.M(f"{self.name}.getNavb: NavBar object is missing or duplicated", True)
+            self.journal.M(f"{self.name}.getNavb: NavBar object is missing or duplicated")
             self.journal.O()
             return None
         
@@ -434,7 +434,7 @@ class Structure:
         #----------------------------------------------------------------------
         if (len(objs.conts)==0) or (type(objs.conts[0])!=Object):
             
-            self.journal.M(f"{self.name}.getStag: Stage object is missing", True)
+            self.journal.M(f"{self.name}.getStag: Stage object is missing")
             self.journal.O()
             return (objSel, objStg)
 
@@ -548,7 +548,7 @@ class Structure:
         #----------------------------------------------------------------------
         if (len(objs.conts)!=1) or (type(objs.conts[0])!=Object):
             
-            self.journal.M(f"{self.name}.getCont: Content object is missing or duplicated", True)
+            self.journal.M(f"{self.name}.getCont: Content object is missing or duplicated")
             self.journal.O()
             return None
 
@@ -581,13 +581,13 @@ class Structure:
                     #----------------------------------------------------------
                     if   objClass=='LOGIN':
                         
-                        from w_login import Login
+                        from siqoweb.w_login import Login
                         obj = Login(self.journal, self.dms, self.userId, self.lang, item=item, POST=self.POST, idx=self.idx)
                         Window.wins[obj.name] = obj
                         
                     elif objClass=='FORUM':
                     
-                        from w_forum import Forum
+                        from siqoweb.w_forum import Forum
                         obj = Forum(self.journal, self.dms, self.userId, self.lang, item=item, POST=self.POST, idx=self.idx)
                         Window.wins[obj.name] = obj
                         

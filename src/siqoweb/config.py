@@ -2,6 +2,7 @@
 #  SIQO Homepage: Configuration
 #------------------------------------------------------------------------------
 import os
+import siqoweb
 
 #==============================================================================
 # package's constants
@@ -17,9 +18,9 @@ _VER      = '1.02'
 #------------------------------------------------------------------------------
 class Config:
     
-    cwd      = os.getcwd()
+    packPath    = os.path.dirname(siqoweb.__file__)
 
-    dtbsPath    = f"{cwd}/database/"
+    dtbsPath    = f"{packPath}/database/"
     dtbsName    = "pagman"
     
     tabParam    = "PM_PARAM"
@@ -52,17 +53,18 @@ class Config:
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    print(Config.cwd       )
-    print(Config.dmsPath   )
-    print(Config.dtbsPath  )
-    print(Config.dtbsName  )
-    print(Config.tabUser   )
 
 
     print(Config.SECRET_KEY)
     
 #==============================================================================
 print(f"config {_VER}")
+
+print('Config packPath :', Config.packPath  )
+print('Config dtbsPath :', Config.dtbsPath  )
+print('Config dtbsName :', Config.dtbsName  )
+print('Config tabUser  :', Config.tabUser   )
+print('Config dmsFolder:', Config.dmsFolder )
 
 #==============================================================================
 #                              END OF FILE

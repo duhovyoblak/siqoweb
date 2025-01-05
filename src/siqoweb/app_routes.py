@@ -7,9 +7,9 @@ from   flask                    import get_flashed_messages, flash
 from   flask_login              import LoginManager, login_required, login_user, current_user
 from   markupsafe               import escape
 
-from   config                   import Config
-from   app_user                 import User
-import app_views                as app_views
+from   siqoweb.config           import Config
+from   siqoweb.app_user         import User
+import siqoweb.app_views        as app_views
 
 #==============================================================================
 # package's constants
@@ -257,11 +257,10 @@ def pgOhistory(idx=0):
 # Test cases
 #------------------------------------------------------------------------------
 with app.test_request_context():
-    print(url_for('index'))
-    print(url_for('pgUser', username='John Doe'))
-    print(url_for('static', filename='css/base_page.css'))
-    print(url_for('static', filename='dms/SF0000056.jpg'))
-    print(url_for('pgFaq'))
+    print('package :', Config.packPath      )
+    print('database:', Config.dtbsPath      )
+    print('index   :', url_for('index')     )
+    print('homepage:', url_for('pgHomepage'))
     
 #==============================================================================
 print(f"app_routes {_VER}")

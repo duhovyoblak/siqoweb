@@ -8,10 +8,10 @@ import os
 #------------------------------------------------------------------------------
 
 #==============================================================================
-from   siqolib.journal     import SiqoJournal
+from   siqolib.journal          import SiqoJournal
 
-import app_routes          as app_routes
-import app_views           as app_views
+import siqoweb.app_routes       as app_routes
+import siqoweb.app_views        as app_views
 
 #==============================================================================
 # package's constants & private vars
@@ -19,10 +19,12 @@ import app_views           as app_views
 _VER      = '1.03'
 _CWD      = os.getcwd()
 
+print()
+
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
-journal = SiqoJournal('siqoweb init', debug=2)
+journal = SiqoJournal('siqoweb', debug=7)
 
 app_routes.journal = journal
 app_views. journal = journal
@@ -37,11 +39,11 @@ app, login  = app_routes.getApp()
 #------------------------------------------------------------------------------
 if __name__ =='__main__':
     
-    journal.M('Main start')
+    journal.M('Init start')
     
     app.run(host='localhost', port=8082, debug=True, use_reloader=False)
     
-    journal.M('Main end')
+    journal.M('Init end')
     
 #==============================================================================
 print(f"siqoweb.__init__ {_VER} at {_CWD}")

@@ -1,10 +1,10 @@
 #==============================================================================
 #  SIQO Homepage: DMS API
 #------------------------------------------------------------------------------
-from   flask                 import url_for
+from   flask                    import url_for
 
-from   config                import Config
-from   database              import Database
+from   siqoweb.config           import Config
+from   siqoweb.database         import Database
 
 #==============================================================================
 # package's constants

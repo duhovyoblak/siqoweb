@@ -9,14 +9,15 @@
 cmd:>pip install -r requirements.txt
 
 #------------------------------------------------------------------------------
-# Add local siqolib package into venv as editable source
+# Install local siqolib and siqoweb package 
 #------------------------------------------------------------------------------
-cmd:>pip install -e D:\GitHub\siqolib
+cmd:>pip install D:\GitHub\siqolib
+cmd:>pip install D:\GitHub\siqoweb
 
+#==============================================================================
+# Start siqoweb server in waitress
 #------------------------------------------------------------------------------
-# Add standard packages into venv
-#------------------------------------------------------------------------------
-cmd:>pip install <package_name>
+waitress-serve --host 127.0.0.1 --port 8082  --threads 100 __init__:app
 
 #==============================================================================
 #                              END OF FILE

@@ -5,7 +5,7 @@ from   flask              import make_response
 from   flask              import request, session, abort, redirect
 from   markupsafe         import escape
 
-from   p__page            import Page
+from   siqoweb.p__page    import Page
 
 #==============================================================================
 # package's constants

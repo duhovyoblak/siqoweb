@@ -9,8 +9,8 @@ import traceback
 from   datetime                 import date
 from   flask                    import request, redirect
 
-from   w__window                import Window
-from   w_forum_f                import ForumForm
+from   siqoweb.w__window        import Window
+from   siqoweb.w_forum_f        import ForumForm
 
 #==============================================================================
 # package's constants

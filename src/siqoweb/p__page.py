@@ -1,19 +1,16 @@
 #==============================================================================
 #  SIQO web library: Function for SIQO Flask application
 #------------------------------------------------------------------------------
-from   flask                 import url_for, get_flashed_messages, flash, make_response
-from   flask                 import request, session, abort, redirect
-from   flask_login           import login_user, logout_user, current_user
+from   flask                    import url_for, get_flashed_messages, flash, make_response
+from   flask                    import request, session, abort, redirect
+from   flask_login              import login_user, logout_user, current_user
 
-from   markupsafe            import escape
-from   wtforms.validators    import ValidationError
+from   markupsafe               import escape
+from   wtforms.validators       import ValidationError
 
-#import jinja2                as j2
-#from   jinja2                import Environment, FileSystemLoader, PackageLoader, select_autoescape
-
-from   config                import Config
-from   app_dms               import DMS
-from   p__structure          import Structure
+from   siqoweb.config           import Config
+from   siqoweb.app_dms          import DMS
+from   siqoweb.p__structure     import Structure
 
 #==============================================================================
 # package's constants

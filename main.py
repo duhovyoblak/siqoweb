@@ -1,22 +1,18 @@
 #==============================================================================
 #  SIQO Homepage: main file
 #------------------------------------------------------------------------------
-import os
-
-os.environ['siqo-test-mode'] = '1'
-
-from siqolib.journal    import SiqoJournal
-from siqo_api        import app
+from waitress                   import serve
+from siqoweb                    import journal, app
 
 #==============================================================================
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = 1.00
-_IS_TEST  = True if os.environ['siqo-test-mode']=='1' else False
 
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
+
 
 #==============================================================================
 # package's tools
@@ -27,11 +23,13 @@ _IS_TEST  = True if os.environ['siqo-test-mode']=='1' else False
 # Functions
 #------------------------------------------------------------------------------
 if __name__ =='__main__':
+    
+    journal.setDepth(2)
 
-    journal = SiqoJournal('SIQO Homepage', debug=5)
     journal.I('Main start')
+    
+    serve(app, host='127.0.0.1', port=8082, threads=100)
 
-    app.run(host='localhost', port=5000, debug=True, use_reloader=False)
     
     journal.O('Main end')
     

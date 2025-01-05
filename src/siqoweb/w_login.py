@@ -10,9 +10,9 @@ from   datetime                 import date
 from   flask                    import request, session, abort, redirect, flash
 from   flask_login              import login_user, logout_user, current_user
 
-from   app_user                 import User, _ANONYM
-from   w__window                import Window
-from   w_login_f                import LoginForm
+from   siqoweb.app_user         import User, _ANONYM
+from   siqoweb.w__window        import Window
+from   siqoweb.w_login_f        import LoginForm
 
 #==============================================================================
 # package's constants

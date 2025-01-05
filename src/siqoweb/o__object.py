@@ -1,11 +1,11 @@
 #==============================================================================
 #  SIQO web library: def for SIQO Flask application
 #------------------------------------------------------------------------------
-from   werkzeug.security     import generate_password_hash, check_password_hash
+from   werkzeug.security        import generate_password_hash, check_password_hash
 
-import siqolib.general       as gen
-from   config                import Config
-from   html_render           import HTML
+import siqolib.general          as gen
+from   siqoweb.config           import Config
+from   siqoweb.html_render      import HTML
 
 #==============================================================================
 # package's constants
