@@ -3,7 +3,6 @@
 #------------------------------------------------------------------------------
 from   flask                 import url_for
 
-import siqolib.general       as gen
 from   config                import Config
 from   database              import Database
 

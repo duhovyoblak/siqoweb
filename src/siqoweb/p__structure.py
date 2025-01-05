@@ -6,8 +6,6 @@ from   flask                    import request, session, abort, redirect
 from   flask_login              import login_user, logout_user, current_user
 from   markupsafe               import escape
 
-import siqolib.general          as gen
-
 from   o__object                import Object
 from   w__window                import Window
 

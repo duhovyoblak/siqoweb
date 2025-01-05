@@ -1,7 +1,6 @@
 #==============================================================================
 #  SIQO web library: Function for SIQO Flask application
 #------------------------------------------------------------------------------
-import flask
 from   flask                 import url_for, get_flashed_messages, flash, make_response
 from   flask                 import request, session, abort, redirect
 from   flask_login           import login_user, logout_user, current_user
@@ -12,14 +11,9 @@ from   wtforms.validators    import ValidationError
 #import jinja2                as j2
 #from   jinja2                import Environment, FileSystemLoader, PackageLoader, select_autoescape
 
-import siqolib.general       as gen
 from   config                import Config
-from   app_user              import User
 from   app_dms               import DMS
 from   p__structure          import Structure
-
-from   p__page_f             import PageForm
-
 
 #==============================================================================
 # package's constants

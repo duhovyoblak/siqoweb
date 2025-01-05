@@ -6,8 +6,6 @@ from   flask              import request, session, abort, redirect
 from   markupsafe         import escape
 
 from   p__page            import Page
-from   p_login            import PageLogin
-from   p_forum            import PageForum
 
 #==============================================================================
 # package's constants
@@ -37,21 +35,6 @@ def pgStaged(title, classId, height=670, idx=0):
     journal.O()
     return resp
 
-
-
-
-
-#------------------------------------------------------------------------------
-def pgLogin():
-    
-    journal.I('app_views.pgLogin()')
-
-    page = PageLogin(journal, title='Login', classId='PagManLogin', height=670)
-    resp = page.resp()
-
-    journal.O()
-    return resp
-
 #------------------------------------------------------------------------------
 def pgEmpty(title, classId, height=670):
     
@@ -64,15 +47,6 @@ def pgEmpty(title, classId, height=670):
     return resp
 
 #------------------------------------------------------------------------------
-def pgForum(title, classId, target, idx=0, height=670):
-    
-    journal.I('app_views.pgForum()')
-
-    page = PageForum(journal, title=title, classId=classId, target=target, idx=idx, height=height)
-    resp = page.resp()
-
-    journal.O()
-    return resp
 
 #==============================================================================
 # Test cases

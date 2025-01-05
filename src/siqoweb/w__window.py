@@ -3,7 +3,6 @@
 # Class Window for SIQO Flask application
 #
 #------------------------------------------------------------------------------
-import re
 import traceback
 
 from   datetime                 import date

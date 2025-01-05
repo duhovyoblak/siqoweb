@@ -1,9 +1,6 @@
 #==============================================================================
 #  SIQO Homepage: app_routes methods
 #------------------------------------------------------------------------------
-import unicodedata
-
-import flask
 from   flask                    import Flask, url_for, make_response
 from   flask                    import request, session, abort, redirect
 from   flask                    import get_flashed_messages, flash
@@ -12,8 +9,6 @@ from   markupsafe               import escape
 
 from   config                   import Config
 from   app_user                 import User
-from   p__page                  import Page
-
 import app_views                as app_views
 
 #==============================================================================
@@ -211,7 +206,7 @@ def pgContact():
     return app_views.pgStaged(title='SIQO Contacts', classId='PagManContact')
 
 #------------------------------------------------------------------------------
-@app.route('/faq',           methods=['GET'])
+@app.route('/faq',           methods=['GET', 'POST'])
 @app.route('/faq/<int:idx>', methods=['GET', 'POST'])
 @login_required
 def pgFaq(idx=0):

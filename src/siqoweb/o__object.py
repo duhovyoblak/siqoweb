@@ -2,7 +2,6 @@
 #  SIQO web library: def for SIQO Flask application
 #------------------------------------------------------------------------------
 from   werkzeug.security     import generate_password_hash, check_password_hash
-from   flask_login           import UserMixin
 
 import siqolib.general       as gen
 from   config                import Config
