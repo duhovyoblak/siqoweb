@@ -1,7 +1,6 @@
 #==============================================================================
 #  SIQO web library: Function for SIQO Flask application
 #------------------------------------------------------------------------------
-import os
 import re
 from   datetime              import datetime, timedelta
 
@@ -12,7 +11,6 @@ import siqolib.general       as gen
 # package's constants
 #------------------------------------------------------------------------------
 _VER       = '1.05'
-_CWD       = os.getcwd()
 
 _PING_LAG  =    2    # Number of hours after which ping is recomended
 _TIMEOUT   =   10    # Default timeout in seconds for SQL statement

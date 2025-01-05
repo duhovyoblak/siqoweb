@@ -1,7 +1,6 @@
 #==============================================================================
 #  SIQO Homepage: app_routes methods
 #------------------------------------------------------------------------------
-import os
 import unicodedata
 
 import flask
@@ -23,8 +22,6 @@ import app_views                as app_views
 _VER        = '1.08'
 _LOGIN_VIEW = 'pgLogin'
 
-if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
-else                        : _IS_TEST = False
 
 #==============================================================================
 # package's variables
@@ -114,7 +111,7 @@ def shutdown():
     
     journal.I("shutdown():")
 
-    if _IS_TEST: 
+    if 1==1: 
         shutdownServer()
         
     else: 

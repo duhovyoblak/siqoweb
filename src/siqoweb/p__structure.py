@@ -1,8 +1,6 @@
 #==============================================================================
 #  SIQO web library: Function for SIQO Flask application
 #------------------------------------------------------------------------------
-import os
-
 from   flask                    import url_for, get_flashed_messages, flash, make_response
 from   flask                    import request, session, abort, redirect
 from   flask_login              import login_user, logout_user, current_user

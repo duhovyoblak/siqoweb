@@ -1,8 +1,6 @@
 #==============================================================================
 #  SIQO web library: Function for SIQO Flask application
 #------------------------------------------------------------------------------
-import os
-
 import flask
 from   flask                 import url_for, get_flashed_messages, flash, make_response
 from   flask                 import request, session, abort, redirect
@@ -92,16 +90,16 @@ class Page(Structure):
         #----------------------------------------------------------------------
         # Vypisem si request data
         #----------------------------------------------------------------------
-#        self.journal.M(f"{self.name}.resp: user_agent       {request.user_agent}", True)
-        self.journal.M(f"{self.name}.resp: remote_addr      {request.remote_addr}", True)
-        self.journal.M(f"{self.name}.resp: is_secure        {request.is_secure}", True)
-#        self.journal.M(f"{self.name}.resp: form             {request.form}", True)
-        self.journal.M(f"{self.name}.resp: data             {request.data}", True)
-        self.journal.M(f"{self.name}.resp: args             {request.args}", True)
-        self.journal.M(f"{self.name}.resp: access_route     {request.access_route}", True)
+#        self.journal.M(f"{self.name}.resp: user_agent       {request.user_agent}")
+        self.journal.M(f"{self.name}.resp: remote_addr      {request.remote_addr}" )
+        self.journal.M(f"{self.name}.resp: is_secure        {request.is_secure}"   )
+#        self.journal.M(f"{self.name}.resp: form             {request.form}")
+        self.journal.M(f"{self.name}.resp: data             {request.data}"        )
+        self.journal.M(f"{self.name}.resp: args             {request.args}"        )
+        self.journal.M(f"{self.name}.resp: access_route     {request.access_route}")
 
-        self.journal.M(f"{self.name}.resp: headers.Referer  {request.headers.get('Referer')}", True)
-#        self.journal.M(f"{self.name}.resp: headers.Cookie   {request.headers.get('Cookie' )}", True)
+        self.journal.M(f"{self.name}.resp: headers.Referer  {request.headers.get('Referer')}")
+#        self.journal.M(f"{self.name}.resp: headers.Cookie   {request.headers.get('Cookie' )}")
 
 
 

@@ -1,8 +1,6 @@
 #==============================================================================
 #  SIQO web library: Function for SIQO Flask application
 #------------------------------------------------------------------------------
-import os
-
 from   werkzeug.security        import generate_password_hash, check_password_hash
 from   flask_login              import UserMixin
 
@@ -14,9 +12,6 @@ from   config          import Config
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = '1.03'
-
-if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
-else                        : _IS_TEST = False
 
 #==============================================================================
 # package's variables

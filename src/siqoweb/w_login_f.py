@@ -1,8 +1,6 @@
 #==============================================================================
 #  SIQO Homepage: Form Login
 #------------------------------------------------------------------------------
-import os
-
 from wtforms            import StringField, PasswordField, BooleanField, SubmitField
 from wtforms            import validators
 
@@ -12,7 +10,6 @@ from w__window_f        import WindowForm
 # package's constants
 #------------------------------------------------------------------------------
 _VER      = '1.02'
-_CWD      = os.getcwd()
 
 #==============================================================================
 # package's variables

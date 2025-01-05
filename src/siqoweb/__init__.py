@@ -6,8 +6,6 @@ import os
 #==============================================================================
 # Setting the environment
 #------------------------------------------------------------------------------
-os.environ['siqo-test'] = '1'
-#os.environ['wsiqo-secret-key'] = 'asklurgw8374yhcbfQ2R7GYFQPIUBR'
 
 #==============================================================================
 from   siqolib.journal     import SiqoJournal
@@ -21,13 +19,10 @@ import app_views           as app_views
 _VER      = '1.03'
 _CWD      = os.getcwd()
 
-if 'siqo-test' in os.environ: _IS_TEST = True if os.environ['siqo-test']=='1' else False 
-else                        : _IS_TEST = False
-
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
-journal = SiqoJournal('siqoweb init', debug=5)
+journal = SiqoJournal('siqoweb init', debug=2)
 
 app_routes.journal = journal
 app_views. journal = journal
@@ -44,8 +39,7 @@ if __name__ =='__main__':
     
     journal.M('Main start')
     
-    if _IS_TEST:
-        app.run(host='localhost', port=5005, debug=True, use_reloader=False)
+    app.run(host='localhost', port=8082, debug=True, use_reloader=False)
     
     journal.M('Main end')
     

@@ -3,7 +3,6 @@
 # Class Login for SIQO Flask application
 #
 #------------------------------------------------------------------------------
-import os
 import re
 import traceback
 

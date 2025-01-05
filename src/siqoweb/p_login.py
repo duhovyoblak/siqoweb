@@ -1,8 +1,6 @@
 #==============================================================================
 #  SIQO web library: Function for SIQO Flask application
 #------------------------------------------------------------------------------
-import os
-
 import flask
 from   flask               import url_for, get_flashed_messages, flash, render_template, make_response
 from   flask               import request, session, abort, redirect
@@ -17,7 +15,6 @@ from   config              import Config
 from   app_user            import User, _ANONYM
 from   p__page             import Page
 from   w_login_f           import LoginForm
-
 
 #==============================================================================
 # package's constants

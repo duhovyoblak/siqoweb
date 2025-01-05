@@ -3,7 +3,6 @@
 # Kniznica pre pracu s HTML dokumentom
 #
 #------------------------------------------------------------------------------
-import os
 import re
 import traceback
 
