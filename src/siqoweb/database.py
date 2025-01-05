@@ -35,7 +35,7 @@ class Database:
     def __init__(self, journal, dtbs, path='', autoInit=False, timeout=_TIMEOUT):
         "Call constructor of Database and initialise it"
         
-        journal.I(f"Database({dtbs}).init:")
+        journal.I(f"Database({dtbs}).init: filename = '{path}{dtbs}.db'")
 
         self.journal       = journal
         self.path          = path

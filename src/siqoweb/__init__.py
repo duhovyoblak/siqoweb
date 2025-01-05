@@ -27,7 +27,7 @@ else                        : _IS_TEST = False
 #==============================================================================
 # package's variables
 #------------------------------------------------------------------------------
-journal = SiqoJournal('siqo-web', debug=5)
+journal = SiqoJournal('siqoweb init', debug=5)
 
 app_routes.journal = journal
 app_views. journal = journal
@@ -45,7 +45,7 @@ if __name__ =='__main__':
     journal.M('Main start')
     
     if _IS_TEST:
-        app.run(host='localhost', port=80, debug=True, use_reloader=False)
+        app.run(host='localhost', port=5005, debug=True, use_reloader=False)
     
     journal.M('Main end')
     
