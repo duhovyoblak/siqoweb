@@ -45,6 +45,7 @@ DROP TABLE IF EXISTS PM_PARAMETER;
 
 CREATE TABLE IF NOT EXISTS PM_PARAMETER (
    PARAM_ID     VARCHAR(32)      NOT NULL                     /* Jednoznačná identifikácia parametra */
+
   ,S_VAL        VARCHAR(256)     NOT NULL
   ,NAME         VARCHAR(128)     NOT NULL
   ,C_FUNC       CHAR(1)          DEFAULT 'A'
@@ -73,7 +74,7 @@ CREATE TABLE IF NOT EXISTS PM_USER (
   ,LNAME        VARCHAR(64)      NOT NULL                     /* Last name */
   ,EMAIL        VARCHAR(128)         NULL                     /* E-mail address for authentification */
   ,PASSWORD     VARCHAR(32)      DEFAULT 'heslo'              /* Password hash */
-  ,AUTH_CODE    VARCHAR(128)         NULL                     /* Authentification code */
+  ,AUTH_CODE    VARCHAR(128)         NULL                     /* Authentification code for email authentification*/
   ,N_FAILS      TINYINT          DEFAULT 0                    /* failed connections count */
   ,D_CREATED    TIMESTAMP        NOT NULL                     /* creations date */
   ,D_CHANGED    TIMESTAMP        NOT NULL                     /* Date of last connection */
@@ -140,7 +141,7 @@ CREATE INDEX FKI_RES_OBJ  ON PM_OBJ_RESOURCE(CLASS_ID, OBJ_ID);
 DROP TABLE IF EXISTS PM_OBJ_USER_ROLE;
 
 CREATE TABLE IF NOT EXISTS PM_OBJ_USER_ROLE (
-   PAGE_ID      VARCHAR(32)      DEFAULT 'PAGMAN'             /* Stránka ktorej objekt patrí - časť primárneho kľúča */
+   CLASS_ID     VARCHAR(32)      DEFAULT 'PAGMAN'             /* Typ objektu/stránka ktorej objekt patrí - časť primárneho kľúča */
   ,OBJ_ID       VARCHAR(32)      DEFAULT 'PagManObject'       /* Jednoznačná identifikácia objektu vrámci stránky - časť primárneho kľúča */
   ,USER_ID      VARCHAR(32)      DEFAULT 'Anonymous'          /*  Jednoznačná dentifikácia usera - časť primárneho kľúča */
 
@@ -218,7 +219,7 @@ DROP TABLE IF EXISTS PM_DMS;
 CREATE TABLE IF NOT EXISTS PM_DMS (
    DOC_ID       INTEGER          NOT NULL                     /* ID dokumentu INTEGER PRIMARY KEY will autoincrement */
 
-  ,C_FUNC       CHAR(1)          DEFAULT 'E'                  /* Stav dokumentu E entered A aktívny D N */
+  ,C_FUNC       CHAR(1)          DEFAULT 'E'                  /* Stav dokumentu E entered A aktívny D Neaktivny */
   ,USER_ID      VARCHAR(32)      NOT NULL                     /* Vlastnik dokumentu */
   ,D_CREATED    TIMESTAMP        NOT NULL                     /* Datum vlozenia do DMS */
   ,C_TYPE       VARCHAR(8)       NOT NULL                     /* Typ dokumentu - fileextension */
