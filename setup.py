@@ -7,23 +7,21 @@ from setuptools import find_packages, setup
 # ==============================================================================
 # package's constants
 # ------------------------------------------------------------------------------
-
 DIR_CURRENT = os.path.abspath(os.path.dirname(__file__))
 
 DELIMITER_VERSION = '.'
-MAJOR_VERSION = '1'
-MINOR_VERSION = '2'
-PATCH_VERSION = '2'
+MAJOR_VERSION     = '1'
+MINOR_VERSION     = '2'
+PATCH_VERSION     = '3'
 
 PACKAGE_NAME             = 'siqoweb'
 PACKAGE_AUTHOR           = 'Pavol Horansky'
 PACKAGE_DESCRIPTION      = 'General SIQO library'
 PACKAGE_DESCRIPTION_LONG = ''
-PACKAGE_URL              = '<https://github.com/duhovyoblak/siqoweb'
+PACKAGE_URL              = 'https://github.com/duhovyoblak/siqoweb'
 PACKAGE_LICENSE          = 'Proprietary'
 PACKAGE_PYTHON           = '>=3.8'
 PACKAGE_VERSION          = DELIMITER_VERSION.join([MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION])
-
 
 # ==============================================================================
 # Build the package
@@ -33,7 +31,11 @@ def publish_artifacts() -> None:
     Methods automatically clears old build directories and then
     builds and publishes new artifacts
 
-    :return: None
+    Build the Package by running the following command in your package directory:
+    python setup.py sdist bdist_wheel
+
+    Install the generated wheel file from the dist directory:
+    pip install dist/siqoweb-1.2.3-py3-none-any.whl
     """
     try:
 

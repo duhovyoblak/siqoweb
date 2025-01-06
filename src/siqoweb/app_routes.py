@@ -65,10 +65,11 @@ def shutdownServer():
 
     journal.I("shutdownServer():")
 
-    from win32api import GenerateConsoleCtrlEvent
-    CTRL_C_EVENT = 0
-    GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0)
-
+    func = request.environ.get('werkzeug.server.shutdown')
+    
+    if func is None: raise RuntimeError('Not running with the Werkzeug Server')
+    else           : func()
+    
     journal.O()
     
 #------------------------------------------------------------------------------
