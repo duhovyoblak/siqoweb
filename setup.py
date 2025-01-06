@@ -21,7 +21,7 @@ PACKAGE_DESCRIPTION      = 'General SIQO library'
 PACKAGE_DESCRIPTION_LONG = ''
 PACKAGE_URL              = '<https://github.com/duhovyoblak/siqoweb'
 PACKAGE_LICENSE          = 'Proprietary'
-PACKAGE_PYTHON           = '>=3.9'
+PACKAGE_PYTHON           = '>=3.8'
 PACKAGE_VERSION          = DELIMITER_VERSION.join([MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION])
 
 
@@ -56,7 +56,7 @@ def publish_artifacts() -> None:
         # Publish artifacts
         # ------------------------------------------------------------------------------
         print(f'INFO: Building the artifacts!')
-        with open(os.path.join(DIR_CURRENT, "README.md"), mode="r", encoding="UTF-8") as f:
+        with open(os.path.join(DIR_CURRENT, "readme.md"), mode="r", encoding="UTF-8") as f:
             PACKAGE_DESCRIPTION_LONG = f.read()
 
         setup(

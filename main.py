@@ -28,7 +28,7 @@ if __name__ =='__main__':
 
     journal.I('Main start')
     
-    serve(app, host='127.0.0.1', port=8082, threads=100)
+    serve(app, host='0.0.0.0', port=8082, threads=100)
 
     
     journal.O('Main end')
