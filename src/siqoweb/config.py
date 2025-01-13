@@ -18,9 +18,18 @@ _VER      = '1.02'
 #------------------------------------------------------------------------------
 class Config:
     
-    packPath    = os.path.dirname(siqoweb.__file__)
+    #--------------------------------------------------------------------------
+    # Absolute path foe websiqo package in live environment
+    #--------------------------------------------------------------------------
+    #packPath    = os.path.dirname(siqoweb.__file__) + '/'
 
-    dtbsPath    = f"{packPath}/database/"
+    #--------------------------------------------------------------------------
+    # Relative path for no-package development environment. Workdirectory: 
+    #--------------------------------------------------------------------------
+    packPath    = ''
+
+    #--------------------------------------------------------------------------
+    dtbsPath    = f"{packPath}database/"
     dtbsName    = "pagman"
     
     tabParam    = "PM_PARAM"

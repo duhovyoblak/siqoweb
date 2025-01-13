@@ -594,6 +594,12 @@ class Structure:
                         # Pre Forum nastavim Structure.idx podla Forum.idx
                         self.idx = obj.idx
                      
+                    elif objClass=='BOC':
+                    
+                        from siqoweb.w_boc import Boc
+                        obj = Boc(self.journal, self.dms, self.userId, self.lang, item=item, POST=self.POST, idx=self.idx)
+                        Window.wins[obj.name] = obj
+                        
                     else:
                         self.journal.M(f"{self.name}.getCont: Unknown object class {objClass} ERROR", True)
             
@@ -635,23 +641,24 @@ if __name__ == '__main__':
     from   config                import Config
     from   app_dms               import DMS
     
-    journal = SiqoJournal('test-Structure', debug=5)
+    journal = SiqoJournal('test-Structure', debug=8)
     
     dms = DMS (journal, Config.dtbsName, Config.dtbsPath)
     
-#    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManLogin',    700)
-#    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManHomepage', 700)
-#    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManContact', 700)
-    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'FAQ', 700)
-#    page = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'OHISTORY', 700)
- 
+#    struct = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManLogin',    700)
+#    struct = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManHomepage', 700, 0)
+#    struct = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PagManContact', 700)
+#    struct = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'FAQ', 700)
+#    struct = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'OHISTORY', 700)
+    struct = Structure(journal, dms, 'Titul stranky', 'palo4', 'Pavol H', 'SK', 'PageBOC', 700, 0)
+    
     print()
-    print(page)
+    print(struct)
     print()
     
-   # print(page.html())
+    print(struct.html())
 
-#    item = page.dms.loadForumItem('ja', forumId='OHISTORY')
+#    item = struct.dms.loadForumItem('ja', forumId='OHISTORY')
 
     
 #==============================================================================

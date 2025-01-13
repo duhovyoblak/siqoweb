@@ -254,6 +254,14 @@ def pgOhistory(idx=0):
     journal.M(f"/oralhistory: idx='{idx}'")
     return app_views.pgStaged(title='SIQO Oral history', classId='OHISTORY', idx=idx)
 
+#------------------------------------------------------------------------------
+@app.route('/boc'          , methods=['GET', 'POST'])
+@app.route('/boc/<int:idx>', methods=['GET', 'POST'])
+def pgBoc(idx=0):
+
+    journal.M(f"/boc: idx='{idx}'")
+    return app_views.pgStaged(title='Battle of consistency', classId='PageBOC', idx=idx)
+
 #==============================================================================
 # Test cases
 #------------------------------------------------------------------------------

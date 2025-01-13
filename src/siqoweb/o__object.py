@@ -118,7 +118,7 @@ class Object(HTML):
     def html(self):
         "This method should be overrided and return html code for this Object"
 
-        self.journal.I("{self.name}.html:")
+        self.journal.I(f"{self.name}.html:")
         toRet = ''
         
         #----------------------------------------------------------------------
@@ -827,9 +827,11 @@ if __name__ == '__main__':
     dms     = DMS(journal, Config.dtbsName, Config.dtbsPath)
     
 #    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__HEAD__')
-    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__NAVB__')
-    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__STAG__')
+#    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__NAVB__')
+#    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PagManHomepage', objPar='__STAG__')
     
+    obj = Object(journal, dms, userId='palo4', lang='SK', classId='PageBOC', objPar='__CONT__')
+
     print(obj.conts)
     print()
 
@@ -838,7 +840,12 @@ if __name__ == '__main__':
     #print(obj.html())
     
     #rows = obj.readObjs('ja', objPar='__HEAD__')
+    #rows = obj.readObjs('ja', objPar='__STAG__')
+    
+    
     #rec = obj.objectGet('who', '__STAG__')
+    
+    #obj.dms.readDb('who', sql)
 
 
 #==============================================================================

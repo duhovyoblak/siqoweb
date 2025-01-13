@@ -106,19 +106,6 @@ class Window(Object):
         self.journal.O()
 
     #--------------------------------------------------------------------------
-    def formFromPost(self):
-        "This method cretes form based on POST data"
-        
-        self.journal.I(f"{self.name}.formFromPost:")
-        
-        #----------------------------------------------------------------------
-        # Vytvorenie window formulara z post data
-        #----------------------------------------------------------------------
-        "This section should be overrided"
-
-        self.journal.O()
-
-    #--------------------------------------------------------------------------
     def formDataFromDb(self):
         "This method loads tuple (dbItem, dbData) from DMS/Database"
         
@@ -133,6 +120,19 @@ class Window(Object):
         #----------------------------------------------------------------------
         return (self.dbData, self.dbItem)
     
+    #--------------------------------------------------------------------------
+    def formFromPost(self):
+        "This method cretes form based on POST data"
+        
+        self.journal.I(f"{self.name}.formFromPost:")
+        
+        #----------------------------------------------------------------------
+        # Vytvorenie window formulara z post data
+        #----------------------------------------------------------------------
+        "This section should be overrided"
+
+        self.journal.O()
+
     #==========================================================================
     # HTML methods
     #--------------------------------------------------------------------------
