@@ -8,6 +8,7 @@ instance/
 backup/
 htmlcov/
 venv/
+.venv/
 
 dist/
 build/

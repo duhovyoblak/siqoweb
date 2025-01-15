@@ -779,7 +779,7 @@ if __name__ == '__main__':
     journal = SiqoJournal('test-db', debug=5)
 
     from   config                   import Config
-    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=True)
+    db = Database(journal, Config.dtbsName, Config.dtbsPath, autoInit=False)
  
     tables     = db.tables()
 #    attributes = db.attributes(Config.tabUser)
@@ -793,6 +793,8 @@ if __name__ == '__main__':
 #    db.sSqlScript(who='test', fName='ohistory.sql')
     
     db.sJournal('SIQO')
+
+    print(db.readDb("michal", "SELECT * FROM PM_OBJECT"))
     
 #==============================================================================
 print(f"Database {_VER}")
