@@ -9,11 +9,11 @@
 
 /* Resources */
 DELETE FROM PM_OBJ_RESOURCE WHERE OBJ_ID   = 'Stage_BOC';
-DELETE FROM PM_OBJ_RESOURCE WHERE CLASS_ID = 'BOC';
+DELETE FROM PM_OBJ_RESOURCE WHERE CLASS_ID = 'PageBOC';
 
 /* Homepage object */
 DELETE FROM PM_OBJECT WHERE OBJ_ID   = 'Stage_BOC';
-DELETE FROM PM_OBJECT WHERE CLASS_ID = 'BOC';
+DELETE FROM PM_OBJECT WHERE CLASS_ID = 'PageBOC';
 
 /*----------------------------------------------------------------------------------------------*/
 /* Homepage object */
@@ -41,9 +41,9 @@ INSERT INTO PM_OBJ_RESOURCE VALUES( 'PagManHomepage', 'Stage_BOC', '8_Item',  'T
 /*----------------------------------------------------------------------------------------------*/
 /* BOC Page objects */
 /*----------------------------------------------------------------------------------------------*/
-INSERT INTO PM_OBJECT       VALUES( 'PageBOC',        'HeadItems',   '__HEAD__', 'A', 'Battle of consistency',          DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJECT       VALUES( 'PageBOC',        'NavLinks',    '__NAVB__', 'A', 'Battle of consistency',          DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJECT       VALUES( 'PageBOC',        'OHIST_cont',  '__CONT__', 'A', 'Battle of consistency',          DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJECT       VALUES( 'PageBOC',        'HeadItems', '__HEAD__', 'A', 'Battle of consistency',            DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJECT       VALUES( 'PageBOC',        'NavLinks',  '__NAVB__', 'A', 'Battle of consistency',            DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJECT       VALUES( 'PageBOC',        'BOC_cont',  '__CONT__', 'A', 'Battle of consistency',            DATE('now'), DATE('now'), 'SIQO');
 
 /*----------------------------------------------------------------------------------------------*/
 /* OHISTORY Page Forum Resources */
@@ -57,13 +57,13 @@ INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'HeadItems',   '2_Comment',  'TY
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'HeadItems',   '3_SubTitle', 'SK',    'A', 'by Michal H',               DATE('now'), DATE('now'), 'SIQO');
 INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'HeadItems',   '3_SubTitle', 'TYPE',  'A', 'HEADSUBTIT',                DATE('now'), DATE('now'), 'SIQO');
 
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'OHIST_cont',  'BocObject',  'NAME',  'A', 'BocWindow',                 DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'OHIST_cont',  'BocObject',  'TYPE',  'A', 'WINDOW',                    DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'OHIST_cont',  'BocObject',  'target','A', 'pgBoc',                     DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'OHIST_cont',  'BocObject',  'height','A', '94%',                       DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'OHIST_cont',  'BocObject',  'width', 'A', '99%',                       DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'OHIST_cont',  'BocObject',  'CLASS', 'A', 'BOC',                       DATE('now'), DATE('now'), 'SIQO');
-INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'OHIST_cont',  'BocObject',  'objId', 'A', 'BOC_A',                     DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'BOC_cont',    'BocObject',  'NAME',  'A', 'BocWindow',                 DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'BOC_cont',    'BocObject',  'TYPE',  'A', 'WINDOW',                    DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'BOC_cont',    'BocObject',  'target','A', 'pgBoc',                     DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'BOC_cont',    'BocObject',  'height','A', '94%',                       DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'BOC_cont',    'BocObject',  'width', 'A', '99%',                       DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'BOC_cont',    'BocObject',  'CLASS', 'A', 'BOC',                       DATE('now'), DATE('now'), 'SIQO');
+INSERT INTO PM_OBJ_RESOURCE VALUES( 'PageBOC',  'BOC_cont',    'BocObject',  'objId', 'A', 'BOC_A',                     DATE('now'), DATE('now'), 'SIQO');
 
 /*----------------------------------------------------------------------------------------------*/
 /* Meta */
