@@ -260,7 +260,7 @@ def pgOhistory(idx=0):
 def pgBoc(idx=0):
 
     journal.M(f"/boc: idx='{idx}'")
-    return app_views.pgStaged(title='Battle of consistency', classId='PageBOC', idx=idx)
+    return app_views.pgStaged(title='Battle of causality', classId='PageBOC', idx=idx)
 
 #==============================================================================
 # Test cases

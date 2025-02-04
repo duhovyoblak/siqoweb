@@ -149,8 +149,8 @@ class Boc(Window):
         #----------------------------------------------------------------------
         # Nacitanie objektu podla class/objId/idx
         #----------------------------------------------------------------------
-#!!!!
-        self.dbData, self.dbItem = self.dms.loadForumItem(self.name, forumId=self.objId, idx=self.idx, target=self.target)
+
+        self.dbData, self.dbItem = self.dms.loadForumItem(self.name, forumId=self.objId, idx=self.idx, target=self.target) #TODO this is the issue!!!
       
         if self.dbItem is None:
             self.journal.M(f"{self.name}.formDataFromDb : No dbItem for class={self.classId}, object={self.objId} with idx={self.idx}", True)
@@ -188,11 +188,12 @@ class Boc(Window):
     # HTML methods
     #--------------------------------------------------------------------------
 #!!!!
+
     def htmlHead(self):
         """"This method should be overrided and return html code
             for the head space of this window"""
         
-        toRet = ''
+        toRet = 'head\n'
         
         #----------------------------------------------------------------------
         # Vytvorenie hlavicky objektu podla class
@@ -208,7 +209,7 @@ class Boc(Window):
         """"This method should be overrided and return html code
             for the back space of this window"""
 
-        toRet = ''
+        toRet = 'back\n'
 
         #----------------------------------------------------------------------
         # Render the object formular
@@ -245,7 +246,7 @@ class Boc(Window):
         """"This method should be overrided and return html code
             for the front space of this window"""
 
-        toRet = ''
+        toRet = 'front\n'
 
         #----------------------------------------------------------------------
         # Vytvorenie Front/end objektu podla class
@@ -299,7 +300,7 @@ class Boc(Window):
         """"This method should be overrided and return html code
             for the controll space of this window"""
 
-        toRet = ''
+        toRet = 'control\n'
 
 #        toRet += str(self.form.sfUp        (class_="ObjectControlBtn", disabled="disabled" ))
 #        toRet += str(self.form.sfAddChapter(class_="ObjectControlBtn"))
